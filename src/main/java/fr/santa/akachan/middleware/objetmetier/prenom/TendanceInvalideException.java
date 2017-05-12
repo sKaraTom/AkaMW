@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.prenom;
+package fr.santa.akachan.middleware.objetmetier.prenom;
 
 public class TendanceInvalideException extends Exception {
 

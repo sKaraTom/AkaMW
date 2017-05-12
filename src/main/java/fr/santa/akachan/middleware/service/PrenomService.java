@@ -17,7 +17,7 @@ import fr.santa.akachan.middleware.dao.PrenomDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
-import fr.santa.akachan.middleware.prenom.TendanceInvalideException;
+import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
 
 @Stateless
 public class PrenomService {

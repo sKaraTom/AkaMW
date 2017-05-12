@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
-import fr.santa.akachan.middleware.prenom.TendanceInvalideException;
+import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
 import fr.santa.akachan.middleware.service.PrenomService;
 
 @WebService
