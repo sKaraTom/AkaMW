@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+  				http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+  				
+  				<!--
+		Nous définissons la règle de traitement
+		et de redirection des URLs du serveur Java EE.
+		Toute URL répondant à la regex /ws/* sera traitée par notre application.
+		Toute URL ne répondant pas à la regex sera ignoré par notre application.
+	-->	
+	<servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+  				
+  				
+</web-app>
+
+
