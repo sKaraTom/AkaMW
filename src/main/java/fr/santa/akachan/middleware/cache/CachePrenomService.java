@@ -45,12 +45,6 @@ public class CachePrenomService {
 	
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(CachePrenomService.class);
-	/*
-	private List<String> listePrenoms = new ArrayList<String>();
-	
-	private List<String> listePrenomsTendances = new ArrayList<String>();
-	private List<String> listePrenomsAnciens = new ArrayList<String>();
-	*/
 	
 	public CachePrenomService() {
 		super();
@@ -115,31 +109,7 @@ public class CachePrenomService {
 	
 	public void estimerPrenom (Estimation estimation, UUID refClient)
 			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
-		
-		/*
-		LOGGER.info("***************************************liste principale début estimation " + listePrenoms.size());
-		
-		Client client = clientDao.obtenirClient(refClient);
-		
-		if (!clientDao.contenirClient(refClient)) {
-            throw new ClientIntrouvableException();
-		}
-		
-		if (StringUtils.isBlank(estimation.getPrenom())) {
-			throw new PrenomInexistantException();
-		}
-		
-		else {
-		String prenomMajuscules = StringUtils.upperCase(estimation.getPrenom());
-		
-		LOGGER.info("***************************************nbre prenoms liste principale / avant remove : " + listePrenoms.size());
-		boolean estSupprime = listePrenoms.remove(prenomMajuscules);
-		//this.listePrenomsTendances.remove(prenomMajuscules);
-		//this.listePrenomsAnciens.remove(prenomMajuscules);
-		
-		LOGGER.info("***************************************liste principale remove : " + estSupprime);
-		LOGGER.info("***************************************nbre prenoms liste principale / apres remove : " + listePrenoms.size());
-		*/
+	
 		Client client = clientDao.obtenirClient(refClient);
 		
 		String prenomMajuscules = StringUtils.upperCase(estimation.getPrenom());

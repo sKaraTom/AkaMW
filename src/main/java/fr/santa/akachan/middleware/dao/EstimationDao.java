@@ -47,14 +47,19 @@ public class EstimationDao {
 	}
 	
 	// retourne le nombre d'estimations d'un client.
-	public Long obtenirNbEstimClient(UUID refClient) {
+	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
 		
 		final String requeteJPQL = "Estimation.obtenirNbEstimClient";
 		final Query requete = em.createNamedQuery(requeteJPQL);
 		requete.setParameter("refclient", refClient);
 		
-		Long totalEstimClient = (Long) requete.getSingleResult();
-		
+		Long totalEstimClient = null;
+		try {
+			totalEstimClient = (Long) requete.getSingleResult();
+		}
+		catch (NoResultException n) {
+			throw new DaoException();
+		}
 		return totalEstimClient;
 		
 	}

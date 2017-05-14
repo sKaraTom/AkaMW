@@ -2,6 +2,7 @@ package fr.santa.akachan.middleware.service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,6 +17,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
 
@@ -33,7 +35,7 @@ public class CompteService {
 	
 	
 	public void creerCompte(final Compte compte)
-			throws CompteInvalideException, CompteDejaExistantException {
+			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException {
 		
 		this.validerCompte(compte);
 		
@@ -56,7 +58,6 @@ public class CompteService {
 		else {
 			throw new CompteDejaExistantException();
 		}
-		
 	}
 	
 	
@@ -89,6 +90,7 @@ public class CompteService {
 			
 			else {
 				String token = jwtCreation.creerToken2(compteValide);
+				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
 				jeton = new Jeton(compteValide.getClient().getUuid().toString(),compteValide.getClient().getPrenom(), token) ;
 			}
 			
@@ -97,7 +99,7 @@ public class CompteService {
 	}
 
 	private void validerCompte(final Compte compte)
-			throws CompteInvalideException {
+			throws CompteInvalideException, EmailInvalideException {
 	
 		if (Objects.isNull(compte))
 			throw new CompteInvalideException("Le compte ne peut être null.");
@@ -105,9 +107,18 @@ public class CompteService {
 		if ((StringUtils.isBlank(compte.getEmail())) || (StringUtils.isBlank(compte.getPassword())) )
 			throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
 		
-		// ajouter vérification email valide.
-		
+		// vérification email valide.
+		this.validerEmail(compte.getEmail());
 	}
 	
+	
+	private void validerEmail(final String email) throws EmailInvalideException {
+		
+		Boolean emailValide = Pattern.matches("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)+$", email);
+		
+		if(!emailValide) {
+			throw new EmailInvalideException("email non formaté correctement.");
+		}
+	}
 	
 }

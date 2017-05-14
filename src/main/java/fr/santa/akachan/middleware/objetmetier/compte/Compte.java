@@ -29,7 +29,7 @@ public class Compte implements Serializable {
 
     private String password;
 
-    private Boolean connecte;
+    private Boolean connecte; // TODO à supprimer je n'en ai pas l'utilité.
     
     private Client client;
 

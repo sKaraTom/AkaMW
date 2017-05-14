@@ -69,6 +69,27 @@ public class EstimationRS {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
+	@Path("/stats/{refclient}")
+	public Response obtenirNbEstimClient(@PathParam("refclient") UUID refClient) {
+		
+		 Response.ResponseBuilder builder = null;
+
+	        Long totalEstimClients;
+	        
+			try {
+					totalEstimClients = estimationService.obtenirNbEstimClient(refClient);
+					 builder = Response.ok(totalEstimClients);
+			} 
+			catch (DaoException e) {
+					builder = Response.status(Response.Status.BAD_GATEWAY);
+			}
+			return builder.build();
+	}
+	
+	
+	
+	@GET
+    @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}/{sexe}")
 	public Response obtenirNbEstimClientParSexe(@PathParam("refclient") UUID refClient, @PathParam("sexe") String sexe) {
 		
@@ -110,7 +131,6 @@ public class EstimationRS {
 		builder = Response.status(Response.Status.CONFLICT);
 		
 	}
-
 	   return builder.build();
 	}
 	
@@ -127,7 +147,6 @@ public class EstimationRS {
 
 		   return builder.build();
 	}
-	
 	
 	@PUT
     @Consumes(MediaType.APPLICATION_JSON)

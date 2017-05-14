@@ -9,6 +9,8 @@ import javax.ejb.PrePassivate;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.ejb.StatefulTimeout;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 @Stateful
 @StatefulTimeout(unit = TimeUnit.MINUTES, value = 20)
@@ -52,6 +54,7 @@ public class CachePrenom implements Serializable {
 	
 	@PrePassivate
 	@Remove
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void viderListe() {
 		this.listePrenoms.clear();
 	}

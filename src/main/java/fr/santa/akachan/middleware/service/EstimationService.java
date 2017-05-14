@@ -36,29 +36,36 @@ public class EstimationService {
 	private EstimationDao estimationDao;
 	
 	@EJB
-	private CachePrenomService proxyPrenom;
+	private CachePrenomService cachePrenomService;
 	
-	
+	// nombre total tous clients confondus.
 	public Long obtenirNbTotalEstimations() {
 		
 		Long total = estimationDao.obtenirNbTotalEstimations();
 		return total;
 	}
 	
+	// nombre total pour un client.
+	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
+		Long totalEstimClient = estimationDao.obtenirNbEstimClient(refClient);
+		return totalEstimClient;
+	}
+	
+	// nombre pour un client, par sexe.
 	public Long obtenirNbEstimClientParSexe(UUID refClient, String sexe) throws DaoException {
 		
 		Long total = estimationDao.obtenirNbEstimClientParSexe(refClient, sexe);
 		return total;
 	}
 	
+	/* METHODE POUR TEST STATEFUL
 	public void estimerPrenom(Estimation estimation, UUID refClient) throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
 		
-		proxyPrenom.estimerPrenom(estimation, refClient);
+		cachePrenomService.estimerPrenom(estimation, refClient);
 	}
+	*/
 	
 	
-	
-	/*
 	public void estimerPrenom (Estimation estimation, UUID refClient)
 			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
 		
@@ -81,7 +88,6 @@ public class EstimationService {
 		clientDao.modifierClient(client);
 		}
 	}
-	*/
 	
 	public void changerDeListeEstimations(final List<Estimation>estimations, final String akachan) {
 		

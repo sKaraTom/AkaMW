@@ -22,6 +22,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
 import fr.santa.akachan.middleware.service.CompteService;
@@ -57,6 +58,9 @@ public class CompteRS {
 			} 
             catch (CompteInvalideException e) {
 				builder = Response.status(Response.Status.BAD_REQUEST);
+				
+			} catch (EmailInvalideException e) {
+				builder = Response.status(Response.Status.NOT_ACCEPTABLE);
 			}
 
         return builder.build();
