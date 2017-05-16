@@ -91,11 +91,16 @@ public class EstimationService {
 	
 	public void changerDeListeEstimations(final List<Estimation>estimations, final String akachan) {
 		
-		// si on passe des estimations en liste noire, retirer le marqueur favori.
-		if(akachan.equals("false")) {
+
+	
 			for(Estimation estimation:estimations) {
-				estimation.setFavori(0);;
-			}		
+				// si on passe des estimations en liste noire, retirer le marqueur favori.
+				if(akachan.equals("false")) {
+				estimation.setFavori(0);
+				}
+				// inscrire date changement de liste.
+				estimation.setDateEstimation(Calendar.getInstance());
+				
 		}
 
 		estimationDao.changerDeListeEstimations(estimations, akachan);
@@ -106,7 +111,7 @@ public class EstimationService {
 	public void modifierEstimation (Estimation estimation) {
 		
 		// forcer le fuseau à être sur Paris à la modification d'estimation, sinon soustraction de 2h...
-		// TODO 
+		// TODO à revoir ce problème de GMT
 		Calendar dateFormatee = estimation.getDateEstimation();
 		dateFormatee.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 		

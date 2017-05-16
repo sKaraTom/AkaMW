@@ -10,6 +10,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
@@ -22,7 +25,11 @@ public class EstimationDao {
 	@PersistenceContext
 	private EntityManager em;
 	
-
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(EstimationDao.class);
+	
+	
+	
 	// toutes les estimations sans distinction de client.
 	public Long obtenirNbTotalEstimations() {
 	
@@ -88,14 +95,16 @@ public class EstimationDao {
 		
 		// TODO : tester si le prénom n'est pas déjà estimé... 
 		// la génération d'uuid empêche d'utiliser em.contains(estimation).
-		// autre option : faire la vérification côté pattern Proxy.
+		//Boolean estimationExistante = this.contenirEstimation(estimation);
+		
+		//if(!estimationExistante) {
 		em.persist(estimation);
-
-		/*
+	/* }
+		
 		else {
 			throw new EstimationExistanteException();
 		}
-		*/
+	*/
 	}
 	
 	
@@ -114,10 +123,9 @@ public class EstimationDao {
 		em.merge(estimation);
 	}
 	
-	
+		
 	// TODO : à revoir. problématique : je ne peux pas me baser sur la clef primaire (uuid) pour trouver les estimations
 	// mais sur le prénom.
-	// A revoir quand proxy
 	public boolean contenirEstimation (final Estimation estimation) {
 		
 		// si on trouve le prénom dans la table, retourner true.
@@ -128,14 +136,14 @@ public class EstimationDao {
 		
 		// Objects.isNull(estimation retournée de la bdd);
 		
+		// problème à la persistance en cascade (TransientObjectException).
+		String resultat = (String) requete.getSingleResult();
+		LOGGER.info("***************************************resultat requete contenirEstim : " + resultat );
 		
-		try {
-		requete.getSingleResult();
+		if(resultat == null)
 		return true;
 		
-		}
-		
-		catch(Exception e) {
+		else {
 			return false;
 		}
 	
