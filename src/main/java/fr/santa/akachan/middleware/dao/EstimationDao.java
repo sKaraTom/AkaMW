@@ -133,7 +133,7 @@ public class EstimationDao {
 		final Query requete = em.createQuery(requeteJPQL);
 		requete.setParameter("refclient", estimation.getRefClient());
 		requete.setParameter("prenom", estimation.getPrenom());
-		
+	
 		// Objects.isNull(estimation retournée de la bdd);
 		
 		// problème à la persistance en cascade (TransientObjectException).
