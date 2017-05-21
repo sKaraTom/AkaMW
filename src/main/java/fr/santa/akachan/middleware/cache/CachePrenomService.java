@@ -121,7 +121,6 @@ public class CachePrenomService {
 		estimation.setRefClient(refClient); // à revoir, peut être inclus directement à la création de l'estimation.
 		estimation.setPrenom(prenomMajuscules);
 		estimation.setFavori(0); // idem, à la création de l'estimation.
-		client.getListeAkachan().add(estimation);
 		estimationDao.creerEstimation(estimation);
 		clientDao.modifierClient(client);
 	}

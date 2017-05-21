@@ -58,16 +58,6 @@ public class ClientDao {
 		em.merge(client);
 	}
 	
-	// toutes les estimations, true et false. utilité ?
-	public List<Estimation> obtenirListeEstimations(final UUID refClient) {
-
-		 Client client = em.find(Client.class, refClient);
-		 
-		 List<Estimation> liste = client.getListeAkachan();
-
-		return liste;
-	}
-	
 	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
 
 		 final String requeteJPQL = "Estimation.obtenirListeAkachan";

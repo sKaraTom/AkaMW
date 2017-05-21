@@ -70,20 +70,6 @@ public class ClientRS {
          return builder.build();
 	}
 	
-	// toutes les estimations pour un client. Administration ? TODO : à attribuer ou supprimer.
-	@GET
-	@Path("/liste/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirListeEstimations(@PathParam("ref") final UUID refClient) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 final List<Estimation> liste = clientService.obtenirListeEstimations(refClient);
-
-         builder = Response.ok(liste);
-         return builder.build();
-	}
-	
 	@GET
 	@Path("/listeA/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)

@@ -68,6 +68,19 @@ public class EstimationRS {
 	}
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/top/{sexe}")
+	public Response obtenirTop3Estimations(@PathParam("sexe")String sexe){
+		
+		Response.ResponseBuilder builder = null;
+		
+		final List<String> listeTopPrenoms = estimationService.obtenirTop3Estimations(sexe);
+		builder = Response.ok(listeTopPrenoms);
+		
+		return builder.build();
+	}
+	
+	@GET
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}")
 	public Response obtenirNbEstimClient(@PathParam("refclient") UUID refClient) {
@@ -85,7 +98,6 @@ public class EstimationRS {
 			}
 			return builder.build();
 	}
-	
 	
 	
 	@GET
@@ -106,8 +118,6 @@ public class EstimationRS {
 
 			return builder.build();
 	}
-	
-	
 	
 	
 	@POST
@@ -159,7 +169,6 @@ public class EstimationRS {
 
 	   return builder.build();
 	}
-	
 	
 	
 	

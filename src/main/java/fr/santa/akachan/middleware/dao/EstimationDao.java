@@ -41,7 +41,8 @@ public class EstimationDao {
 		return total;
 	}
 	
-	// toutes les estimations sans distinction de client par sexe.
+	// toutes les estimations sans distinction de client, par sexe.
+	// TODO : inutilisé pour l'instant.
 	public Long obtenirNbTotalEstimParSexe(String sexe) {
 		
 		final String requeteJPQL = "Estimation.obtenirNbreTotalParSexe";
@@ -52,6 +53,23 @@ public class EstimationDao {
 		
 		return total;
 	}
+	
+	/**
+	 * @param sexe "1" pour garçon "2" pour fille
+	 * @return liste des 3 prenoms les plus aimés par sexe.
+	 */
+	public List<String> obtenirTop3PrenomsEstimes(String sexe) {
+		
+		final String requeteJPQL = "Estimation.obtenirTopPrenomsEstimes";
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("sex", sexe);
+		requete.setMaxResults(3);
+		
+		List<String> listeTopPrenoms = requete.getResultList();
+		
+		return listeTopPrenoms;
+	}
+	
 	
 	// retourne le nombre d'estimations d'un client.
 	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
@@ -95,16 +113,15 @@ public class EstimationDao {
 		
 		// TODO : tester si le prénom n'est pas déjà estimé... 
 		// la génération d'uuid empêche d'utiliser em.contains(estimation).
-		//Boolean estimationExistante = this.contenirEstimation(estimation);
+		Boolean estimationExistante = this.contenirEstimation(estimation);
 		
-		//if(!estimationExistante) {
+		if(!estimationExistante) {
 		em.persist(estimation);
-	/* }
+		}
 		
 		else {
 			throw new EstimationExistanteException();
 		}
-	*/
 	}
 	
 	
@@ -124,8 +141,6 @@ public class EstimationDao {
 	}
 	
 		
-	// TODO : à revoir. problématique : je ne peux pas me baser sur la clef primaire (uuid) pour trouver les estimations
-	// mais sur le prénom.
 	public boolean contenirEstimation (final Estimation estimation) {
 		
 		// si on trouve le prénom dans la table, retourner true.
@@ -133,17 +148,13 @@ public class EstimationDao {
 		final Query requete = em.createQuery(requeteJPQL);
 		requete.setParameter("refclient", estimation.getRefClient());
 		requete.setParameter("prenom", estimation.getPrenom());
-	
-		// Objects.isNull(estimation retournée de la bdd);
 		
-		// problème à la persistance en cascade (TransientObjectException).
+		try {
 		String resultat = (String) requete.getSingleResult();
-		LOGGER.info("***************************************resultat requete contenirEstim : " + resultat );
-		
-		if(resultat == null)
 		return true;
+		}
 		
-		else {
+		catch(NoResultException e) {
 			return false;
 		}
 	

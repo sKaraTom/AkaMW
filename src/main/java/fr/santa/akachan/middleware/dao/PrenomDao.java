@@ -130,9 +130,7 @@ public class PrenomDao {
 	 */
 	public List<String> obtenirListePrenomsSQL(String sexe, UUID refClient) {
 		
-		/**
-		 * TODO : refactorer en StringBuilder.append...
-		 */
+		 //TODO : refactorer en StringBuilder.append...
 		final String requeteSQL = "SELECT DISTINCT LOWER(pre_label) FROM t_prenom p"
 				+ " WHERE pre_sexe= :sex"
 				+ " EXCEPT"

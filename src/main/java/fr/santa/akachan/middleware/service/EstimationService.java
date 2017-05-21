@@ -45,6 +45,13 @@ public class EstimationService {
 		return total;
 	}
 	
+	public List<String> obtenirTop3Estimations(String sexe) {
+		
+		List<String> listeTopPrenoms = estimationDao.obtenirTop3PrenomsEstimes(sexe);
+		
+		return listeTopPrenoms;
+	}
+	
 	// nombre total pour un client.
 	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
 		Long totalEstimClient = estimationDao.obtenirNbEstimClient(refClient);
@@ -65,7 +72,6 @@ public class EstimationService {
 	}
 	*/
 	
-	
 	public void estimerPrenom (Estimation estimation, UUID refClient)
 			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
 		
@@ -83,29 +89,24 @@ public class EstimationService {
 		estimation.setRefClient(refClient);
 		estimation.setPrenom(StringUtils.upperCase(estimation.getPrenom()));
 		estimation.setFavori(0);
-		client.getListeAkachan().add(estimation);
 		estimationDao.creerEstimation(estimation);
 		clientDao.modifierClient(client);
 		}
 	}
 	
 	public void changerDeListeEstimations(final List<Estimation>estimations, final String akachan) {
-		
-
 	
-			for(Estimation estimation:estimations) {
-				// si on passe des estimations en liste noire, retirer le marqueur favori.
-				if(akachan.equals("false")) {
+		for(Estimation estimation:estimations) {
+			// si on passe des estimations en liste noire, retirer le marqueur favori.
+			if(akachan.equals("false")) {
 				estimation.setFavori(0);
-				}
-				// inscrire date changement de liste.
-				estimation.setDateEstimation(Calendar.getInstance());
-				
+			}
+			// inscrire date changement de liste.
+			estimation.setDateEstimation(Calendar.getInstance());
 		}
 
 		estimationDao.changerDeListeEstimations(estimations, akachan);
 	}
-	
 	
 	
 	public void modifierEstimation (Estimation estimation) {

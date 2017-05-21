@@ -40,13 +40,6 @@ public class ClientService {
 		return client;
 	}
 	
-	// toutes les estimations, Akachan et noire... utilité ? administration ?
-	public List<Estimation> obtenirListeEstimations(final UUID refClient) {
-		
-		List<Estimation> listeAkachan = clientDao.obtenirListeEstimations(refClient);
-		
-		return listeAkachan;
-	}	
 	
 	public List<Estimation> obtenirListeAkachanTrue(final UUID refClient) {
 		

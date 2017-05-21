@@ -22,15 +22,15 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @Entity
 @NamedQueries({
-		@NamedQuery(name = "Estimation.obtenirListeAkachan", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='true'"),
-		@NamedQuery(name = "Estimation.obtenirListeNoire", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='false'"),
-		@NamedQuery(name = "Estimation.obtenirListeFavoris", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.favori='1'"),
-		@NamedQuery(name = "Estimation.obtenirNbreTotal", query = "SELECT count(*) FROM Estimation"),
-		@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.sexe=:sex"),
-		@NamedQuery(name = "Estimation.obtenirNbEstimClient", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient"),
-		@NamedQuery(name = "Estimation.obtenirNbEstimClientParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex"), })
+	@NamedQuery(name = "Estimation.obtenirListeAkachan", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='true'"),
+	@NamedQuery(name = "Estimation.obtenirListeNoire", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='false'"),
+	@NamedQuery(name = "Estimation.obtenirListeFavoris", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.favori='1'"),
+	@NamedQuery(name = "Estimation.obtenirNbreTotal", query = "SELECT count(*) FROM Estimation"),
+	@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.sexe=:sex"),
+	@NamedQuery(name = "Estimation.obtenirNbEstimClient", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient"),
+	@NamedQuery(name = "Estimation.obtenirNbEstimClientParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex"),
+	@NamedQuery(name = "Estimation.obtenirTopPrenomsEstimes", query = "SELECT e.prenom FROM Estimation e WHERE e.sexe=:sex AND e.akachan='true' GROUP BY e.prenom ORDER BY COUNT(*) DESC") })
 @Table(name = "T_ESTIMATION")
-
 public class Estimation implements Serializable {
 
 	private UUID uuid;

@@ -32,9 +32,6 @@ public class Client implements Serializable{
 	private String prenom;
 	private String sexe;
 	
-	private List<Estimation> listeAkachan;
-	
-	
 	public Client() {
 		super();
 	}
@@ -44,7 +41,6 @@ public class Client implements Serializable{
 		this.uuid = uuid;
 		this.prenom = prenom;
 		this.sexe = sexe;
-		this.listeAkachan = listeAkachan;
 	}
 
 	
@@ -77,18 +73,6 @@ public class Client implements Serializable{
 	public void setSexe(String sexe) {
 		this.sexe = sexe;
 	}
-	
-	// voir cascade.
-	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.MERGE})
-	@JoinColumn (name="CLI_LISTEA")
-	public List<Estimation> getListeAkachan() {
-		return listeAkachan;
-	}
-
-	public void setListeAkachan(List<Estimation> listeAkatchan) {
-		this.listeAkachan = listeAkatchan;
-	}
-
 
 	@Override
 	public int hashCode() {
