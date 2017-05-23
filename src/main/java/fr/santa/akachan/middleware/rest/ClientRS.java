@@ -20,6 +20,7 @@ import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
+import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.ClientService;
 
 @WebService
@@ -71,6 +72,7 @@ public class ClientRS {
 	}
 	
 	@GET
+	@Securise
 	@Path("/listeA/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeAkachanTrue(@PathParam("ref") final UUID refClient) {

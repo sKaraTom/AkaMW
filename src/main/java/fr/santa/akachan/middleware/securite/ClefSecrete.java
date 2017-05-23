@@ -2,7 +2,7 @@ package fr.santa.akachan.middleware.securite;
 
 public class ClefSecrete {
 	
-	String secret = "ù%*^$lsf)#&asfgva120" ;
+	String secret = "%^$lsf#&asfgva120" ;
 	
 	
 	
