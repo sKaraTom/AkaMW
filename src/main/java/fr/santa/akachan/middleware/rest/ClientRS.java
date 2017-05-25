@@ -86,6 +86,7 @@ public class ClientRS {
 	}
 	
 	@GET
+	@Securise
 	@Path("/listeN/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {

@@ -15,7 +15,7 @@ public class ClefSecrete {
 		return secret;
 	}
 
-	public void setSecret(String secret) {
+	private void setSecret(String secret) {
 		this.secret = secret;
 	}
 	

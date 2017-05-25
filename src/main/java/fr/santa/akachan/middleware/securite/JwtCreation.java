@@ -30,12 +30,15 @@ public class JwtCreation {
 		ClefSecrete clefSecrete = new ClefSecrete();
 		Client client = compte.getClient();
 		
-		Date d = new Date();
+		Date date = new Date();
+		long t = date.getTime();
+		Date dateExpiration = new Date(t + (240*60*60*1000)); // date de maintenant + 10 jours. 10*24h*60mn*60sec*1000ms
+		// 5000l pour test 5 secondes
 		
 		String token = Jwts.builder()
 				  .setSubject("users/TzMUocMF4p")
-				  .setIssuedAt(d)
-				  .setExpiration( new Date(d.getTime()+(24*60*60*1000))) // date de maintenant + 1 jour.
+				  .setIssuedAt(date)
+				  .setExpiration(dateExpiration)
 				  .claim("prenom", client.getPrenom())
 				  .claim("sexe", client.getSexe())
 				  .signWith(

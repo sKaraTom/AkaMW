@@ -25,6 +25,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
+import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.CompteService;
 
 @WebService
@@ -110,15 +111,24 @@ public class CompteRS {
 				builder = Response.status(Response.Status.BAD_REQUEST);
 				
 			} 
-			/*
-			catch(Exception e) {
-				builder = Response.status(Response.Status.NO_CONTENT);
-			}
-			*/
 		
 		return builder.build();
 	}
 	
+	@GET
+	@Securise
+	@Path("/token")
+	@Produces("text/plain")
+	public Response validerToken() {
+		
+		Response.ResponseBuilder builder = null;
+		
+		String validOk = "ok";
+		
+		builder = Response.ok(validOk);
+		return builder.build();
+		
+	}
 	
 	
 }
