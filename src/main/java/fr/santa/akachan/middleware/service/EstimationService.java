@@ -101,13 +101,12 @@ public class EstimationService {
 			if(akachan.equals("false")) {
 				estimation.setFavori(0);
 			}
-			// inscrire date changement de liste.
+			// remplacer la date de création de l'estimation par la date de changement de liste.
 			estimation.setDateEstimation(Calendar.getInstance());
 		}
 
 		estimationDao.changerDeListeEstimations(estimations, akachan);
 	}
-	
 	
 	public void modifierEstimation (Estimation estimation) {
 		

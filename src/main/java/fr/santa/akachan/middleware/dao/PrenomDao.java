@@ -88,7 +88,7 @@ public class PrenomDao {
 				requeteSQL.append(" AND e.est_prenom=p.pre_label)");
 				requeteSQL.append(" AND pre_sexe= :sex");
 				requeteSQL.append(" AND pre_annee >= 2000");
-				requeteSQL.append(" AND pre_nombre >= 1000");
+				requeteSQL.append(" AND pre_nombre >= 300");
 				requeteSQL.append(" ORDER BY RANDOM() LIMIT 1");
 				
 		Query q = em.createNativeQuery(requeteSQL.toString());
@@ -107,7 +107,7 @@ public class PrenomDao {
 				requeteSQL.append(" AND e.est_prenom=p.pre_label)");
 				requeteSQL.append(" AND pre_sexe= :sex");
 				requeteSQL.append(" AND pre_annee <= 1940");
-				requeteSQL.append(" AND pre_nombre >= 1000");
+				requeteSQL.append(" AND pre_nombre >= 100");
 				requeteSQL.append(" ORDER BY RANDOM() LIMIT 1");
 				
 		Query q = em.createNativeQuery(requeteSQL.toString());
