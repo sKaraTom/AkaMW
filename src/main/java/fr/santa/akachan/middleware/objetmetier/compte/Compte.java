@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,12 +17,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 
 
 @XmlRootElement
 @Entity
 @Table(name = "T_COMPTE")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
 public class Compte implements Serializable {
 
 	
@@ -29,10 +34,7 @@ public class Compte implements Serializable {
 
     private String password;
 
-    private Boolean connecte; // TODO à supprimer je n'en ai pas l'utilité.
-    
     private Client client;
-
     
 	public Compte() {
 		super();
@@ -42,7 +44,6 @@ public class Compte implements Serializable {
 		super();
 		this.email = email;
 		this.password = password;
-		this.connecte = false;
 		this.client = client;
 	}
 
@@ -65,17 +66,8 @@ public class Compte implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	@Column(name = "COM_CONNECTE")
-	public Boolean getConnecte() {
-		return connecte;
-	}
-
-	public void setConnecte(Boolean connecte) {
-		this.connecte = connecte;
-	}
     
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = CascadeType.ALL,mappedBy="compte")
 	public Client getClient() {
 		return client;
 	}

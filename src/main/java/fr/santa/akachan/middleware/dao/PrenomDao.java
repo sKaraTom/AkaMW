@@ -75,7 +75,8 @@ public class PrenomDao {
 		Query q = em.createNativeQuery(requeteSQL.toString());
 			q.setParameter("sex", sexe);
 			q.setParameter("refclient", refClient);
-				
+		
+		// TODO : traiter exceptions et propager.
 		String prenomAleatoire = (String)q.getSingleResult();
 		return prenomAleatoire;
 	}

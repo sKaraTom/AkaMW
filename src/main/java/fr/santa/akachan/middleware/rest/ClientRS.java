@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
+import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
@@ -59,15 +60,22 @@ public class ClientRS {
 	}
 	
 	@GET
+	@Securise
 	@Path("/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirClient(@PathParam("ref") final UUID refClient) {
 		
 		 Response.ResponseBuilder builder = null;
 		 
-		 final Client client = clientService.obtenirClient(refClient);
+		 Client client;
+		try {
+			client = clientService.obtenirClient(refClient);
+	        builder = Response.ok(client);
+		} catch (ClientIntrouvableException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST);
+		}
 
-         builder = Response.ok(client);
+
          return builder.build();
 	}
 	

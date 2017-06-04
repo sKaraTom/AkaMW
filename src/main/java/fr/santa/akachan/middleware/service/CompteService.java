@@ -10,6 +10,8 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.CompteDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
@@ -18,6 +20,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantExceptio
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
+import fr.santa.akachan.middleware.rest.EstimationRS;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
 
@@ -26,6 +29,8 @@ import fr.santa.akachan.middleware.securite.JwtCreation;
 //@Transactional
 public class CompteService {
 
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(CompteService.class);
 	
 	@EJB
 	private CompteDao compteDao;
@@ -37,13 +42,8 @@ public class CompteService {
 	public void creerCompte(final Compte compte)
 			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException {
 		
+		// d'abord vérifier que le compte est valide avant d'interroger la BDD.
 		this.validerCompte(compte);
-		
-		//si client null --> pour générer un client avec uuid.
-		if(compte.getClient() == null) {
-		Client client = new Client();
-		compte.setClient(client);
-		}
 		
 		boolean estContenu = compteDao.contenir(compte);
 		
@@ -53,6 +53,16 @@ public class CompteService {
 			String prenomFormate = WordUtils.capitalizeFully(prenomClientAFormater, new char[] { '-',' ' });
 			compte.getClient().setPrenom(prenomFormate);
 			
+			// instancier un client avec setCompte(compte).
+			Client clientAPersister = new Client();	
+			clientAPersister.setPrenom(prenomFormate);
+			clientAPersister.setSexe(compte.getClient().getSexe());
+			clientAPersister.setCompte(compte);
+			
+			//associer le client créé au compte.
+			compte.setClient(clientAPersister);
+			
+			//persister le compte va persister en cascade le client.
 			compteDao.ajouter(compte);
 		}
 		else {

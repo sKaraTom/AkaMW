@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.dao;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -14,6 +15,7 @@ import javax.transaction.Transactional;
 
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
+import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 
@@ -34,15 +36,21 @@ public class ClientDao {
 		return requete.getResultList();
 	}
 
-	public Client obtenirClient(final UUID refClient) {
+	public Client obtenirClient(final UUID refClient) throws ClientIntrouvableException {
 
 		Client client = null;
 
 		client = em.find(Client.class, refClient);
+		
+		if(Objects.isNull(client)) {
+			throw new ClientIntrouvableException();
+		}
+		
 
 		return client;
 	}
-
+	
+	// TODO : inutile avec onetoone Compte. à supprimer juqu'aux WS
 	public void creerClient(Client client) throws ClientExistantException {
 		
 		try {

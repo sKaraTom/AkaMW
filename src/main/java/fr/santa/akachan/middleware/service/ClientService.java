@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
+import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 
@@ -34,7 +35,7 @@ public class ClientService {
 		}
 	}
 	
-	public Client obtenirClient(UUID refClient) {
+	public Client obtenirClient(UUID refClient) throws ClientIntrouvableException {
 		
 		Client client = clientDao.obtenirClient(refClient);
 		return client;

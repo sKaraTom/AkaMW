@@ -15,6 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
@@ -32,7 +36,7 @@ import fr.santa.akachan.middleware.service.CompteService;
 @Transactional
 @Path("/compte")
 public class CompteRS {
-
+	
 	
 	@EJB
 	private JwtCreation jwtCreation;
@@ -67,12 +71,13 @@ public class CompteRS {
         return builder.build();
 	}
 	
-	// à revoir.. ajouter le password : obtenir compte pour autoriser modification.
 	@POST
+	@Securise
 	@Path("/obtenir")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response obtenirCompte(@FormParam("email") String email) {
+		
 		
 		Response.ResponseBuilder builder = null;
 		
@@ -82,7 +87,7 @@ public class CompteRS {
 			builder = Response.ok(compte);
 		
 		} catch (CompteInexistantException e) {
-			builder = Response.status(Response.Status.NO_CONTENT);
+			builder = Response.status(Response.Status.BAD_REQUEST);
 		}
 		return builder.build();
 	}

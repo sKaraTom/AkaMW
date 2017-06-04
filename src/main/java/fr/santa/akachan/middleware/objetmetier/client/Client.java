@@ -12,8 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -21,26 +23,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 
 @XmlRootElement
 @Entity
 @Table(name = "T_CLIENT")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid")
 public class Client implements Serializable{
 
 	private UUID uuid;
 	private String prenom;
 	private String sexe;
 	
+	private Compte compte;
+	
 	public Client() {
 		super();
 	}
 
-	public Client(UUID uuid, String prenom, String sexe, List<Estimation> listeAkachan) {
+	public Client(UUID uuid, String prenom, String sexe, Compte compte) {
 		super();
 		this.uuid = uuid;
 		this.prenom = prenom;
 		this.sexe = sexe;
+		this.compte = compte;
 	}
 
 	
@@ -51,6 +61,7 @@ public class Client implements Serializable{
 	public UUID getUuid() {
 		return uuid;
 	}
+
 
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
@@ -73,7 +84,19 @@ public class Client implements Serializable{
 	public void setSexe(String sexe) {
 		this.sexe = sexe;
 	}
+	
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="compte_email")
+	public Compte getCompte() {
+		return compte;
+	}
+
+	public void setCompte(Compte compte) {
+		this.compte = compte;
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		
