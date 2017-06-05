@@ -46,7 +46,6 @@ public class Compte implements Serializable {
 		this.password = password;
 		this.client = client;
 	}
-
 	
 	@Id
 	@Column(name = "COM_EMAIL")

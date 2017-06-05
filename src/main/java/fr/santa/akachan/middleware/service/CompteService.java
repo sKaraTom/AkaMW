@@ -53,7 +53,7 @@ public class CompteService {
 			String prenomFormate = WordUtils.capitalizeFully(prenomClientAFormater, new char[] { '-',' ' });
 			compte.getClient().setPrenom(prenomFormate);
 			
-			// instancier un client avec setCompte(compte).
+			// instancier un client puis lui associer le compte avec setCompte(compte).
 			Client clientAPersister = new Client();	
 			clientAPersister.setPrenom(prenomFormate);
 			clientAPersister.setSexe(compte.getClient().getSexe());
@@ -78,7 +78,32 @@ public class CompteService {
 		return compte;
 	}
 	
-	
+	public void modifierCompte(final Compte compte) throws CompteInexistantException, CompteInvalideException, EmailInvalideException {
+		
+		// d'abord vérifier que le compte est valide avant d'interroger la BDD.
+		this.validerCompte(compte);
+		
+		Compte compteValide = compteDao.obtenir(compte.getEmail());
+		
+		if (compteValide.getPassword().equals(compte.getPassword())) {
+		
+		// créer un client qui a les valeurs du compte.client pour lui associer le compte.
+		// nécessaire pour persistance du compte avec relation bidirectionnelle.
+		Client client = new Client();
+		client.setUuid(compte.getClient().getUuid());
+		client.setPrenom(WordUtils.capitalizeFully(compte.getClient().getPrenom(), new char[] { '-',' ' }));
+		client.setSexe(compte.getClient().getSexe());
+		client.setCompte(compte);
+		
+		compte.setClient(client);
+		
+		compteDao.modifier(compte);
+		}
+		else {
+			throw new CompteInvalideException("password non valide");
+		}
+		}
+		
 	
 	public Jeton connecter(final String email, final String password)
 		throws CompteInvalideException, CompteInexistantException, UnsupportedEncodingException {
@@ -86,8 +111,8 @@ public class CompteService {
 			Compte compteValide = compteDao.obtenir(email);
 			Jeton jeton = null;
 			
+			// redondant avec méthode de la dao.
 			if(Objects.isNull(compteValide)) {
-			//if (compteValide.equals(null)) {
 				throw new CompteInexistantException("le compte n'existe pas");
 			}
 			
@@ -116,6 +141,9 @@ public class CompteService {
 		
 		if ((StringUtils.isBlank(compte.getEmail())) || (StringUtils.isBlank(compte.getPassword())) )
 			throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
+		
+		if((StringUtils.isBlank(compte.getClient().getPrenom())) || (StringUtils.isBlank(compte.getClient().getSexe())))
+				throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
 		
 		// vérification email valide.
 		this.validerEmail(compte.getEmail());

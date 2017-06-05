@@ -32,6 +32,24 @@ public class ClientRS {
 	@EJB
 	ClientService clientService;
 	
+	
+	@GET
+	@Path("/total")
+	@Produces("text/plain")
+	public Response obtenirNombreClients() {
+		
+		 Response.ResponseBuilder builder = null;
+		 
+		 Long TotalClients;
+
+		 TotalClients = clientService.obtenirNombreClients();
+	     builder = Response.ok(TotalClients);
+		
+         return builder.build();
+	}
+	
+	
+	
 	@POST
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -32,17 +33,6 @@ public class CompteDao {
 	private EntityManager em;
 	
 	
-	public Compte obtenir(final String email) throws CompteInexistantException {
-		
-		Compte compte = em.find(Compte.class, email);
-		LOGGER.info("*************************************** compte DAO : "+compte);
-		
-		if (Objects.isNull(compte)){
-			throw new CompteInexistantException();
-		}
-		return compte;
-	}
-	
 	public void ajouter(final Compte compte) throws CompteInvalideException, CompteDejaExistantException {
 		
 		try {
@@ -51,6 +41,23 @@ public class CompteDao {
 		catch(final EntityExistsException e) {
 			throw new CompteDejaExistantException();
 		}
+	}
+	
+	public Compte obtenir(final String email) throws CompteInexistantException {
+		
+		Compte compte = em.find(Compte.class, email);
+		
+		if (Objects.isNull(compte)){
+			throw new CompteInexistantException("le compte n'existe pas");
+		}
+		return compte;
+	}
+	
+	
+	public void modifier(final Compte compte) {
+		
+		em.merge(compte);
+		
 	}
 	
 	public void supprimerCompte(String email) throws CompteInexistantException {

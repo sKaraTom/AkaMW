@@ -21,6 +21,13 @@ public class ClientService {
 	@EJB
 	private ClientDao clientDao;
 	
+	
+	public Long obtenirNombreClients() {
+		
+		Long total = clientDao.obtenirNombreClients();
+		return total;
+	}
+	
 	public void creerClient (Client client) throws ClientInvalideException, ClientExistantException {
 		
 		//validation plus complète à implémenter.

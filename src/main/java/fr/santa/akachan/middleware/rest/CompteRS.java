@@ -4,12 +4,12 @@ import java.io.UnsupportedEncodingException;
 
 import javax.ejb.EJB;
 import javax.jws.WebService;
-import javax.mail.internet.InternetAddress;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -19,9 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.cache.CachePrenomService;
-import fr.santa.akachan.middleware.objetmetier.client.Client;
-import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
-import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
@@ -89,6 +86,33 @@ public class CompteRS {
 		} catch (CompteInexistantException e) {
 			builder = Response.status(Response.Status.BAD_REQUEST);
 		}
+		return builder.build();
+	}
+	
+	@PUT
+	@Securise
+	@Path("/modifier")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response modifierCompte(Compte compte) {
+		
+		
+		Response.ResponseBuilder builder = null;
+
+		try {
+			compteService.modifierCompte(compte);
+			builder = Response.ok(compte);
+			
+		} catch (CompteInexistantException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);	
+		} catch (CompteInvalideException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST);
+		} catch (EmailInvalideException e) {
+			builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+		}
+		
+
+			
 		return builder.build();
 	}
 	

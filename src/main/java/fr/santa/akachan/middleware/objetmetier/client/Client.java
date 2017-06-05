@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,6 +33,9 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 
 @XmlRootElement
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c")
+	})
 @Table(name = "T_CLIENT")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid")
 public class Client implements Serializable{

@@ -13,6 +13,10 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
@@ -22,10 +26,26 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 @Stateless
 @Transactional
 public class ClientDao {
-
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(ClientDao.class);
+	
+	
 	@PersistenceContext
 	private EntityManager em;
 
+	
+	public Long obtenirNombreClients() {
+		
+		final String requeteJPQL = "Client.obtenirNbreClients";
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		
+		Long total = (Long) requete.getSingleResult();
+		LOGGER.info("***************** "+total);
+		
+		return total;
+	}
+	
 	
 	public List<Client> obtenirClients() {
 
@@ -67,14 +87,13 @@ public class ClientDao {
 	}
 	
 	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
-
+		
 		 final String requeteJPQL = "Estimation.obtenirListeAkachan";
 		 
 		 final Query requete = em.createNamedQuery(requeteJPQL);
 			requete.setParameter("refclient", refClient);
 			
 		List<Estimation> listeAkachan = requete.getResultList();
-		 
 		return listeAkachan;
 	}
 	
