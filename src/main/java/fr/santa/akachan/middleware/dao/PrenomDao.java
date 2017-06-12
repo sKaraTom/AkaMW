@@ -12,12 +12,18 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
+import fr.santa.akachan.middleware.rest.EstimationRS;
 
 @Stateless
 @Transactional
 public class PrenomDao {
 
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(PrenomDao.class);
 	
 	@PersistenceContext
 	private EntityManager em;
@@ -35,18 +41,42 @@ public class PrenomDao {
 		return prenomInsee;
 	}
 	
+	public List<String> chercherPrenom(String recherche, String sexe) {
+		
+		List<String> ListePrenomsRecherche = null;
+		
+		final String requeteJPQL = "Prenom.chercherPrenom";
+		
+		final StringBuilder concatRechercheLike = new StringBuilder();
+		concatRechercheLike.append("%");
+		concatRechercheLike.append(recherche.toUpperCase());
+		concatRechercheLike.append("%");
+		
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("recherche", concatRechercheLike.toString());
+		requete.setParameter("sex", sexe);
+		
+		
+		ListePrenomsRecherche = requete.getResultList();
+		
+		return ListePrenomsRecherche;
+		
+	}
+	
+	
+	
+	
 	/**
 	 * @param label
-	 * @return liste des stats d'un prénom
+	 * @return liste des stats (nombre naissances et années) d'un prénom
 	 * @throws DaoException
 	 */
 	public List<PrenomInsee> obtenirStatsPrenom(String label, String sexe) throws DaoException {
 
 		List<PrenomInsee> liste = null;
-
+		
 		// je demande de selectionner les prenoms selon un label defini
-		final String requeteJPQL = "SELECT p FROM PrenomInsee p WHERE p.label=:lab "
-				+ "AND  p.sexe=:sex";
+		final String requeteJPQL = "SELECT p FROM PrenomInsee p WHERE p.label=:lab AND  p.sexe=:sex";
 
 		final TypedQuery<PrenomInsee> requete = em.createQuery(requeteJPQL, PrenomInsee.class);
 		requete.setParameter("lab", label);

@@ -29,6 +29,29 @@ public class PrenomService {
 	private CachePrenomService cachePrenomService;
 	
 	
+
+	public PrenomInsee obtenirPrenomParReference(Integer reference) throws PrenomInexistantException {
+		
+		PrenomInsee prenom = prenomDao.obtenirPrenom(reference);
+		
+		// a refactorer : mauvaise logique.
+		if (prenom == null) {
+			throw new PrenomInexistantException();
+		}
+		else {
+		return prenom;
+		}
+	}
+	
+	public List<String> chercherPrenom(String recherche, String sexe) {
+		
+		List<String> ListePrenomsRecherche = prenomDao.chercherPrenom(recherche, sexe);
+		
+		return ListePrenomsRecherche;
+	}
+	
+	
+	
 	public String getPrenomAleatoire(String sexe, UUID refClient, Integer choixTendance) {
 		String prenom = cachePrenomService.genererPrenomAleatoire(sexe, refClient, choixTendance);
 		return prenom;
@@ -131,7 +154,7 @@ public class PrenomService {
 				listeNaissances.add(0);
 			}
 			
-			// puis je peuple à chaque (année de naissance -1900 pour tomber sur l'index).
+			// puis je peuple à chaque année de naissance récupérée (année de naissance -1900 pour tomber sur l'index).
 			// à cet index j'ajoute le nombre de naissances.
 			for( PrenomInsee prenom : statsPrenom) {
 				listeNaissances.set((prenom.getAnnee()-1900), prenom.getNombreNaissance());
@@ -140,18 +163,6 @@ public class PrenomService {
 	}
 	
 
-	public PrenomInsee obtenirPrenomParReference(Integer reference) throws PrenomInexistantException {
-		
-		PrenomInsee prenom = prenomDao.obtenirPrenom(reference);
-		
-		// a refactorer : mauvaise logique.
-		if (prenom == null) {
-			throw new PrenomInexistantException();
-		}
-		else {
-		return prenom;
-		}
-	}
 	
 	
 	

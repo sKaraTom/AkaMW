@@ -37,7 +37,7 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c")
 	})
 @Table(name = "T_CLIENT")
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid") // pour éviter boucles infinies en json côté WS
 public class Client implements Serializable{
 
 	private UUID uuid;

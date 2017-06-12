@@ -28,6 +28,31 @@ public class PrenomRS {
 	@EJB
 	private PrenomService prenomService;
 	
+	@GET
+	@Path("/{ref}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirPrenomParReference(@PathParam("ref") final Integer referencePrenom) {
+		
+		 Response.ResponseBuilder builder = null;
+
+	        try {
+
+	            // Cas Nominal
+	            final PrenomInsee prenom = prenomService.obtenirPrenomParReference(referencePrenom);
+
+	            builder = Response.ok(prenom);
+
+	        } catch (final PrenomInexistantException e) {
+
+	            // Cas alternatif : l'identifiant recherché n'existe pas.
+	            builder = Response.status(Response.Status.NOT_FOUND);
+	        }
+
+			return builder.build();
+		}
+	
+	
+	
 	
 	//a voir si on passe le prenomAleatoire en texte plutôt que json.
 	@GET
@@ -48,6 +73,20 @@ public class PrenomRS {
 		}
 
 		return builder.build();
+	}
+	
+	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+	@Path("/recherche/{sexe}/{label}")
+	public Response chercherPrenom(@PathParam("label") String recherche, @PathParam("sexe") String sexe) {
+		
+		 Response.ResponseBuilder builder = null;
+
+	     final List<String> listeRecherches = prenomService.chercherPrenom(recherche, sexe);
+
+	     builder = Response.ok(listeRecherches);
+
+	     return builder.build();
 	}
 	
 	
@@ -129,28 +168,7 @@ public class PrenomRS {
 	
 	
 	
-	@GET
-	@Path("/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirPrenomParReference(@PathParam("ref") final Integer referencePrenom) {
-		
-		 Response.ResponseBuilder builder = null;
 
-	        try {
-
-	            // Cas Nominal
-	            final PrenomInsee prenom = prenomService.obtenirPrenomParReference(referencePrenom);
-
-	            builder = Response.ok(prenom);
-
-	        } catch (final PrenomInexistantException e) {
-
-	            // Cas alternatif : l'identifiant recherché n'existe pas.
-	            builder = Response.status(Response.Status.NOT_FOUND);
-	        }
-
-			return builder.build();
-		}
 	
 	
 }
