@@ -111,8 +111,6 @@ public class EstimationDao {
 	
 	public void creerEstimation(final Estimation estimation) throws EstimationExistanteException {
 		
-		// TODO : tester si le prénom n'est pas déjà estimé... 
-		// la génération d'uuid empêche d'utiliser em.contains(estimation).
 		Boolean estimationExistante = this.contenirEstimation(estimation);
 		
 		if(!estimationExistante) {
@@ -157,7 +155,27 @@ public class EstimationDao {
 		catch(NoResultException e) {
 			return false;
 		}
+	}
+	
+	public boolean contenirEstimationPourOutilRecherche (final String prenom, final String sexe, final UUID refClient ) {
+		
+		// si on trouve le prénom dans la table, retourner true.
+		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex AND e.prenom=:prenom";
+		final Query requete = em.createQuery(requeteJPQL);
+		requete.setParameter("refclient", refClient);
+		requete.setParameter("sex", sexe);
+		requete.setParameter("prenom", prenom);
+		
+		try {
+		String resultat = (String) requete.getSingleResult();
+		return true;
+		}
+		
+		catch(NoResultException e) {
+			return false;
+		}
 	
 	}
+	
 	
 }

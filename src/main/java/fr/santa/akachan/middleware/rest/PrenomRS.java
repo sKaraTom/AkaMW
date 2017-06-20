@@ -1,13 +1,16 @@
 package fr.santa.akachan.middleware.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
@@ -85,6 +89,26 @@ public class PrenomRS {
 	     final List<String> listeRecherches = prenomService.chercherPrenom(recherche, sexe);
 
 	     builder = Response.ok(listeRecherches);
+
+	     return builder.build();
+	}
+	
+	@POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+	@Path("/recherche")
+	public Response chercherPrenomEtEstimExistante(Estimation estimation) {
+		
+		 Response.ResponseBuilder builder = null;
+
+	     HashMap<String, Boolean> resultats;
+		try {
+			resultats = prenomService.chercherPrenomEtEstimationExistante(estimation);
+			builder = Response.ok(resultats);
+			
+		} catch (PrenomInexistantException e) {
+			builder = Response.status(Response.Status.NO_CONTENT);
+		}
 
 	     return builder.build();
 	}

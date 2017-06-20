@@ -170,6 +170,21 @@ public class EstimationRS {
 	   return builder.build();
 	}
 	
+	@POST
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recherche")
+	public Response verifierEstimationExistante (Estimation estimation) {
+
+	   Response.ResponseBuilder builder = null;
+
+		boolean estimExistante = estimationService.verifierEstimationExistante(estimation);
+	    builder = Response.ok(estimExistante);
+		
+	   return builder.build();
+	}
+	
+	
 	
 	
 	}

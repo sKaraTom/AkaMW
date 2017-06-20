@@ -52,7 +52,6 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         try {
             // valider le token
         	 Jws<Claims> jws = Jwts.parser().setSigningKey(clefSecrete.getSecret().getBytes("UTF-8")).parseClaimsJws(token);
-        	 LOGGER.info("================================== " + jws.getBody().getExpiration());
         	 
         } catch (Exception e) {
            // n'importe quelle exception annule la connexion côté ihm.

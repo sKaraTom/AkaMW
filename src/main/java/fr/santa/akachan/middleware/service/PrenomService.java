@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -10,20 +11,30 @@ import javax.ejb.Stateless;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.dao.EstimationDao;
 import fr.santa.akachan.middleware.dao.PrenomDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
+import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
 
 @Stateless
 public class PrenomService {
-
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(PrenomService.class);
+	
 	@EJB
 	private PrenomDao prenomDao;
+	
+	@EJB
+	private EstimationDao estimationDao;
 	
 	@EJB
 	private CachePrenomService cachePrenomService;
@@ -48,6 +59,34 @@ public class PrenomService {
 		List<String> ListePrenomsRecherche = prenomDao.chercherPrenom(recherche, sexe);
 		
 		return ListePrenomsRecherche;
+	}
+	
+	
+	/**
+	 * Faire une recherche de prénoms (sql LIKE) et renvoyer en booléen associé si une estimation existe déjà pour ce client.
+	 * Permet côté IHM de savoir si prénom déjà estimé.
+	 * @param estimation
+	 * @return un hashmap <prenom trouvé, booleen si estimation existante>
+	 * @throws PrenomInexistantException 
+	 */
+	public HashMap<String,Boolean> chercherPrenomEtEstimationExistante(Estimation estimation) throws PrenomInexistantException {
+		
+		HashMap<String, Boolean> resultats = new HashMap<String,Boolean>();
+		
+		List<String> listePrenomsRecherche = prenomDao.chercherPrenom(estimation.getPrenom(), estimation.getSexe());
+		
+		if(listePrenomsRecherche.isEmpty()) {
+			LOGGER.info("============== PrenomInexistantException ");
+			throw new PrenomInexistantException();
+		}
+		else {
+			for(String prenom:listePrenomsRecherche) {
+				Boolean estimExistante = estimationDao.contenirEstimationPourOutilRecherche(prenom,estimation.getSexe(),estimation.getRefClient());
+				resultats.put(prenom, estimExistante);
+			}
+		}
+		LOGGER.info("============== map " + resultats.size());
+		return resultats;
 	}
 	
 	

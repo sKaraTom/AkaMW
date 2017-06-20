@@ -119,7 +119,21 @@ public class EstimationService {
 		
 		estimationDao.modifierEstimation(estimation);
 	}
-
+	
+	/**
+	 * vérifier si estimation existe (sert pour affichage boutons j'aime ou non dans l'outil de recherche).
+	 * @param estimation
+	 * @return boolean : true si estimation trouvée.
+	 */
+	public boolean verifierEstimationExistante(final Estimation estimation) {
+		
+		boolean estimExistante = estimationDao.contenirEstimation(estimation);
+		
+		return estimExistante;
+		
+	}
+	
+	
 	
 	}
 	
