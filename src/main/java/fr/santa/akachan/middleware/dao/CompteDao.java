@@ -43,6 +43,7 @@ public class CompteDao {
 		}
 	}
 	
+	// TODO : inutilisé côté ihm, voir si utile pour admin
 	public Compte obtenir(final String email) throws CompteInexistantException {
 		
 		Compte compte = em.find(Compte.class, email);

@@ -3,6 +3,7 @@ package fr.santa.akachan.middleware.rest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.ejb.EJB;
@@ -17,7 +18,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.dao.PrenomDao;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
@@ -28,7 +33,10 @@ import fr.santa.akachan.middleware.service.PrenomService;
 @Transactional
 @Path("/prenom")
 public class PrenomRS {
-
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(PrenomRS.class);
+	
 	@EJB
 	private PrenomService prenomService;
 	
@@ -79,31 +87,18 @@ public class PrenomRS {
 		return builder.build();
 	}
 	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/recherche/{sexe}/{label}")
-	public Response chercherPrenom(@PathParam("label") String recherche, @PathParam("sexe") String sexe) {
-		
-		 Response.ResponseBuilder builder = null;
-
-	     final List<String> listeRecherches = prenomService.chercherPrenom(recherche, sexe);
-
-	     builder = Response.ok(listeRecherches);
-
-	     return builder.build();
-	}
 	
 	@POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	@Path("/recherche")
-	public Response chercherPrenomEtEstimExistante(Estimation estimation) {
+	@Path("/recherche/{rechercheExacte}")
+	public Response chercherPrenomEtEstimExistante(Estimation estimation,@PathParam("rechercheExacte") Boolean rechercheExacte) {
 		
 		 Response.ResponseBuilder builder = null;
 
-	     HashMap<String, Boolean> resultats;
+	     Map<String, Boolean> resultats;
 		try {
-			resultats = prenomService.chercherPrenomEtEstimationExistante(estimation);
+			resultats = prenomService.chercherPrenomEtEstimationExistante(estimation,rechercheExacte);
 			builder = Response.ok(resultats);
 			
 		} catch (PrenomInexistantException e) {
@@ -154,20 +149,6 @@ public class PrenomRS {
 	}
 	*/
 	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/stats/{sexe}/{label}")
-	public Response obtenirStatsPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) throws DaoException {
-		
-		 Response.ResponseBuilder builder = null;
-
-	      	    // Cas Nominal
-	            final List<PrenomInsee> liste = prenomService.obtenirStatsPrenom(label,sexe);
-
-	            builder = Response.ok(liste);
-
-			return builder.build();
-	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 
 import fr.santa.akachan.middleware.dao.ClientDao;
+import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
@@ -21,27 +22,22 @@ public class ClientService {
 	@EJB
 	private ClientDao clientDao;
 	
-	
-	public Long obtenirNombreClients() {
+	/** Obtenir le nombre total de clients inscrits.
+	 * @return nombre (Long)
+	 * @throws DaoException 
+	 */
+	public Long obtenirNombreClients() throws DaoException {
 		
 		Long total = clientDao.obtenirNombreClients();
 		return total;
 	}
 	
-	public void creerClient (Client client) throws ClientInvalideException, ClientExistantException {
-		
-		//validation plus complète à implémenter.
-		if(client == null) {
-			throw new ClientInvalideException();
-		}
-		if(clientDao.contenirClient(client.getUuid())) {
-			throw new ClientExistantException();
-		}
-		else {
-		clientDao.creerClient(client);
-		}
-	}
-	
+
+	/** obtenir un client par son uuid (sert côté ihm pour infos compte)
+	 * @param refClient
+	 * @return
+	 * @throws ClientIntrouvableException
+	 */
 	public Client obtenirClient(UUID refClient) throws ClientIntrouvableException {
 		
 		Client client = clientDao.obtenirClient(refClient);

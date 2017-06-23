@@ -35,18 +35,29 @@ public class ClientDao {
 	private EntityManager em;
 
 	
-	public Long obtenirNombreClients() {
+	/** Obtenir le nombre total de clients inscrits.
+	 * @return nombre (Long)
+	 * @throws DaoException 
+	 */
+	public Long obtenirNombreClients() throws DaoException {
 		
 		final String requeteJPQL = "Client.obtenirNbreClients";
 		final Query requete = em.createNamedQuery(requeteJPQL);
-		
-		Long total = (Long) requete.getSingleResult();
-		LOGGER.info("***************** "+total);
+		Long total;
+		try {
+		total = (Long) requete.getSingleResult();
+		}
+		catch(Exception e) {
+			throw new DaoException();
+		}
 		
 		return total;
 	}
 	
-	
+	/** Obtenir la liste de tous les clients inscrits.
+	 * A dérouler jusqu'aux WS pour admin.
+	 * @return Liste de clients (List<Client>)
+	 */
 	public List<Client> obtenirClients() {
 
 		final String requeteJPQL = "SELECT c FROM Client c";
@@ -56,6 +67,11 @@ public class ClientDao {
 		return requete.getResultList();
 	}
 
+	/** obtenir un client par son uuid (sert côté ihm pour infos compte)
+	 * @param refClient
+	 * @return
+	 * @throws ClientIntrouvableException
+	 */
 	public Client obtenirClient(final UUID refClient) throws ClientIntrouvableException {
 
 		Client client = null;
@@ -66,26 +82,20 @@ public class ClientDao {
 			throw new ClientIntrouvableException();
 		}
 		
-
 		return client;
 	}
 	
-	// TODO : inutile avec onetoone Compte. à supprimer juqu'aux WS
-	public void creerClient(Client client) throws ClientExistantException {
-		
-		try {
-			em.persist(client);
-		}
-		catch(final EntityExistsException e) {
-			throw new ClientExistantException();
-		}
-	}
-
+	// TODO : inutilisé car modification faite côté compte (relation OneToOne).
 	public void modifierClient(final Client client) {
 		
 		em.merge(client);
 	}
 	
+	
+	/** Obtenir liste Akachan des estimations (prénoms aimés) d'un client
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
 	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
 		
 		 final String requeteJPQL = "Estimation.obtenirListeAkachan";
@@ -97,6 +107,10 @@ public class ClientDao {
 		return listeAkachan;
 	}
 	
+	/** Obtenir liste noire des estimations (prénoms non aimés) d'un client
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
 	public List<Estimation> obtenirListeNoire(final UUID refClient) {
 
 		 final String requeteJPQL = "Estimation.obtenirListeNoire";
@@ -109,6 +123,10 @@ public class ClientDao {
 		return listeNoire;
 	}
 	
+	/** Obtenir la liste des favoris d'un client (Boolean favori = true)
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
 	public List<Estimation> obtenirListeFavoris(final UUID refClient) {
 		
 		final String requeteJPQL ="Estimation.obtenirListeFavoris";
@@ -121,7 +139,11 @@ public class ClientDao {
 		return listeFavoris;
 	}
 	
-	
+	/** Vérifier si le client existe dans la bdd.
+	 * TODO : inutilisé, voir si supprimer après page admin.
+	 * @param uuid
+	 * @return Boolean (true si client existe dans bdd, false sinon).
+	 */
 	public Boolean contenirClient(final UUID uuid){
 		
 		Boolean estTrouve = null;

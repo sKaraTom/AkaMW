@@ -41,19 +41,35 @@ public class PrenomDao {
 		return prenomInsee;
 	}
 	
-	public List<String> chercherPrenom(String recherche, String sexe) {
+	/**
+	 * chercher des prénoms : SQL LIKE si rechercheExacte = true.
+	 * @param recherche
+	 * @param sexe
+	 * @param rechercheExacte
+	 * @return liste de prénoms(string) résultat de la recherche
+	 */
+	public List<String> chercherPrenoms(String recherche, String sexe, Boolean rechercheExacte) {
 		
 		List<String> ListePrenomsRecherche = null;
 		
 		final String requeteJPQL = "Prenom.chercherPrenom";
 		
-		final StringBuilder concatRechercheLike = new StringBuilder();
-		concatRechercheLike.append("%");
-		concatRechercheLike.append(recherche.toUpperCase());
-		concatRechercheLike.append("%");
+		String rechercheParam;
+		
+		if(rechercheExacte) {
+			rechercheParam = recherche.toUpperCase();
+		}
+		
+		else {
+			final StringBuilder concatRechercheLike = new StringBuilder();
+			concatRechercheLike.append("%");
+			concatRechercheLike.append(recherche.toUpperCase());
+			concatRechercheLike.append("%");
+			rechercheParam = concatRechercheLike.toString();
+		}
 		
 		final Query requete = em.createNamedQuery(requeteJPQL);
-		requete.setParameter("recherche", concatRechercheLike.toString());
+		requete.setParameter("recherche", rechercheParam);
 		requete.setParameter("sex", sexe);
 		
 		
@@ -64,11 +80,11 @@ public class PrenomDao {
 	}
 	
 	
-	
-	
 	/**
+	 * Obtenir tous les tuples du même prénom
+	 * pour accéder à : nombre naissances par années
 	 * @param label
-	 * @return liste des stats (nombre naissances et années) d'un prénom
+	 * @return liste de prenomsInsee
 	 * @throws DaoException
 	 */
 	public List<PrenomInsee> obtenirStatsPrenom(String label, String sexe) throws DaoException {

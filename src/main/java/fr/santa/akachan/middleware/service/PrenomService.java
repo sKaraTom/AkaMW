@@ -3,13 +3,14 @@ package fr.santa.akachan.middleware.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
 import fr.santa.akachan.middleware.dao.PrenomDao;
-import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
@@ -54,43 +54,46 @@ public class PrenomService {
 		}
 	}
 	
-	public List<String> chercherPrenom(String recherche, String sexe) {
-		
-		List<String> ListePrenomsRecherche = prenomDao.chercherPrenom(recherche, sexe);
-		
-		return ListePrenomsRecherche;
-	}
-	
 	
 	/**
-	 * Faire une recherche de prénoms (sql LIKE) et renvoyer en booléen associé si une estimation existe déjà pour ce client.
+	 * Faire une recherche de prénoms (sql LIKE ou recherche exacte selon paramètre booleen)
+	 * et renvoyer en booléen associé si une estimation existe déjà pour ce client.
 	 * Permet côté IHM de savoir si prénom déjà estimé.
-	 * @param estimation
+	 * @param estimation, rechercheExacte
 	 * @return un hashmap <prenom trouvé, booleen si estimation existante>
 	 * @throws PrenomInexistantException 
 	 */
-	public HashMap<String,Boolean> chercherPrenomEtEstimationExistante(Estimation estimation) throws PrenomInexistantException {
+	public Map<String, Boolean> chercherPrenomEtEstimationExistante(Estimation estimation,Boolean rechercheExacte) throws PrenomInexistantException {
 		
-		HashMap<String, Boolean> resultats = new HashMap<String,Boolean>();
+		HashMap<String, Boolean> resultatsNonTries = new HashMap<String,Boolean>();
 		
-		List<String> listePrenomsRecherche = prenomDao.chercherPrenom(estimation.getPrenom(), estimation.getSexe());
+		//obtenir la liste des prénoms recherchés dans table PrenomInsee
+		List<String> listePrenomsRecherche = prenomDao.chercherPrenoms(estimation.getPrenom(), estimation.getSexe(), rechercheExacte);
 		
 		if(listePrenomsRecherche.isEmpty()) {
-			LOGGER.info("============== PrenomInexistantException ");
 			throw new PrenomInexistantException();
 		}
 		else {
+			// obtenir la liste des prénoms déjà estimés par le client pour comparaison.
+			List<String> listePrenomsEstimes = estimationDao.obtenirPrenomsEstimesClientParSexe(estimation.getSexe(), estimation.getRefClient());
+			
 			for(String prenom:listePrenomsRecherche) {
-				Boolean estimExistante = estimationDao.contenirEstimationPourOutilRecherche(prenom,estimation.getSexe(),estimation.getRefClient());
-				resultats.put(prenom, estimExistante);
+				
+				Boolean estimExistante = listePrenomsEstimes.contains(prenom);
+				
+				resultatsNonTries.put(prenom, estimExistante);
 			}
 		}
-		LOGGER.info("============== map " + resultats.size());
-		return resultats;
+		LOGGER.info("============== nombre entrées hashmap : " + resultatsNonTries.size());
+		
+		// Treemap pour trier la hashmap par ordre alphabétique de la clef(le prénom).
+		Map<String, Boolean> mapTriee = new TreeMap<String, Boolean>(resultatsNonTries);
+		
+		return mapTriee;
 	}
 	
 	
-	
+	// TODO : methode de test cache, à supprimer
 	public String getPrenomAleatoire(String sexe, UUID refClient, Integer choixTendance) {
 		String prenom = cachePrenomService.genererPrenomAleatoire(sexe, refClient, choixTendance);
 		return prenom;
@@ -169,15 +172,9 @@ public class PrenomService {
 	*/
 	
 	
-	public List<PrenomInsee> obtenirStatsPrenom(String label, String sexe) throws DaoException {
-		
-		List<PrenomInsee> statsPrenom = prenomDao.obtenirStatsPrenom(label,sexe);
-		
-		return statsPrenom;
-	}
-	
-	/**
-	 * 
+	/** obtenir un tableau de 1900 à 2015 avec nombre de naissances associées pour ce un prénom.
+	 * 1.peupler le tableau de l'index 0 à 115 (correspond aux années 1900 à 2015)
+	 * 2. ajouter pour chaque année renseignée (année -1900 pour tomber sur l'index) le nombre de naissances.
 	 * @param label
 	 * @param sexe
 	 * @return une liste d'années (index), nombre de naissances pour courbe de statistiques.

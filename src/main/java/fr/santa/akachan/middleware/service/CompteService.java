@@ -70,7 +70,7 @@ public class CompteService {
 		}
 	}
 	
-	
+	// TODO : inutilisé côté ihm, voir si utile pour admin
 	public Compte obtenirCompte(final String email) throws CompteInexistantException {
 			
 		Compte compte = compteDao.obtenir(email);

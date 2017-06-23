@@ -68,6 +68,7 @@ public class CompteRS {
         return builder.build();
 	}
 	
+	// TODO : inutilisé côté ihm, voir si utile pour admin
 	@POST
 	@Securise
 	@Path("/obtenir")

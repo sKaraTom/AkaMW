@@ -108,6 +108,27 @@ public class EstimationDao {
 		return totalEstimClient;		
 	}
 	
+	/** obtenir la liste des prénoms déjà estimés par un client (filtre : sexe).
+	 * Sert notamment pour la comparaison dans l'outil recherche.
+	 * @param sexe
+	 * @param refClient
+	 * @return List<String> liste de prénoms estimés
+	 */
+	public List<String> obtenirPrenomsEstimesClientParSexe(final String sexe,final UUID refClient){
+		
+		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex";
+		final Query requete = em.createQuery(requeteJPQL);
+		requete.setParameter("refclient", refClient);
+		requete.setParameter("sex", sexe);
+		
+		@SuppressWarnings("unchecked")
+		List<String> listePrenomsEstimes = requete.getResultList();
+		
+		return listePrenomsEstimes;
+	}
+	
+	
+	
 	
 	public void creerEstimation(final Estimation estimation) throws EstimationExistanteException {
 		
@@ -157,25 +178,26 @@ public class EstimationDao {
 		}
 	}
 	
-	public boolean contenirEstimationPourOutilRecherche (final String prenom, final String sexe, final UUID refClient ) {
-		
-		// si on trouve le prénom dans la table, retourner true.
-		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex AND e.prenom=:prenom";
-		final Query requete = em.createQuery(requeteJPQL);
-		requete.setParameter("refclient", refClient);
-		requete.setParameter("sex", sexe);
-		requete.setParameter("prenom", prenom);
-		
-		try {
-		String resultat = (String) requete.getSingleResult();
-		return true;
-		}
-		
-		catch(NoResultException e) {
-			return false;
-		}
-	
-	}
+	// NE SERT PLUS : refactorisation de l'outil recherche pour éviter requêtages intempestifs dans la bdd.
+//	public boolean contenirEstimationPourOutilRecherche (final String prenom, final String sexe, final UUID refClient ) {
+//		
+//		// si on trouve le prénom dans la table, retourner true.
+//		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex AND e.prenom=:prenom";
+//		final Query requete = em.createQuery(requeteJPQL);
+//		requete.setParameter("refclient", refClient);
+//		requete.setParameter("sex", sexe);
+//		requete.setParameter("prenom", prenom);
+//		
+//		try {
+//		String resultat = (String) requete.getSingleResult();
+//		return true;
+//		}
+//		
+//		catch(NoResultException e) {
+//			return false;
+//		}
+//	
+//	}
 	
 	
 }

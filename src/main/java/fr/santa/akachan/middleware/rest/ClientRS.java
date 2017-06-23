@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
@@ -42,40 +43,16 @@ public class ClientRS {
 		 
 		 Long TotalClients;
 
-		 TotalClients = clientService.obtenirNombreClients();
-	     builder = Response.ok(TotalClients);
-		
+		 try {
+			TotalClients = clientService.obtenirNombreClients();
+			builder = Response.ok(TotalClients);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+		}	
          return builder.build();
 	}
 	
-	
-	
-	@POST
-    @Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response creerClient(Client client) {
-		
-		Response.ResponseBuilder builder = null;
-		
-		try {
-            // Cas nominal --> 200
-            clientService.creerClient(client);
-            builder = Response.ok(client);
-
-        } catch (final ClientExistantException e) {
-            // Cas alternatif : L'adresse existe déjà. --> 409
-            builder = Response.status(Response.Status.CONFLICT);
-
-        } catch (final ClientInvalideException e) {
-            // Cas alternatif : L'adresse est invalide --> 400
-            builder = Response.status(Response.Status.BAD_REQUEST);
-
-        } catch (final Exception e) {
-            // Cas alternatif autre --> 500
-            builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
-        }
-        return builder.build();
-	}
 	
 	@GET
 	@Securise
