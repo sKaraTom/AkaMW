@@ -41,19 +41,6 @@ public class EstimationRS {
 	private EstimationService estimationService;
 	
 	
-	// Webservice de test des random. TODO : à supprimer avant mise en prod.
-	@GET
-	@Produces("text/xhtml")
-	@Path("/test")
-	public String testerRefAleatoire () {
-		
-		Random hasard = new Random();
-		// ça marche : r.nextInt((max+1) - min) + min;
-		Integer reference = hasard.nextInt((10+1)-5)+5;
-		
-		return reference.toString();
-	}
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/total")
