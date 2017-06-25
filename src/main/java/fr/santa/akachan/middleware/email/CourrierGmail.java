@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -31,10 +32,30 @@ public class CourrierGmail
     public CourrierGmail()
     {
         this.multipart = new MimeMultipart();
+        this.username = "akachanapp";
+        this.password = "akacompteenvoi06";
+    }
+    
+    
+    public String getUsername() {
+		return username;
+	}
+    
+    public String getPassword() {
+    	return password;
+    }
+    
+    /** étape préalable : ouvrir une session et instancier un nouveau message.
+     */
+    public void creerSessionEtNouveauMessage () {
+        // une session est ouverte.
+        this.session = getSession();
+        this.message = new MimeMessage(session);
     }
     
     /** définir l'émetteur (destinateur) de l'envoi.
-     * 
+     * Ne sert que si on souhaite émettre un message depuis un autre
+     * compte qu'akachanapp
      * @param username (sans @aaaa.com)
      * @param password
      */
@@ -42,10 +63,6 @@ public class CourrierGmail
     {
         this.username = username;
         this.password = password;
-        
-        // une session est ouverte.
-        this.session = getSession();
-        this.message = new MimeMessage(session);
     }
     
     /** ajouter un destinataire
@@ -56,7 +73,8 @@ public class CourrierGmail
      */
     public void ajouterDestinataire(String destinataire) throws AddressException, MessagingException
     {
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
+
+    	message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
     }
     
     /** définir le titre du mail.
@@ -69,15 +87,31 @@ public class CourrierGmail
         message.setSubject(titreMail);
     }
     
-    /** définir le contenu du message.
+    /** définir le contenu du message TEXTE.
      * 
      * @param body
      * @throws MessagingException
      */
-    public void setContenu(String body) throws MessagingException
+    public void setContenuTexte(String body) throws MessagingException
     {
         BodyPart messageBodyPart = new MimeBodyPart();
-//        messageBodyPart.setText(body);
+        messageBodyPart.setText(body);
+        
+        multipart.addBodyPart(messageBodyPart);
+
+        message.setContent(multipart);
+    }
+    
+    
+    /** définir le contenu du message HTML.
+     * 
+     * @param body	message à intégrer dans mise en forme html
+     * @throws MessagingException
+     */
+    public void setContenuHtml(String body) throws MessagingException
+    {
+        BodyPart messageBodyPart = new MimeBodyPart();
+
         String contenuHtml = creerContenuEmail(body);
         
         messageBodyPart.setContent(contenuHtml, "text/html");
@@ -90,11 +124,18 @@ public class CourrierGmail
     /** méthode d'envoi de l'email avec l'objet Transport.
      * 
      * @throws MessagingException
+     * @throws AuthentificationEchoueeException 
      */
-    public void envoyerMail() throws MessagingException
+    public void envoyerMail() throws MessagingException, AuthentificationEchoueeException
     {
         Transport transport = session.getTransport(protocol);
+        
+        try {
         transport.connect(username, password);
+        } catch (AuthenticationFailedException a){
+        	throw new AuthentificationEchoueeException();
+        }
+        
         transport.sendMessage(message, message.getAllRecipients());
 
         transport.close();

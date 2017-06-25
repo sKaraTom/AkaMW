@@ -77,7 +77,6 @@ public class CitationRS {
 	
 
 	@GET
-	@Securise
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/aleatoire")
 	public Response obtenirCitationAleatoire(){
