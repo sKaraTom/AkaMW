@@ -73,7 +73,6 @@ public class CourrierGmail
      */
     public void ajouterDestinataire(String destinataire) throws AddressException, MessagingException
     {
-
     	message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
     }
     
@@ -105,16 +104,14 @@ public class CourrierGmail
     
     /** définir le contenu du message HTML.
      * 
-     * @param body	message à intégrer dans mise en forme html
+     * @param body	message à intégrer déjà mis en forme html
      * @throws MessagingException
      */
     public void setContenuHtml(String body) throws MessagingException
     {
         BodyPart messageBodyPart = new MimeBodyPart();
 
-        String contenuHtml = creerContenuEmail(body);
-        
-        messageBodyPart.setContent(contenuHtml, "text/html");
+        messageBodyPart.setContent(body,"text/html");
         
         multipart.addBodyPart(messageBodyPart);
 
@@ -199,23 +196,6 @@ public class CourrierGmail
         return proprietes;
     }
     
-    private String creerContenuEmail(String body) {
-    	
-    	StringBuilder builder = new StringBuilder();
-    	
-    	builder.append("<div style='height:30px;background-color:#eb505f;border-radius:5px;'></div>");
-    	builder.append("<div align='center' style='padding-top:30px;padding-bottom:20px;font-size:110%;'>");
-    	builder.append("<p>Voici les prénoms que j'ai sélectionné sur le site Akachan : </p>");
-    	builder.append("<h2 style='color: #1e9ecc;'>");
-    	builder.append(body);
-    	builder.append("</h2></div>");
-    	builder.append("<div align='left' style='font-size:small;'>retrouvez-les et bien d'autres sur le site ");
-    	builder.append("<a target='_blank' href='http://localhost:4200/'>Akachan.io</a></div>"); // adresse du site final à mettre ici.
-    	builder.append("<div style='height:30px;background-color:#eb505f;border-radius:5px;'></div>");
-//    	builder.append("");
-    	
-    	return builder.toString();
-    }
     
     
     

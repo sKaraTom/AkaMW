@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
@@ -35,8 +34,6 @@ public class EstimationService {
 	@EJB
 	private EstimationDao estimationDao;
 	
-	@EJB
-	private CachePrenomService cachePrenomService;
 	
 	// nombre total tous clients confondus.
 	public Long obtenirNbTotalEstimations() {
@@ -65,12 +62,6 @@ public class EstimationService {
 		return total;
 	}
 	
-	/* METHODE POUR TEST STATEFUL
-	public void estimerPrenom(Estimation estimation, UUID refClient) throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
-		
-		cachePrenomService.estimerPrenom(estimation, refClient);
-	}
-	*/
 	
 	public void estimerPrenom (Estimation estimation, UUID refClient)
 			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {

@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
@@ -23,7 +22,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 
 
 @Stateless
-//@Transactional
+@Transactional
 public class CompteDao {
 	
 	private static final Logger LOGGER =

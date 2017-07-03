@@ -15,7 +15,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.cache.CachePrenomService;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
 import fr.santa.akachan.middleware.dao.PrenomDao;
@@ -35,9 +34,6 @@ public class PrenomService {
 	
 	@EJB
 	private EstimationDao estimationDao;
-	
-	@EJB
-	private CachePrenomService cachePrenomService;
 	
 	
 
@@ -92,12 +88,6 @@ public class PrenomService {
 		return mapTriee;
 	}
 	
-	
-	// TODO : methode de test cache, à supprimer
-	public String getPrenomAleatoire(String sexe, UUID refClient, Integer choixTendance) {
-		String prenom = cachePrenomService.genererPrenomAleatoire(sexe, refClient, choixTendance);
-		return prenom;
-	}
 	
 	public String genererPrenomAleatoireSql(String sexe, UUID refClient,Integer choixTendance) throws TendanceInvalideException {
 		 
