@@ -1,5 +1,11 @@
 package fr.santa.akachan.middleware.rest;
 
+import static javax.ws.rs.core.Response.status;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
+import static javax.ws.rs.core.Response.Status.OK;
+
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -17,6 +23,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.santa.akachan.middleware.email.AuthentificationEchoueeException;
+import fr.santa.akachan.middleware.email.ConnexionEchoueeException;
+import fr.santa.akachan.middleware.email.ContenuInvalideException;
+import fr.santa.akachan.middleware.email.DestinataireInvalideException;
+import fr.santa.akachan.middleware.email.SujetInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.EmailService;
@@ -30,37 +41,6 @@ public class EmailRS {
 	EmailService emailService;
 	
 	
-	
-	// TODO : methode de test, à supprimer après avoir créé les bonnes reliées à l'ihm.
-	@GET
-	@Produces("text/plain")
-//    @Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{emailDestinataire}")
-	public Response envoyerMail(@PathParam("emailDestinataire")String email) {
-		
-		Response.ResponseBuilder builder = null;
-		
-		try {
-			emailService.envoyerMail(email);
-
-			String validOk = "ok";
-			builder = Response.ok(validOk);
-			
-		} catch (AuthentificationEchoueeException e) {
-			// si l'authentification de l'émetteur (mail akachanapp) a échoué.
-			builder = Response.status(Response.Status.SERVICE_UNAVAILABLE);	
-		} catch (AddressException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);	
-			
-		} catch (MessagingException e) {
-			builder = Response.status(Response.Status.CONFLICT);	
-		}
-		
-		return builder.build();
-		
-	}
-	
-	
 	@POST
 	@Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -69,28 +49,39 @@ public class EmailRS {
 		
 		Response.ResponseBuilder builder = null;
 		
-		try {
-			emailService.envoyerMailContact(listeChampsMailClient);
-			String validOk = "message envoyé avec succès.";
+			try {
+				emailService.envoyerMailContact(listeChampsMailClient);
+				String validOk = "message envoyé avec succès.";
+				builder = Response.ok(validOk);
+				
+			} catch (AuthentificationEchoueeException e) {
+				// échec de l'authentification de l'émetteur (mail Akachan)
+				builder = status(PRECONDITION_FAILED).entity(e.getMessage());
+				
+			} catch (DestinataireInvalideException e) {
+				builder = status(BAD_REQUEST).entity(e.getMessage());
+				
+			} catch (SujetInvalideException e) {
+				builder = status(BAD_REQUEST).entity(e.getMessage());
+				
+			} catch (ContenuInvalideException e) {
+				builder = status(BAD_REQUEST).entity(e.getMessage()); 
+				
+			} catch (ConnexionEchoueeException e) {
+				// problème au moment de l'envoi.
+				builder = status(SERVICE_UNAVAILABLE).entity(e.getMessage());
+				
+			} catch (MessagingException e) {
+				// problème au niveau du transport.
+				builder = Response.status(Response.Status.SERVICE_UNAVAILABLE); 
+			}
 			
-			builder = Response.ok(validOk);
-			
-		} catch (AddressException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);	
-			
-		} catch (MessagingException e) {
-			builder = Response.status(Response.Status.CONFLICT);	
-		
-		} catch (AuthentificationEchoueeException e) {
-			// si l'authentification de l'émetteur (mail akachanapp) a échoué.
-			builder = Response.status(Response.Status.SERVICE_UNAVAILABLE);	
-		}
-		
 		return builder.build();
 		
 	}
 	
 	@POST
+	@Securise
 	@Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Path("/selection/{prenomClient}/{mailClient}/{mailAutre}")
@@ -102,19 +93,33 @@ public class EmailRS {
 		try {
 			emailService.envoyerMailSelectionDePrenoms(listePrenomsSelectionnes, prenomClient, mailClient, mailAutre);
 			String validOk = "message envoyé avec succès.";
-			
 			builder = Response.ok(validOk);
 			
-		} catch (AddressException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);	
+		} catch (AuthentificationEchoueeException e) {
+			// échec de l'authentification de l'émetteur (mail Akachan)
+			builder = status(PRECONDITION_FAILED).entity(e.getMessage());
+			
+		} catch (EmailInvalideException e) {
+			builder = status(BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (DestinataireInvalideException e) {
+			builder = status(BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (SujetInvalideException e) {
+			builder = status(BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (ContenuInvalideException e) {
+			builder = status(BAD_REQUEST).entity(e.getMessage()); 
+			
+		} catch (ConnexionEchoueeException e) {
+			// problème au moment de l'envoi.
+			builder = status(SERVICE_UNAVAILABLE).entity(e.getMessage());
 			
 		} catch (MessagingException e) {
-			builder = Response.status(Response.Status.CONFLICT);	
-		
-		} catch (AuthentificationEchoueeException e) {
-			// si l'authentification de l'émetteur (mail akachanapp) a échoué.
-			builder = Response.status(Response.Status.SERVICE_UNAVAILABLE);	
-		}
+			// problème au niveau du transport.
+			builder = Response.status(Response.Status.SERVICE_UNAVAILABLE); 
+		}	
+	
 		
 		return builder.build();
 		

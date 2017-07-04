@@ -42,7 +42,12 @@ public class CompteDao {
 		}
 	}
 	
-	// TODO : inutilisé côté ihm, voir si utile pour admin
+	/** obtenir un compte.
+	 * utile pour modifier un compte par exemple.
+	 * @param email de référence
+	 * @return le compte obtenu.
+	 * @throws CompteInexistantException si la recherche par email ne renvoie rien.
+	 */
 	public Compte obtenir(final String email) throws CompteInexistantException {
 		
 		Compte compte = em.find(Compte.class, email);

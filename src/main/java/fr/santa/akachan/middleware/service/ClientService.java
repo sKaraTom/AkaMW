@@ -33,14 +33,17 @@ public class ClientService {
 	}
 	
 
-	/** obtenir un client par son uuid (sert côté ihm pour infos compte)
+	/** obtenir un client par son uuid 
+	 * (sert côté ihm pour infos compte)
 	 * @param refClient
-	 * @return
+	 * @return le client obtenu
 	 * @throws ClientIntrouvableException
 	 */
 	public Client obtenirClient(UUID refClient) throws ClientIntrouvableException {
 		
 		Client client = clientDao.obtenirClient(refClient);
+//		client.getCompte().setPassword("confidentiel"); --> a revoir : modifie aussi le compte dans la bdd.
+
 		return client;
 	}
 	

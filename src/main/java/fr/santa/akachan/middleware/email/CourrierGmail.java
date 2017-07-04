@@ -10,6 +10,8 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -18,7 +20,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class CourrierGmail
+public class CourrierGmail 
 {
     private static String protocol = "smtp";
 
@@ -29,20 +31,10 @@ public class CourrierGmail
     private Message message;
     private Multipart multipart;
 
-    public CourrierGmail()
-    {
+    public CourrierGmail() {
         this.multipart = new MimeMultipart();
         this.username = "akachanapp";
         this.password = "akacompteenvoi06";
-    }
-    
-    
-    public String getUsername() {
-		return username;
-	}
-    
-    public String getPassword() {
-    	return password;
     }
     
     /** étape préalable : ouvrir une session et instancier un nouveau message.
@@ -68,73 +60,96 @@ public class CourrierGmail
     /** ajouter un destinataire
      * 
      * @param destinataire (adresse mail complète)
-     * @throws AddressException
-     * @throws MessagingException
+     * @throws DestinataireInvalideException 
      */
-    public void ajouterDestinataire(String destinataire) throws AddressException, MessagingException
-    {
-    	message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
+    public void ajouterDestinataire(String destinataire) throws DestinataireInvalideException {
+    	
+    	try {
+    		message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinataire));
+    	
+    	} catch(Exception e) {
+    		throw new DestinataireInvalideException("adresse mail non valide.");
+    	}
     }
     
     /** définir le titre du mail.
      * 
      * @param String titreMail 
-     * @throws MessagingException
+     * @throws SujetInvalideException 
      */
-    public void setSujet(String titreMail) throws MessagingException
-    {
-        message.setSubject(titreMail);
+    public void setSujet(String titreMail) throws SujetInvalideException {
+        
+    	try {
+    		message.setSubject(titreMail);
+    	} catch(Exception e) {
+    		throw new SujetInvalideException("le titre du mail n'est pas valide.");
+    	}
     }
     
     /** définir le contenu du message TEXTE.
      * 
      * @param body
-     * @throws MessagingException
+     * @throws ContenuInvalideException 
      */
-    public void setContenuTexte(String body) throws MessagingException
-    {
+    public void setContenuTexte(String body) throws ContenuInvalideException {
+    	
         BodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setText(body);
         
-        multipart.addBodyPart(messageBodyPart);
-
-        message.setContent(multipart);
+        try {
+	        messageBodyPart.setText(body);
+	        multipart.addBodyPart(messageBodyPart);
+	        message.setContent(multipart);
+        
+        } catch(Exception e) {
+        	throw new ContenuInvalideException("le contenu du mail (texte) n'est pas valide.");
+        }
     }
     
     
     /** définir le contenu du message HTML.
      * 
      * @param body	message à intégrer déjà mis en forme html
-     * @throws MessagingException
+     * @throws ContenuInvalideException 
      */
-    public void setContenuHtml(String body) throws MessagingException
-    {
+    public void setContenuHtml(String body) throws ContenuInvalideException {
         BodyPart messageBodyPart = new MimeBodyPart();
-
-        messageBodyPart.setContent(body,"text/html");
         
-        multipart.addBodyPart(messageBodyPart);
-
-        message.setContent(multipart);
+        try {
+	        messageBodyPart.setContent(body,"text/html");
+	        multipart.addBodyPart(messageBodyPart);
+	        message.setContent(multipart);
+        } catch(Exception e) {
+        	throw new ContenuInvalideException("le contenu du mail (html) n'est pas valide.");
+        }
     }
     
     /** méthode d'envoi de l'email avec l'objet Transport.
      * 
      * @throws MessagingException
      * @throws AuthentificationEchoueeException 
+     * @throws DestinataireInvalideException 
+     * @throws ConnexionEchoueeException 
      */
-    public void envoyerMail() throws MessagingException, AuthentificationEchoueeException
-    {
-        Transport transport = session.getTransport(protocol);
+    public void envoyerMail() throws AuthentificationEchoueeException, DestinataireInvalideException, ConnexionEchoueeException, MessagingException {
+        
+    	Transport transport = session.getTransport(protocol);
         
         try {
-        transport.connect(username, password);
+        	transport.connect(username, password);
         } catch (AuthenticationFailedException a){
-        	throw new AuthentificationEchoueeException();
+        	throw new AuthentificationEchoueeException("mauvais username ou password de l'émetteur.");
+        } catch(Exception e){
+        	throw new AuthentificationEchoueeException("problème à l'authentification.");
         }
         
-        transport.sendMessage(message, message.getAllRecipients());
-
+        try {
+        	transport.sendMessage(message, message.getAllRecipients());
+        } catch(SendFailedException s){
+        	throw new DestinataireInvalideException("l'adresse mail n'est pas valide");
+        } catch(MessagingException m) {
+        	throw new ConnexionEchoueeException("la connexion est coupée ou inexistante à la tentative d'envoi.");
+        }
+        
         transport.close();
     }
     

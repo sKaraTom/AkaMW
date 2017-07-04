@@ -62,7 +62,7 @@ public class CompteService {
 			//associer le client créé au compte.
 			compte.setClient(clientAPersister);
 			
-			//persister le compte va persister en cascade le client.
+			//persister le compte va persister en cascade le client (relation bidirectionnelle).
 			compteDao.ajouter(compte);
 		}
 		else {
@@ -78,29 +78,35 @@ public class CompteService {
 		return compte;
 	}
 	
+	/**
+	 * 
+	 * @param compte qui contient le client à modifier.
+	 * @throws CompteInexistantException
+	 * @throws CompteInvalideException si le compte, ou paramètres du client null.
+	 * @throws EmailInvalideException
+	 */
 	public void modifierCompte(final Compte compte) throws CompteInexistantException, CompteInvalideException, EmailInvalideException {
 		
-		// d'abord vérifier que le compte est valide avant d'interroger la BDD.
-		this.validerCompte(compte);
+		if (Objects.isNull(compte)) {
+			throw new CompteInvalideException("Le compte ne peut être null.");
+		}
 		
 		Compte compteValide = compteDao.obtenir(compte.getEmail());
 		
+		if((StringUtils.isBlank(compte.getClient().getPrenom())) || (StringUtils.isBlank(compte.getClient().getSexe()))) {
+			throw new CompteInvalideException("Le prenom ou le sexe n'est pas renseigné.");
+		}	
+			
 		if (compteValide.getPassword().equals(compte.getPassword())) {
-		
-		// créer un client qui a les valeurs du compte.client pour lui associer le compte.
-		// nécessaire pour persistance du compte avec relation bidirectionnelle.
-		Client client = new Client();
-		client.setUuid(compte.getClient().getUuid());
-		client.setPrenom(WordUtils.capitalizeFully(compte.getClient().getPrenom(), new char[] { '-',' ' }));
-		client.setSexe(compte.getClient().getSexe());
-		client.setCompte(compte);
-		
-		compte.setClient(client);
-		
-		compteDao.modifier(compte);
+			
+			String prenomAFormater = compte.getClient().getPrenom();
+			compteValide.getClient().setPrenom(WordUtils.capitalizeFully(prenomAFormater, new char[] { '-',' ' }));
+			
+			compteValide.getClient().setSexe(compte.getClient().getSexe());
+			compteDao.modifier(compteValide);
 		}
 		else {
-			throw new CompteInvalideException("password non valide");
+			throw new CompteInvalideException("mot de passe non valide.");
 		}
 		}
 		
@@ -143,7 +149,7 @@ public class CompteService {
 			throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
 		
 		if((StringUtils.isBlank(compte.getClient().getPrenom())) || (StringUtils.isBlank(compte.getClient().getSexe())))
-				throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
+				throw new CompteInvalideException("Le prenom ou le sexe n'est pas renseigné.");
 		
 		// vérification email valide.
 		this.validerEmail(compte.getEmail());
@@ -155,7 +161,7 @@ public class CompteService {
 		Boolean emailValide = Pattern.matches("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)+$", email);
 		
 		if(!emailValide) {
-			throw new EmailInvalideException("email non formaté correctement.");
+			throw new EmailInvalideException("email invalide.");
 		}
 	}
 	
