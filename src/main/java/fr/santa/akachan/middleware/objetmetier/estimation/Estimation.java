@@ -29,7 +29,8 @@ import org.hibernate.annotations.GenericGenerator;
 	@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.sexe=:sex"),
 	@NamedQuery(name = "Estimation.obtenirNbEstimClient", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient"),
 	@NamedQuery(name = "Estimation.obtenirNbEstimClientParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex"),
-	@NamedQuery(name = "Estimation.obtenirTopPrenomsEstimes", query = "SELECT e.prenom FROM Estimation e WHERE e.sexe=:sex AND e.akachan='true' GROUP BY e.prenom ORDER BY COUNT(*) DESC") 
+	@NamedQuery(name = "Estimation.obtenirTopPrenomsEstimes", query = "SELECT e.prenom FROM Estimation e WHERE e.sexe=:sex AND e.akachan='true' GROUP BY e.prenom ORDER BY COUNT(*) DESC"),
+	@NamedQuery(name = "Estimation.supprimerToutesEstimationsClient", query = "DELETE FROM Estimation e WHERE e.refClient=:refclient")
 	})
 @Table(name = "T_ESTIMATION")
 public class Estimation implements Serializable {
@@ -41,7 +42,6 @@ public class Estimation implements Serializable {
 
 	private UUID refClient;
 
-	// TODO : repasser en Boolean
 	private String akachan;
 	
 	private Calendar dateEstimation;
@@ -58,7 +58,7 @@ public class Estimation implements Serializable {
 		this.sexe = sexe;
 		this.favori = 0;
 		this.refClient = refClient;
-		this.akachan = "0";
+		this.akachan = akachan;
 		this.dateEstimation = Calendar.getInstance();
 	}
 

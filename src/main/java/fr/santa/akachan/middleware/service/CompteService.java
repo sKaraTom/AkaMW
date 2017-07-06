@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantExceptio
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
 import fr.santa.akachan.middleware.rest.EstimationRS;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
@@ -38,9 +40,16 @@ public class CompteService {
 	@EJB
 	private JwtCreation jwtCreation;
 	
-	
+	/** créer un compte
+	 * 
+	 * @param compte à persister
+	 * @throws CompteInvalideException
+	 * @throws CompteDejaExistantException si un compte identique est trouvé dans la base
+	 * @throws EmailInvalideException
+	 * @throws PasswordInvalideException 
+	 */
 	public void creerCompte(final Compte compte)
-			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException {
+			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException, PasswordInvalideException {
 		
 		// d'abord vérifier que le compte est valide avant d'interroger la BDD.
 		this.validerCompte(compte);
@@ -78,17 +87,17 @@ public class CompteService {
 		return compte;
 	}
 	
-	/**
+	/** modifier les informations client du compte.
 	 * 
 	 * @param compte qui contient le client à modifier.
-	 * @throws CompteInexistantException
+	 * @throws CompteInexistantException si le compte à modifier n'existe pas en bdd
 	 * @throws CompteInvalideException si le compte, ou paramètres du client null.
-	 * @throws EmailInvalideException
+	 * @throws EmailInvalideException si mail n'est pas bien formaté.
 	 */
 	public void modifierCompte(final Compte compte) throws CompteInexistantException, CompteInvalideException, EmailInvalideException {
 		
 		if (Objects.isNull(compte)) {
-			throw new CompteInvalideException("Le compte ne peut être null.");
+			throw new CompteInvalideException("Aucun compte réceptionné à modifier.");
 		}
 		
 		Compte compteValide = compteDao.obtenir(compte.getEmail());
@@ -106,29 +115,55 @@ public class CompteService {
 			compteDao.modifier(compteValide);
 		}
 		else {
-			throw new CompteInvalideException("mot de passe non valide.");
+			throw new CompteInvalideException("Le mot de passe n'est pas valide.");
 		}
+	}
+	
+	/** modifier le mot de passe.
+	 * email client pour obtenir compte à modifier, password actuel à valider, nouveau password à persister.
+	 * @param listeChamps (0:email client,1:password actuel, 2:nouveau password)
+	 * @throws CompteInexistantException si le mail réceptionné n'a pas permis d'obtenir de compte.
+	 * @throws CompteInvalideException si le password actuel saisi n'est pas bon.
+	 * @throws PasswordInvalideException si le nouveau password n'est pas formaté correctement.
+	 */
+	public void modifierMotDePasse(final List<String> listeChamps) 
+			throws CompteInexistantException, CompteInvalideException, PasswordInvalideException {
+		
+		String emailClient = listeChamps.get(0);
+		String passwordActuel = listeChamps.get(1);
+		String nouveauPassword = listeChamps.get(2);
+		
+		Compte compteValide = compteDao.obtenir(emailClient);
+		
+		if (!compteValide.getPassword().equals(passwordActuel) ) {
+			throw new CompteInvalideException("votre mot de passe actuel saisi n'est pas correct.");
 		}
 		
-	
+		this.validerPassword(nouveauPassword);
+		
+		compteValide.setPassword(nouveauPassword);
+		compteDao.modifier(compteValide);
+	}
+		
+	/** connecter un compte : retourne un token d'authentification si succès.
+	 * 
+	 * @param email
+	 * @param password
+	 * @return
+	 * @throws CompteInvalideException si email ou mot de passe non valide.
+	 * @throws CompteInexistantException si aucun compte n'est trouvé avec ces crédentiels.
+	 * @throws UnsupportedEncodingException problème à la création du token.
+	 */
 	public Jeton connecter(final String email, final String password)
 		throws CompteInvalideException, CompteInexistantException, UnsupportedEncodingException {
 		
 			Compte compteValide = compteDao.obtenir(email);
 			Jeton jeton = null;
 			
-			// redondant avec méthode de la dao.
-			if(Objects.isNull(compteValide)) {
-				throw new CompteInexistantException("le compte n'existe pas");
-			}
-			
 			if (!compteValide.getPassword().equals(password) ||
-					!compteValide.getEmail().equals(email)) {
-					throw new CompteInvalideException("connexion impossible");
+				!compteValide.getEmail().equals(email)) {
+				throw new CompteInvalideException("email ou mot de passe invalide.");
 			}
-
-			//assert compteValide.getEmail().equals(compte.getEmail());
-			
 			else {
 				String token = jwtCreation.creerToken2(compteValide);
 				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
@@ -138,30 +173,60 @@ public class CompteService {
 			return jeton;
 	
 	}
-
+	
+	/** valider un compte ou lever une exception.
+	 *  vérifier que le compte n'est pas null, et qu'aucun champ n'est vide ou null.
+	 * @param compte à valider.
+	 * @throws CompteInvalideException si le compte ou un champ null/blanc
+	 * @throws EmailInvalideException si l'email n'est pas formaté correctement.
+	 * @throws PasswordInvalideException 
+	 */
 	private void validerCompte(final Compte compte)
-			throws CompteInvalideException, EmailInvalideException {
+			throws CompteInvalideException, EmailInvalideException, PasswordInvalideException {
 	
 		if (Objects.isNull(compte))
 			throw new CompteInvalideException("Le compte ne peut être null.");
 		
-		if ((StringUtils.isBlank(compte.getEmail())) || (StringUtils.isBlank(compte.getPassword())) )
-			throw new CompteInvalideException("Le mail ou mot de passe du compte ne peuvent valoir null/blanc.");
-		
 		if((StringUtils.isBlank(compte.getClient().getPrenom())) || (StringUtils.isBlank(compte.getClient().getSexe())))
 				throw new CompteInvalideException("Le prenom ou le sexe n'est pas renseigné.");
 		
-		// vérification email valide.
 		this.validerEmail(compte.getEmail());
+		this.validerPassword(compte.getPassword());
 	}
 	
-	
+	/** regex de validation du mail.
+	 * 
+	 * @param email
+	 * @throws EmailInvalideException
+	 */
 	private void validerEmail(final String email) throws EmailInvalideException {
+		
+		if (StringUtils.isBlank(email)) {
+			throw new EmailInvalideException("l'email ne peut être vide.");
+		}
 		
 		Boolean emailValide = Pattern.matches("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)+$", email);
 		
 		if(!emailValide) {
 			throw new EmailInvalideException("email invalide.");
+		}
+	}
+	
+	
+	private void validerPassword(final String password) throws PasswordInvalideException {
+		
+		if (StringUtils.isBlank(password)) {
+			throw new PasswordInvalideException("le mot de passe doit contenir des caractères.");
+		}
+		
+		if(password.length() < 4) {
+			throw new PasswordInvalideException("le mot de passe doit contenir au moins 4 caractères");
+		}
+		
+		Boolean passwordSansEspace = Pattern.matches(".*\\S.*",password);
+		
+		if(!passwordSansEspace) {
+			throw new PasswordInvalideException("le mot de passe ne peut contenir d'espaces");
 		}
 	}
 	

@@ -47,12 +47,14 @@ public class EmailService {
 			// 2. sujet (titre)
 			// 3. message (contenu)
 		
+			String sujetMail = listeChampsMailClient.get(2);
+		
 			String body = creerBodyMailContact(listeChampsMailClient);
 		
 			CourrierGmail emailAEnvoyer = new CourrierGmail();
 			emailAEnvoyer.creerSessionEtNouveauMessage();
 			emailAEnvoyer.ajouterDestinataire("akachanapp@gmail.com");
-			emailAEnvoyer.setSujet(listeChampsMailClient.get(2));
+			emailAEnvoyer.setSujet(sujetMail);
 			emailAEnvoyer.setContenuHtml(body);
 			emailAEnvoyer.envoyerMail();
 		}
@@ -118,24 +120,22 @@ public class EmailService {
 	 */
 	public String creerBodyMailContact(List<String> listeChampsMailClient) {
 		
-		// listeChamps de la saisie formulaire de contact :
-		// 0. prenom client
-		// 1. email client.
-		// 2. sujet (titre)
-		// 3. message (contenu)
+		String prenomClient = listeChampsMailClient.get(0);
+		String emailClient = listeChampsMailClient.get(1);
+		String contenuMail = listeChampsMailClient.get(3);
 		
 		StringBuilder body = new StringBuilder();
 		body.append("<!DOCTYPE html><html><head></head><body>");
 		body.append("<div style='height:30px;background-color:#eb505f;border-radius:5px;'></div>");
 		body.append("<div align='center' style='padding-top:30px;padding-bottom:20px;font-size:110%;'>");
 		body.append("<p><b>");
-		body.append(listeChampsMailClient.get(0));
+		body.append(prenomClient);
 		body.append("</b> dont l'adresse email est : ");
-		body.append(listeChampsMailClient.get(1));
+		body.append(emailClient);
 		body.append(" vous envoie ce message : ");
 		body.append("</p>");
 		body.append("<h3 style='color: #1e9ecc;'>");
-		body.append(listeChampsMailClient.get(3));
+		body.append(contenuMail);
 		body.append("</h3></div>");
 		//adresse du site final à mettre ici :
 		body.append("<p style='font-size:small;'><a target='_blank' href='http://localhost:4200/'>Akachan.io</a></p>");

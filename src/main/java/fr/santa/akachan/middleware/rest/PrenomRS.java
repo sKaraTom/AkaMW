@@ -48,10 +48,8 @@ public class PrenomRS {
 		 Response.ResponseBuilder builder = null;
 
 	        try {
-
 	            // Cas Nominal
 	            final PrenomInsee prenom = prenomService.obtenirPrenomParReference(referencePrenom);
-
 	            builder = Response.ok(prenom);
 
 	        } catch (final PrenomInexistantException e) {
@@ -59,7 +57,6 @@ public class PrenomRS {
 	            // Cas alternatif : l'identifiant recherché n'existe pas.
 	            builder = Response.status(Response.Status.NOT_FOUND);
 	        }
-
 			return builder.build();
 		}
 	
@@ -157,18 +154,16 @@ public class PrenomRS {
 		
 		 Response.ResponseBuilder builder = null;
 
-	      	    // Cas Nominal
-	            ArrayList<Integer> liste = null;
-	            
-				try {
-					liste = prenomService.obtenirNaissancesPrenom(label,sexe);
-				} catch (DaoException e) {
-					
-				}
-
-	            builder = Response.ok(liste);
-
-			return builder.build();
+  	    // Cas Nominal
+        ArrayList<Integer> liste = null;
+        
+		try {
+			liste = prenomService.obtenirNaissancesPrenom(label,sexe);
+			builder = Response.ok(liste);
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return builder.build();
 	}
 	
 	

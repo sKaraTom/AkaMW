@@ -32,7 +32,10 @@ public class EstimationDao {
 	
 	
 	
-	// toutes les estimations sans distinction de client.
+	/** obtenir le nombre total d'estimations sans distinction de client, liste akachan ou noire, ou autre.
+	 *  
+	 * @return Long nombre total des estimations.
+	 */
 	public Long obtenirNbTotalEstimations() {
 	
 		final String requeteJPQL = "Estimation.obtenirNbreTotal";
@@ -56,7 +59,7 @@ public class EstimationDao {
 		return total;
 	}
 	
-	/**
+	/** obtenir le top 3 des prénoms estimés par sexe et nombre de fois estimé positivement (akachan = "true")
 	 * @param sexe "1" pour garçon "2" pour fille
 	 * @return liste des 3 prenoms les plus aimés par sexe.
 	 */
@@ -73,7 +76,12 @@ public class EstimationDao {
 	}
 	
 	
-	// retourne le nombre d'estimations d'un client.
+	/** obtenir le nombre total d'estimation d'un client (sans distinction de sexe).
+	 *  
+	 * @param refClient
+	 * @return le nombre d'estimations d'un client.
+	 * @throws DaoException
+	 */
 	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
 		
 		final String requeteJPQL = "Estimation.obtenirNbEstimClient";
@@ -91,8 +99,14 @@ public class EstimationDao {
 		
 	}
 	
-	// retourne le nombre d'estimations d'un client par sexe.
-	public Long obtenirNbEstimClientParSexe(UUID refClient, String sexe) throws DaoException {
+	/** obtenir le nombre d'estimations d'un client par sexe du prénom.
+	 * 
+	 * @param refClient
+	 * @param sexe
+	 * @return le nombre d'estimations d'un client par sexe.
+	 * @throws DaoException si aucun résultat n'est obtenu depuis la bdd.
+	 */
+	public Long obtenirNbEstimClientParSexe(final UUID refClient,final String sexe) throws DaoException {
 		
 		final String requeteJPQL = "Estimation.obtenirNbEstimClientParSexe";
 		final Query requete = em.createNamedQuery(requeteJPQL);
@@ -123,13 +137,16 @@ public class EstimationDao {
 		requete.setParameter("refclient", refClient);
 		requete.setParameter("sex", sexe);
 		
-		@SuppressWarnings("unchecked")
 		List<String> listePrenomsEstimes = requete.getResultList();
 		
 		return listePrenomsEstimes;
 	}
 	
-	
+	/** créer une estimation.
+	 * 
+	 * @param estimation
+	 * @throws EstimationExistanteException si une estimation est trouvée avec ce prénom, sexe et uuid client.
+	 */
 	public void creerEstimation(final Estimation estimation) throws EstimationExistanteException {
 		
 		Boolean estimationExistante = this.contenirEstimation(estimation);
@@ -143,7 +160,11 @@ public class EstimationDao {
 		}
 	}
 	
-	
+	/** changer de liste un groupe d'estimations.
+	 * 
+	 * @param estimations
+	 * @param akachan true:passe dans liste Akachan, false:passe dans liste noire.
+	 */
 	public void changerDeListeEstimations(final List<Estimation> estimations, final String akachan) {
 		
 		for(Estimation estimation:estimations) {
@@ -153,16 +174,49 @@ public class EstimationDao {
 		}
 	}
 
-	// sert notamment pour ajouter favori, changer de liste Akachan <--> liste noire.
-	public void modifierEstimation(final Estimation estimation) {
+	/** modifier une estimation.
+	 * sert notamment pour ajouter favori, changer de liste Akachan <--> liste noire.
+	 * @param estimation
+	 * @throws DaoException si la persistance a échoué.
+	 */
+	public void modifierEstimation(final Estimation estimation) throws DaoException {
 		
-		em.merge(estimation);
+		try {
+			em.merge(estimation);
+		}
+		catch(Exception e) {
+			throw new DaoException("problème interne : impossible d'enregistrer la modification dans la base.");
+		}
 	}
 	
+	
+	public void supprimerToutesEstimationsClient(final UUID refClient) throws DaoException {
 		
+		final String requeteJPQL = "Estimation.supprimerToutesEstimationsClient";
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("refclient", refClient);
+		
+		try {
+			requete.executeUpdate();
+		}
+		catch(Exception e) {
+			throw new DaoException("échec à la suppression des estimations.");
+		}
+		
+		
+		
+	}
+	
+	
+	
+	/** méthode de vérification si une estimation existe déjà : prénom, sexe et uuid client.
+	 * 	cette méthode est nécessaire car on ne peut se baser sur l'uuid de l'estimation.
+	 * @param estimation
+	 * @return true si une estimation existe déjà.
+	 */
 	public boolean contenirEstimation (final Estimation estimation) {
 		
-		// si on trouve le prénom dans la table, retourner true.
+		// si on trouve le prénom dans la table lié au client, retourner true.
 		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.prenom=:prenom";
 		final Query requete = em.createQuery(requeteJPQL);
 		requete.setParameter("refclient", estimation.getRefClient());
@@ -177,27 +231,5 @@ public class EstimationDao {
 			return false;
 		}
 	}
-	
-	// NE SERT PLUS : refactorisation de l'outil recherche pour éviter requêtages intempestifs dans la bdd.
-//	public boolean contenirEstimationPourOutilRecherche (final String prenom, final String sexe, final UUID refClient ) {
-//		
-//		// si on trouve le prénom dans la table, retourner true.
-//		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex AND e.prenom=:prenom";
-//		final Query requete = em.createQuery(requeteJPQL);
-//		requete.setParameter("refclient", refClient);
-//		requete.setParameter("sex", sexe);
-//		requete.setParameter("prenom", prenom);
-//		
-//		try {
-//		String resultat = (String) requete.getSingleResult();
-//		return true;
-//		}
-//		
-//		catch(NoResultException e) {
-//			return false;
-//		}
-//	
-//	}
-	
 	
 }

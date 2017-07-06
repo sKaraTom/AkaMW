@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.rest;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.jws.WebService;
@@ -11,6 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,6 +25,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantExceptio
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
 import fr.santa.akachan.middleware.securite.Jeton;
 import fr.santa.akachan.middleware.securite.JwtCreation;
 import fr.santa.akachan.middleware.securite.Securise;
@@ -33,6 +36,8 @@ import fr.santa.akachan.middleware.service.CompteService;
 @Path("/compte")
 public class CompteRS {
 	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(CompteRS.class);
 	
 	@EJB
 	private JwtCreation jwtCreation;
@@ -62,6 +67,9 @@ public class CompteRS {
 				
 			} catch (EmailInvalideException e) {
 				builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+				
+			} catch (PasswordInvalideException e) {
+				builder = Response.status(Response.Status.NOT_ACCEPTABLE);
 			}
 
         return builder.build();
@@ -74,7 +82,6 @@ public class CompteRS {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirCompte(@FormParam("email") String email) {
-		
 		
 		Response.ResponseBuilder builder = null;
 		
@@ -96,7 +103,6 @@ public class CompteRS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response modifierCompte(Compte compte) {
 		
-		
 		Response.ResponseBuilder builder = null;
 
 		try {
@@ -104,15 +110,38 @@ public class CompteRS {
 			builder = Response.ok(compte);
 			
 		} catch (CompteInexistantException e) {
-			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);	
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());	
 		} catch (CompteInvalideException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
 		} catch (EmailInvalideException e) {
-			builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+			builder = Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage());
 		}
+		return builder.build();
+	}
+	
+	@PUT
+	@Securise
+	@Path("/modifier/password")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces("text/plain")
+	public Response modifierMotDePasse(final List<String> listeChamps) {
 		
-
+		Response.ResponseBuilder builder = null;
+		
+		try {
+			compteService.modifierMotDePasse(listeChamps);
+			String succès = "le nouveau mot de passe est enregistré.";
+			builder = Response.ok(succès);
 			
+		} catch (CompteInexistantException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (CompteInvalideException e) {
+			builder = Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage());
+			
+		} catch (PasswordInvalideException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()); 
+		}
 		return builder.build();
 	}
 	

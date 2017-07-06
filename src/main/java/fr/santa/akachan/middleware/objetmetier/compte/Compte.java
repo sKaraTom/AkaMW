@@ -40,7 +40,7 @@ public class Compte implements Serializable {
 		super();
 	}
 
-	public Compte(String pseudo, String email, String password, Boolean connecte, Client client) {
+	public Compte(String email, String password, Client client) {
 		super();
 		this.email = email;
 		this.password = password;

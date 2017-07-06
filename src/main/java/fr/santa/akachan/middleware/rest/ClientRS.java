@@ -64,7 +64,7 @@ public class ClientRS {
 		 
 		 Client client;
 		try {
-			client = clientService.obtenirClient(refClient);
+			client = clientService.obtenirClientSansDonneesSensibles(refClient);
 	        builder = Response.ok(client);
 		} catch (ClientIntrouvableException e) {
 			builder = Response.status(Response.Status.BAD_REQUEST);

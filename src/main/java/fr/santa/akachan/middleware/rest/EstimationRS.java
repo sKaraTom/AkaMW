@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -151,25 +152,36 @@ public class EstimationRS {
 	public Response modifierEstimation(Estimation estimation) {
 
 	   Response.ResponseBuilder builder = null;
-	   estimationService.modifierEstimation(estimation);
-	   builder = Response.ok(estimation);
+	   try {
+		estimationService.modifierEstimation(estimation);
+		builder = Response.ok(estimation);
+		
+	   } catch (DaoException e) {
+		   builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+	   }
+	   
 
 	   return builder.build();
 	}
 	
-	@POST
-    @Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/recherche")
-	public Response verifierEstimationExistante (Estimation estimation) {
-
-	   Response.ResponseBuilder builder = null;
-
-		boolean estimExistante = estimationService.verifierEstimationExistante(estimation);
-	    builder = Response.ok(estimExistante);
+	@DELETE
+	@Produces("text/plain")
+	@Path("/{refClient}")
+	public Response effacerToutesEstimationsClient(@PathParam("refClient")final UUID refClient) {
 		
-	   return builder.build();
+		Response.ResponseBuilder builder = null;
+		try {
+			estimationService.effacerToutesEstimationsClient(refClient);
+			String succes = "suppression effectuée avec succès.";
+			builder = Response.ok(succes);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+		
+		return builder.build();
 	}
+	
 	
 	
 	

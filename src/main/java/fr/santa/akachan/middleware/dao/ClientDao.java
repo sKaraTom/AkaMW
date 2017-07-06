@@ -122,7 +122,7 @@ public class ClientDao {
 		return listeNoire;
 	}
 	
-	/** Obtenir la liste des favoris d'un client (Boolean favori = true)
+	/** Obtenir la liste des favoris d'un client (favori = 1)
 	 * @param refClient
 	 * @return List<Estimation>
 	 */

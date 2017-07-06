@@ -99,7 +99,7 @@ public class EstimationService {
 		estimationDao.changerDeListeEstimations(estimations, akachan);
 	}
 	
-	public void modifierEstimation (Estimation estimation) {
+	public void modifierEstimation (Estimation estimation) throws DaoException {
 		
 		// forcer le fuseau à être sur Paris à la modification d'estimation, sinon soustraction de 2h...
 		// TODO à revoir ce problème de GMT
@@ -111,18 +111,11 @@ public class EstimationService {
 		estimationDao.modifierEstimation(estimation);
 	}
 	
-	/**
-	 * vérifier si estimation existe (sert pour affichage boutons j'aime ou non dans l'outil de recherche).
-	 * @param estimation
-	 * @return boolean : true si estimation trouvée.
-	 */
-	public boolean verifierEstimationExistante(final Estimation estimation) {
+	public void effacerToutesEstimationsClient(final UUID refClient) throws DaoException {
 		
-		boolean estimExistante = estimationDao.contenirEstimation(estimation);
-		
-		return estimExistante;
-		
+		estimationDao.supprimerToutesEstimationsClient(refClient);
 	}
+	
 	
 	
 	
