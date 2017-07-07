@@ -38,14 +38,17 @@ public class EmailService {
 	 * @throws ContenuInvalideException 
 	 * @throws MessagingException si la création du Transport a rencontré un problème.
 	 * @throws ConnexionEchoueeException 
+	 * @throws EmailInvalideException si le mail de l'émetteur (client ou prospect est invalide)
 	 */
-	public void envoyerMailContact(List<String> listeChampsMailClient) throws AuthentificationEchoueeException, DestinataireInvalideException, SujetInvalideException, ContenuInvalideException, ConnexionEchoueeException, MessagingException {
+	public void envoyerMailContact(List<String> listeChampsMailClient) throws AuthentificationEchoueeException, DestinataireInvalideException, SujetInvalideException, ContenuInvalideException, ConnexionEchoueeException, MessagingException, EmailInvalideException {
 			
 			// listeChamps de la saisie formulaire de contact :
 			// 0. prenom client
 			// 1. email client.
 			// 2. sujet (titre)
 			// 3. message (contenu)
+		
+			validerEmail(listeChampsMailClient.get(1));
 		
 			String sujetMail = listeChampsMailClient.get(2);
 		

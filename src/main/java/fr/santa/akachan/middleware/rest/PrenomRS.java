@@ -40,28 +40,6 @@ public class PrenomRS {
 	@EJB
 	private PrenomService prenomService;
 	
-	@GET
-	@Path("/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirPrenomParReference(@PathParam("ref") final Integer referencePrenom) {
-		
-		 Response.ResponseBuilder builder = null;
-
-	        try {
-	            // Cas Nominal
-	            final PrenomInsee prenom = prenomService.obtenirPrenomParReference(referencePrenom);
-	            builder = Response.ok(prenom);
-
-	        } catch (final PrenomInexistantException e) {
-
-	            // Cas alternatif : l'identifiant recherché n'existe pas.
-	            builder = Response.status(Response.Status.NOT_FOUND);
-	        }
-			return builder.build();
-		}
-	
-	
-	
 	
 	//a voir si on passe le prenomAleatoire en texte plutôt que json.
 	@GET

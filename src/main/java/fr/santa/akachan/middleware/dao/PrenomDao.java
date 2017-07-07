@@ -29,18 +29,6 @@ public class PrenomDao {
 	private EntityManager em;
 	
 	
-	public PrenomInsee obtenirPrenom(final Integer reference) {
-
-		PrenomInsee prenomInsee;
-
-		prenomInsee = em.find(PrenomInsee.class, reference);
-
-		 if(Objects.isNull(prenomInsee)){
-		 // exception prenomInexistant à mettre
-		 }
-		return prenomInsee;
-	}
-	
 	/**
 	 * chercher des prénoms : SQL LIKE si rechercheExacte = true.
 	 * @param recherche
@@ -72,11 +60,9 @@ public class PrenomDao {
 		requete.setParameter("recherche", rechercheParam);
 		requete.setParameter("sex", sexe);
 		
-		
 		ListePrenomsRecherche = requete.getResultList();
 		
 		return ListePrenomsRecherche;
-		
 	}
 	
 	

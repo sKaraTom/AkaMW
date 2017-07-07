@@ -67,6 +67,9 @@ public class EmailRS {
 			} catch (ContenuInvalideException e) {
 				builder = status(BAD_REQUEST).entity(e.getMessage()); 
 				
+			} catch (EmailInvalideException e) {
+				builder = status(BAD_REQUEST).entity(e.getMessage());
+			
 			} catch (ConnexionEchoueeException e) {
 				// problème au moment de l'envoi.
 				builder = status(SERVICE_UNAVAILABLE).entity(e.getMessage());

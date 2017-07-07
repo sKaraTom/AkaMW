@@ -36,25 +36,10 @@ public class PrenomService {
 	private EstimationDao estimationDao;
 	
 	
-
-	public PrenomInsee obtenirPrenomParReference(Integer reference) throws PrenomInexistantException {
-		
-		PrenomInsee prenom = prenomDao.obtenirPrenom(reference);
-		
-		// a refactorer : mauvaise logique.
-		if (prenom == null) {
-			throw new PrenomInexistantException();
-		}
-		else {
-		return prenom;
-		}
-	}
-	
-	
 	/**
 	 * Faire une recherche de prénoms (sql LIKE ou recherche exacte selon paramètre booleen)
 	 * et renvoyer en booléen associé si une estimation existe déjà pour ce client.
-	 * Permet côté IHM de savoir si prénom déjà estimé.
+	 * (Permet côté IHM de savoir si prénom déjà estimé).
 	 * @param estimation, rechercheExacte
 	 * @return un hashmap <prenom trouvé, booleen si estimation existante>
 	 * @throws PrenomInexistantException 
@@ -76,11 +61,9 @@ public class PrenomService {
 			for(String prenom:listePrenomsRecherche) {
 				
 				Boolean estimExistante = listePrenomsEstimes.contains(prenom);
-				
 				resultatsNonTries.put(prenom, estimExistante);
 			}
 		}
-		LOGGER.info("============== nombre entrées hashmap : " + resultatsNonTries.size());
 		
 		// Treemap pour trier la hashmap par ordre alphabétique de la clef(le prénom).
 		Map<String, Boolean> mapTriee = new TreeMap<String, Boolean>(resultatsNonTries);
