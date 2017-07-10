@@ -36,39 +36,29 @@ public class PrenomService {
 	private EstimationDao estimationDao;
 	
 	
-	/**
+	/** 
 	 * Faire une recherche de prénoms (sql LIKE ou recherche exacte selon paramètre booleen)
 	 * et renvoyer en booléen associé si une estimation existe déjà pour ce client.
 	 * (Permet côté IHM de savoir si prénom déjà estimé).
-	 * @param estimation, rechercheExacte
+	 * 
+	 * @param estimation
+	 * @param rechercheExacte
 	 * @return un hashmap <prenom trouvé, booleen si estimation existante>
-	 * @throws PrenomInexistantException 
+	 * @throws PrenomInexistantException si la map retournée depuis la dao est vide.
 	 */
-	public Map<String, Boolean> chercherPrenomEtEstimationExistante(Estimation estimation,Boolean rechercheExacte) throws PrenomInexistantException {
+	public Map<String, Boolean> chercherPrenomEtEstimation(Estimation estimation, Boolean rechercheExacte) throws PrenomInexistantException {
 		
-		HashMap<String, Boolean> resultatsNonTries = new HashMap<String,Boolean>();
+		String prenomAChercher = estimation.getPrenom();
+		String sexe = estimation.getSexe();
+		UUID refClient = estimation.getRefClient();
 		
-		//obtenir la liste des prénoms recherchés dans table PrenomInsee
-		List<String> listePrenomsRecherche = prenomDao.chercherPrenoms(estimation.getPrenom(), estimation.getSexe(), rechercheExacte);
+		Map<String, Boolean> resultatRecherche = prenomDao.chercherPrenomEtEstimation(prenomAChercher, sexe, refClient, rechercheExacte);
 		
-		if(listePrenomsRecherche.isEmpty()) {
+		if(resultatRecherche.isEmpty()) {
 			throw new PrenomInexistantException();
 		}
-		else {
-			// obtenir la liste des prénoms déjà estimés par le client pour comparaison.
-			List<String> listePrenomsEstimes = estimationDao.obtenirPrenomsEstimesClientParSexe(estimation.getSexe(), estimation.getRefClient());
-			
-			for(String prenom:listePrenomsRecherche) {
-				
-				Boolean estimExistante = listePrenomsEstimes.contains(prenom);
-				resultatsNonTries.put(prenom, estimExistante);
-			}
-		}
 		
-		// Treemap pour trier la hashmap par ordre alphabétique de la clef(le prénom).
-		Map<String, Boolean> mapTriee = new TreeMap<String, Boolean>(resultatsNonTries);
-		
-		return mapTriee;
+		return resultatRecherche;
 	}
 	
 	
@@ -145,9 +135,11 @@ public class PrenomService {
 	*/
 	
 	
-	/** obtenir un tableau de 1900 à 2015 avec nombre de naissances associées pour ce un prénom.
+	/** 
+	 * obtenir un tableau de 1900 à 2015 avec nombre de naissances associées pour ce un prénom.
 	 * 1.peupler le tableau de l'index 0 à 115 (correspond aux années 1900 à 2015)
 	 * 2. ajouter pour chaque année renseignée (année -1900 pour tomber sur l'index) le nombre de naissances.
+	 * 
 	 * @param label
 	 * @param sexe
 	 * @return une liste d'années (index), nombre de naissances pour courbe de statistiques.

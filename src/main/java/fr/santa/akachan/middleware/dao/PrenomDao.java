@@ -1,7 +1,11 @@
 package fr.santa.akachan.middleware.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -16,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
-import fr.santa.akachan.middleware.rest.EstimationRS;
 
 @Stateless
 @Transactional
@@ -29,18 +32,17 @@ public class PrenomDao {
 	private EntityManager em;
 	
 	
+	
 	/**
-	 * chercher des prénoms : SQL LIKE si rechercheExacte = true.
-	 * @param recherche
-	 * @param sexe
-	 * @param rechercheExacte
-	 * @return liste de prénoms(string) résultat de la recherche
+	 * chercher des prénoms et savoir s'il ont déjà été estimé : LIKE si rechercheExacte = true.
+	 * 
+	 * @param recherche (le prenom à rechercher)
+	 * @param sexe ("1" garçon, "2" fille)
+	 * @param refClient (uuid client pour chercher si estimation existante)
+	 * @param rechercheExacte (requete like avec % ou non")
+	 * @return Map<String prenom, Boolean estEstime> collection clef prenom, valeur booleen (true si le prénom est estimé).
 	 */
-	public List<String> chercherPrenoms(String recherche, String sexe, Boolean rechercheExacte) {
-		
-		List<String> ListePrenomsRecherche = null;
-		
-		final String requeteJPQL = "Prenom.chercherPrenom";
+	public Map<String,Boolean> chercherPrenomEtEstimation(String recherche, String sexe, UUID refClient, Boolean rechercheExacte) {
 		
 		String rechercheParam;
 		
@@ -53,22 +55,43 @@ public class PrenomDao {
 			concatRechercheLike.append("%");
 			concatRechercheLike.append(recherche.toUpperCase());
 			concatRechercheLike.append("%");
+			
 			rechercheParam = concatRechercheLike.toString();
 		}
+
+		final String requeteSQL = "Prenom.chercherPrenomEtEstimationExistante";
 		
-		final Query requete = em.createNamedQuery(requeteJPQL);
-		requete.setParameter("recherche", rechercheParam);
+		Query requete = em.createNamedQuery(requeteSQL);
 		requete.setParameter("sex", sexe);
+		requete.setParameter("recherche", rechercheParam);
+		requete.setParameter("refClient", refClient);
 		
-		ListePrenomsRecherche = requete.getResultList();
+		// TreeMap permet de trier par ordre alphabétique le prénom (clef).
+		Map<String,Boolean> listePrenomsRecherche = new TreeMap<String,Boolean>();
 		
-		return ListePrenomsRecherche;
+		// la requête retourne une liste d'un tableau d'objet [prenom, akachan ("true","false", ou null si non estimé)]
+		List<Object[]> liste= requete.getResultList();
+		
+		for(Object[] objet : liste) {
+			
+			Boolean estEstime = false;
+			
+			// si akachan est non null, le prénom est estimé.
+			if(objet[1] != null) {
+				estEstime = true;
+			}
+			listePrenomsRecherche.put((String)objet[0], estEstime);
+		}
+		
+		return listePrenomsRecherche;
+		
 	}
 	
 	
+	
 	/**
-	 * Obtenir tous les tuples du même prénom
-	 * pour accéder à : nombre naissances par années
+	 * Obtenir tous les tuples du même prénom pour accéder à : nombre naissances par années
+	 * 
 	 * @param label
 	 * @return liste de prenomsInsee
 	 * @throws DaoException

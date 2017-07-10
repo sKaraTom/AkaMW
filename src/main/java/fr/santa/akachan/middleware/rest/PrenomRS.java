@@ -62,18 +62,18 @@ public class PrenomRS {
 		return builder.build();
 	}
 	
-	
 	@POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/recherche/{rechercheExacte}")
-	public Response chercherPrenomEtEstimExistante(Estimation estimation,@PathParam("rechercheExacte") Boolean rechercheExacte) {
+	public Response rechercherPrenomEtEstimExistante(Estimation estimation,@PathParam("rechercheExacte") Boolean rechercheExacte) {
 		
-		 Response.ResponseBuilder builder = null;
+		Response.ResponseBuilder builder = null;
 
-	     Map<String, Boolean> resultats;
+		Map<String, Boolean> resultats;
+
 		try {
-			resultats = prenomService.chercherPrenomEtEstimationExistante(estimation,rechercheExacte);
+			resultats = prenomService.chercherPrenomEtEstimation(estimation, rechercheExacte);
 			builder = Response.ok(resultats);
 			
 		} catch (PrenomInexistantException e) {

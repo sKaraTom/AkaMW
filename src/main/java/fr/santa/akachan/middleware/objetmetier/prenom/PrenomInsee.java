@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -19,8 +21,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement
 @Entity
-@NamedQueries({
-	@NamedQuery(name = "Prenom.chercherPrenom", query = "SELECT DISTINCT p.label FROM PrenomInsee p WHERE p.label LIKE :recherche AND p.sexe=:sex")
+@NamedNativeQueries({
+	@NamedNativeQuery(name = "Prenom.chercherPrenomEtEstimationExistante", 
+		query = "SELECT DISTINCT pre_label, est_akachan FROM t_prenom LEFT OUTER JOIN t_estimation ON pre_label=est_prenom AND est_refclient=:refClient WHERE pre_label LIKE :recherche AND pre_sexe=:sex ORDER BY pre_label ASC")
 	})
 @Table(name = "T_PRENOM")
 public class PrenomInsee implements Serializable {
