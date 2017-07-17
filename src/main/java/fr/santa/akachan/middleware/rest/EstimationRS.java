@@ -25,6 +25,7 @@ import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
+import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
 import fr.santa.akachan.middleware.service.EstimationService;
@@ -158,7 +159,10 @@ public class EstimationRS {
 		
 	   } catch (DaoException e) {
 		   builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
-	   }
+		   
+	   } catch (EstimationIntrouvableException e) {
+		   builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+	}
 	   
 
 	   return builder.build();

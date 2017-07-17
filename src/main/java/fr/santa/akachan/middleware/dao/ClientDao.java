@@ -34,7 +34,9 @@ public class ClientDao {
 	private EntityManager em;
 
 	
-	/** Obtenir le nombre total de clients inscrits.
+	/** 
+	 * Obtenir le nombre total de clients inscrits.
+	 * 
 	 * @return nombre (Long)
 	 * @throws DaoException 
 	 */
@@ -53,8 +55,10 @@ public class ClientDao {
 		return total;
 	}
 	
-	/** Obtenir la liste de tous les clients inscrits.
-	 * A dérouler jusqu'aux WS pour admin.
+	/** 
+	 * Obtenir la liste de tous les clients inscrits.
+	 * TODO : A dérouler jusqu'aux WS pour admin.
+	 * 
 	 * @return Liste de clients (List<Client>)
 	 */
 	public List<Client> obtenirClients() {
@@ -66,7 +70,9 @@ public class ClientDao {
 		return requete.getResultList();
 	}
 
-	/** obtenir un client par son uuid (sert côté ihm pour infos compte)
+	/** 
+	 * obtenir un client par son uuid (sert côté ihm pour infos compte)
+	 * 
 	 * @param refClient
 	 * @return
 	 * @throws ClientIntrouvableException
@@ -91,7 +97,9 @@ public class ClientDao {
 	}
 	
 	
-	/** Obtenir liste Akachan des estimations (prénoms aimés) d'un client
+	/** 
+	 * Obtenir liste Akachan des estimations (prénoms aimés) d'un client
+	 * 
 	 * @param refClient
 	 * @return List<Estimation>
 	 */
@@ -106,7 +114,9 @@ public class ClientDao {
 		return listeAkachan;
 	}
 	
-	/** Obtenir liste noire des estimations (prénoms non aimés) d'un client
+	/** 
+	 * Obtenir liste noire des estimations (prénoms non aimés) d'un client
+	 * 
 	 * @param refClient
 	 * @return List<Estimation>
 	 */
@@ -122,7 +132,9 @@ public class ClientDao {
 		return listeNoire;
 	}
 	
-	/** Obtenir la liste des favoris d'un client (favori = 1)
+	/** 
+	 * Obtenir la liste des favoris d'un client (favori = 1)
+	 * 
 	 * @param refClient
 	 * @return List<Estimation>
 	 */
@@ -138,8 +150,10 @@ public class ClientDao {
 		return listeFavoris;
 	}
 	
-	/** Vérifier si le client existe dans la bdd.
+	/** 
+	 * Vérifier si le client existe dans la bdd.
 	 * TODO : inutilisé, voir si supprimer après page admin.
+	 * 
 	 * @param uuid
 	 * @return Boolean (true si client existe dans bdd, false sinon).
 	 */

@@ -40,7 +40,8 @@ public class CompteService {
 	@EJB
 	private JwtCreation jwtCreation;
 	
-	/** créer un compte
+	/** 
+	 * créer un compte
 	 * 
 	 * @param compte à persister
 	 * @throws CompteInvalideException
@@ -51,7 +52,8 @@ public class CompteService {
 	public void creerCompte(final Compte compte)
 			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException, PasswordInvalideException {
 		
-		// d'abord vérifier que le compte est valide avant d'interroger la BDD.
+		// d'abord vérifier que le compte est valide (les variables sont formatées correctement)
+		// avant d'interroger la BDD.
 		this.validerCompte(compte);
 		
 		boolean estContenu = compteDao.contenir(compte);
@@ -87,7 +89,8 @@ public class CompteService {
 		return compte;
 	}
 	
-	/** modifier les informations client du compte.
+	/** 
+	 * modifier les informations client du compte.
 	 * 
 	 * @param compte qui contient le client à modifier.
 	 * @throws CompteInexistantException si le compte à modifier n'existe pas en bdd
@@ -119,8 +122,10 @@ public class CompteService {
 		}
 	}
 	
-	/** modifier le mot de passe.
+	/** 
+	 * modifier le mot de passe.
 	 * email client pour obtenir compte à modifier, password actuel à valider, nouveau password à persister.
+	 * 
 	 * @param listeChamps (0:email client,1:password actuel, 2:nouveau password)
 	 * @throws CompteInexistantException si le mail réceptionné n'a pas permis d'obtenir de compte.
 	 * @throws CompteInvalideException si le password actuel saisi n'est pas bon.
@@ -145,7 +150,8 @@ public class CompteService {
 		compteDao.modifier(compteValide);
 	}
 		
-	/** connecter un compte : retourne un token d'authentification si succès.
+	/** 
+	 * connecter un compte : retourne un token d'authentification si succès.
 	 * 
 	 * @param email
 	 * @param password
@@ -174,8 +180,10 @@ public class CompteService {
 	
 	}
 	
-	/** valider un compte ou lever une exception.
-	 *  vérifier que le compte n'est pas null, et qu'aucun champ n'est vide ou null.
+	/** 
+	 * valider un compte :
+	 * vérifier que le compte n'est pas null, et qu'aucun champ n'est vide ou null.
+	 *  
 	 * @param compte à valider.
 	 * @throws CompteInvalideException si le compte ou un champ null/blanc
 	 * @throws EmailInvalideException si l'email n'est pas formaté correctement.
@@ -194,7 +202,8 @@ public class CompteService {
 		this.validerPassword(compte.getPassword());
 	}
 	
-	/** regex de validation du mail.
+	/** 
+	 * regex de validation du mail.
 	 * 
 	 * @param email
 	 * @throws EmailInvalideException
@@ -212,7 +221,12 @@ public class CompteService {
 		}
 	}
 	
-	
+	/**
+	 * valider un password : qu'il n'est pas blanc, et a au minimum 4 caractères.
+	 * 
+	 * @param password
+	 * @throws PasswordInvalideException
+	 */
 	private void validerPassword(final String password) throws PasswordInvalideException {
 		
 		if (StringUtils.isBlank(password)) {

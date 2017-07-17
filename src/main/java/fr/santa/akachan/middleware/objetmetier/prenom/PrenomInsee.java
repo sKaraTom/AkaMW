@@ -22,9 +22,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement
 @Entity
 @NamedNativeQueries({
-	@NamedNativeQuery(name = "Prenom.chercherPrenomEtEstimationExistante", 
-		query = "SELECT DISTINCT pre_label, est_akachan FROM t_prenom LEFT OUTER JOIN t_estimation ON pre_label=est_prenom AND est_refclient=:refClient WHERE pre_label LIKE :recherche AND pre_sexe=:sex ORDER BY pre_label ASC")
-	})
+@NamedNativeQuery(name = "Prenom.chercherPrenomEtEstimationExistante", 
+query = "SELECT DISTINCT pre_label, est_akachan FROM t_prenom LEFT OUTER JOIN t_estimation ON pre_label=est_prenom AND pre_sexe=est_sexe AND est_refclient=:refClient WHERE pre_label LIKE :recherche AND pre_sexe=:sex ORDER BY pre_label ASC")
+})
 @Table(name = "T_PRENOM")
 public class PrenomInsee implements Serializable {
 	

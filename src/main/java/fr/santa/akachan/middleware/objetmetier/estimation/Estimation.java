@@ -38,7 +38,7 @@ public class Estimation implements Serializable {
 	private UUID uuid;
 	private String prenom;
 	private String sexe;
-	private Integer favori;
+	private Boolean favori;
 
 	private UUID refClient;
 
@@ -56,7 +56,7 @@ public class Estimation implements Serializable {
 		this.uuid = uuid;
 		this.prenom = prenom;
 		this.sexe = sexe;
-		this.favori = 0;
+		this.favori = false;
 		this.refClient = refClient;
 		this.akachan = akachan;
 		this.dateEstimation = Calendar.getInstance();
@@ -93,11 +93,11 @@ public class Estimation implements Serializable {
 	}
 	
 	@Column(name = "EST_FAVORI")
-	public Integer getFavori() {
+	public Boolean getFavori() {
 		return favori;
 	}
 
-	public void setFavori(Integer favori) {
+	public void setFavori(Boolean favori) {
 		this.favori = favori;
 	}
 	

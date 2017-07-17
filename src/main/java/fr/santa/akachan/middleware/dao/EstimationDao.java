@@ -14,9 +14,11 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
+import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
 
 
@@ -32,7 +34,8 @@ public class EstimationDao {
 	
 	
 	
-	/** obtenir le nombre total d'estimations sans distinction de client, liste akachan ou noire, ou autre.
+	/** 
+	 * obtenir le nombre total d'estimations sans distinction de client, liste akachan ou noire, ou autre.
 	 *  
 	 * @return Long nombre total des estimations.
 	 */
@@ -59,7 +62,9 @@ public class EstimationDao {
 		return total;
 	}
 	
-	/** obtenir le top 3 des prénoms estimés par sexe et nombre de fois estimé positivement (akachan = "true")
+	/** 
+	 * obtenir le top 3 des prénoms estimés par sexe et estimés positivement (akachan = "true")
+	 * 
 	 * @param sexe "1" pour garçon "2" pour fille
 	 * @return liste des 3 prenoms les plus aimés par sexe.
 	 */
@@ -76,7 +81,8 @@ public class EstimationDao {
 	}
 	
 	
-	/** obtenir le nombre total d'estimation d'un client (sans distinction de sexe).
+	/** 
+	 * obtenir le nombre total d'estimations d'un client (sans distinction de sexe).
 	 *  
 	 * @param refClient
 	 * @return le nombre d'estimations d'un client.
@@ -99,7 +105,8 @@ public class EstimationDao {
 		
 	}
 	
-	/** obtenir le nombre d'estimations d'un client par sexe du prénom.
+	/**
+	 *  obtenir le nombre d'estimations d'un client par sexe du prénom.
 	 * 
 	 * @param refClient
 	 * @param sexe
@@ -124,8 +131,11 @@ public class EstimationDao {
 		return totalEstimClient;		
 	}
 	
-	/** obtenir la liste des prénoms déjà estimés par un client (filtre : sexe).
+	// TODO : inutilisé depuis reconstruction recherche.
+	/** 
+	 * obtenir la liste des prénoms déjà estimés par un client (filtre : sexe).
 	 * Sert notamment pour la comparaison dans l'outil recherche.
+	 * 
 	 * @param sexe
 	 * @param refClient
 	 * @return List<String> liste de prénoms estimés
@@ -141,6 +151,26 @@ public class EstimationDao {
 		
 		return listePrenomsEstimes;
 	}
+	
+	/**
+	 * obtenir une estimation
+	 * 
+	 * @param uuidEstimation
+	 * @return
+	 * @throws EstimationIntrouvableException si aucune estimation trouvée pour cet uuid
+	 */
+	public Estimation obtenirEstimation(final UUID uuidEstimation) throws EstimationIntrouvableException {
+		
+		Estimation estimation = null;
+		estimation = em.find(Estimation.class, uuidEstimation);
+		
+		if(Objects.isNull(estimation)) {
+			throw new EstimationIntrouvableException("erreur interne : aucune estimation trouvée.");
+		}
+		
+		return estimation;
+	}
+	
 	
 	/** créer une estimation.
 	 * 
@@ -174,14 +204,17 @@ public class EstimationDao {
 		}
 	}
 
-	/** modifier une estimation.
+	/** 
+	 * modifier une estimation.
 	 * sert notamment pour ajouter favori, changer de liste Akachan <--> liste noire.
+	 * 
 	 * @param estimation
 	 * @throws DaoException si la persistance a échoué.
 	 */
 	public void modifierEstimation(final Estimation estimation) throws DaoException {
 		
 		try {
+			LOGGER.info("*****************" + estimation.getDateEstimation());
 			em.merge(estimation);
 		}
 		catch(Exception e) {
@@ -189,7 +222,12 @@ public class EstimationDao {
 		}
 	}
 	
-	
+	/**
+	 * retirer toutes les estimations d'un client de la bdd
+	 * 
+	 * @param refClient
+	 * @throws DaoException si l'éxécution de la requête échoue.
+	 */
 	public void supprimerToutesEstimationsClient(final UUID refClient) throws DaoException {
 		
 		final String requeteJPQL = "Estimation.supprimerToutesEstimationsClient";
@@ -202,25 +240,24 @@ public class EstimationDao {
 		catch(Exception e) {
 			throw new DaoException("échec à la suppression des estimations.");
 		}
-		
-		
-		
 	}
 	
 	
-	
-	/** méthode de vérification si une estimation existe déjà : prénom, sexe et uuid client.
-	 * 	cette méthode est nécessaire car on ne peut se baser sur l'uuid de l'estimation.
+	/** 
+	 * méthode de vérification si une estimation existe déjà : prénom, sexe et uuid client.
+	 * cette méthode est nécessaire car on ne peut se baser sur l'uuid de l'estimation comme ref de vérification.
+	 * 
 	 * @param estimation
 	 * @return true si une estimation existe déjà.
 	 */
 	public boolean contenirEstimation (final Estimation estimation) {
 		
 		// si on trouve le prénom dans la table lié au client, retourner true.
-		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.prenom=:prenom";
+		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.prenom=:prenom AND e.sexe=:sex";
 		final Query requete = em.createQuery(requeteJPQL);
 		requete.setParameter("refclient", estimation.getRefClient());
 		requete.setParameter("prenom", estimation.getPrenom());
+		requete.setParameter("sex", estimation.getSexe());
 		
 		try {
 		String resultat = (String) requete.getSingleResult();

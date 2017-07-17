@@ -21,6 +21,7 @@ import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
+import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
 
@@ -35,13 +36,23 @@ public class EstimationService {
 	private EstimationDao estimationDao;
 	
 	
-	// nombre total tous clients confondus.
+	/**
+	 *  obtenir le nombre total tous clients confondus.
+	 *  
+	 * @return Long nombre total d'estimations
+	 */
 	public Long obtenirNbTotalEstimations() {
 		
 		Long total = estimationDao.obtenirNbTotalEstimations();
 		return total;
 	}
 	
+	/**
+	 * obtenir les 3 prénoms les plus estimés positivement pour un sexe.
+	 * 
+	 * @param sexe
+	 * @return List<String> liste des 3 prénoms les plus populaires (garçons ou filles)
+	 */
 	public List<String> obtenirTop3Estimations(String sexe) {
 		
 		List<String> listeTopPrenoms = estimationDao.obtenirTop3PrenomsEstimes(sexe);
@@ -49,20 +60,42 @@ public class EstimationService {
 		return listeTopPrenoms;
 	}
 	
-	// nombre total pour un client.
+	
+	/**
+	 *  nombre total d'estimations pour un client sans autre distinction.
+	 *  
+	 * @param refClient
+	 * @return Long le total
+	 * @throws DaoException
+	 */
 	public Long obtenirNbEstimClient(UUID refClient) throws DaoException {
 		Long totalEstimClient = estimationDao.obtenirNbEstimClient(refClient);
 		return totalEstimClient;
 	}
 	
-	// nombre pour un client, par sexe.
+	/**
+	 *  nombre total d'estimations d'un client, par sexe.
+	 *  
+	 * @param refClient
+	 * @param sexe
+	 * @return Long le total pour un sexe
+	 * @throws DaoException
+	 */
 	public Long obtenirNbEstimClientParSexe(UUID refClient, String sexe) throws DaoException {
 		
 		Long total = estimationDao.obtenirNbEstimClientParSexe(refClient, sexe);
 		return total;
 	}
 	
-	
+	/**
+	 * créer une estimation
+	 * 
+	 * @param estimation
+	 * @param refClient
+	 * @throws ClientIntrouvableException si la vérification de l'uuid client a échoué
+	 * @throws PrenomInexistantException si le prénom reçu est blanc.
+	 * @throws EstimationExistanteException s'il existe déjà une estimation pour ce prénom.
+	 */
 	public void estimerPrenom (Estimation estimation, UUID refClient)
 			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
 		
@@ -79,18 +112,24 @@ public class EstimationService {
 		else {
 		estimation.setRefClient(refClient);
 		estimation.setPrenom(StringUtils.upperCase(estimation.getPrenom()));
-		estimation.setFavori(0);
+		estimation.setFavori(false);
 		estimationDao.creerEstimation(estimation);
-		clientDao.modifierClient(client);
 		}
 	}
 	
+	/**
+	 * toggle de la valeur "akachan" : "true" si aimé, "false" si à mettre dans liste noire.
+	 * changer la date par la date de ce changement de liste.
+	 * 
+	 * @param estimations
+	 * @param akachan
+	 */
 	public void changerDeListeEstimations(final List<Estimation>estimations, final String akachan) {
 	
 		for(Estimation estimation:estimations) {
 			// si on passe des estimations en liste noire, retirer le marqueur favori.
 			if(akachan.equals("false")) {
-				estimation.setFavori(0);
+				estimation.setFavori(false);
 			}
 			// remplacer la date de création de l'estimation par la date de changement de liste.
 			estimation.setDateEstimation(Calendar.getInstance());
@@ -99,18 +138,30 @@ public class EstimationService {
 		estimationDao.changerDeListeEstimations(estimations, akachan);
 	}
 	
-	public void modifierEstimation (Estimation estimation) throws DaoException {
+	/**
+	 * modifier une estimation pour ses variables pouvant être modifiées : booleen akachan, favori, et date.
+	 * 
+	 * @param estimation l'estimation à modifier
+	 * @throws DaoException
+	 * @throws EstimationIntrouvableException si l'estimation à modifier est inexistante.
+	 */
+	public void modifierEstimation (Estimation estimation) throws DaoException, EstimationIntrouvableException {
 		
-		// forcer le fuseau à être sur Paris à la modification d'estimation, sinon soustraction de 2h...
-		// TODO à revoir ce problème de GMT
-		Calendar dateFormatee = estimation.getDateEstimation();
-		dateFormatee.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		Estimation estimationAModifier = estimationDao.obtenirEstimation(estimation.getUuid());
 		
-		estimation.setDateEstimation(dateFormatee);
+		estimationAModifier.setAkachan(estimation.getAkachan());
+		estimationAModifier.setDateEstimation(estimation.getDateEstimation());
+		estimationAModifier.setFavori(estimation.getFavori());
 		
-		estimationDao.modifierEstimation(estimation);
+		estimationDao.modifierEstimation(estimationAModifier);
 	}
 	
+	/**
+	 * supprimer toutes les estimations d'un client
+	 * 
+	 * @param refClient
+	 * @throws DaoException
+	 */
 	public void effacerToutesEstimationsClient(final UUID refClient) throws DaoException {
 		
 		estimationDao.supprimerToutesEstimationsClient(refClient);

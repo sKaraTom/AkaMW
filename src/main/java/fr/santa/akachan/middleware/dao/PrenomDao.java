@@ -84,9 +84,7 @@ public class PrenomDao {
 		}
 		
 		return listePrenomsRecherche;
-		
 	}
-	
 	
 	
 	/**

@@ -23,7 +23,8 @@ public class CitationService {
 	@EJB
 	CitationDao citationDao;
 	
-	/** ajouter une citation à la table dédiée.
+	/** 
+	 * ajouter une citation à la table dédiée.
 	 * 
 	 * @param citation
 	 * @throws CitationExistanteException si la citation à ajouter existe déjà.
@@ -37,7 +38,9 @@ public class CitationService {
 	}
 	
 	
-	/** obtenir toutes les citations de la table.
+	/** 
+	 * obtenir toutes les citations de la table.
+	 * 
 	 * @return List<Citations> liste de toutes les citations
 	 * @throws DaoException si erreur lors de la communication avec la bdd.
 	 */
@@ -46,7 +49,8 @@ public class CitationService {
 		return citationDao.obtenirCitations();
 	}
 	
-	/** obtenir une citation aléatoire : 
+	/** 
+	 * obtenir une citation aléatoire : 
 	 * - tirer un chiffre au hasard à partir du nombre total de citations dans la table.
 	 * - obtenir la citation à partir de l'id égal au chiffre tiré au hasard. 
 	 * 
@@ -58,22 +62,34 @@ public class CitationService {
 		
 		// initialiser le chiffre aléatoire.
 		Integer chiffreAleat = 0;
-		
-		Long total = citationDao.obtenirNombreTotalCitations();
-		
-		Integer totalConverti;
-		totalConverti = total.intValue();
-		
 		Random hasard = new Random();
 		
+		Integer totalCitations = obtenirNombreTotalCitations();
+		
 		// hasard.nextInt(max)+min pour ne pas commencer à 0.
-		chiffreAleat = hasard.nextInt(totalConverti)+1;
+		chiffreAleat = hasard.nextInt(totalCitations)+1;
 		
 		Citation citationAleatoire = citationDao.obtenirCitation(chiffreAleat);
 		
 		return citationAleatoire;
 	}
 	
+	/**
+	 * obtenir le nombre total (Integer) de citations dans la bdd
+	 * 
+	 * @return Integer total
+	 * @throws DaoException si l'obtention du nombre depuis la bdd a échoué.
+	 */
+	public Integer obtenirNombreTotalCitations() throws DaoException {
+		
+		Long total = citationDao.obtenirNombreTotalCitations();
+		
+		Integer totalConverti;
+		totalConverti = total.intValue();
+		
+		return totalConverti;
+		
+	}
 	
 	
 	/** méthode de vérification qu'une citation est valide.

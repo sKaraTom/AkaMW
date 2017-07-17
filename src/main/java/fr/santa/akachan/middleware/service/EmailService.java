@@ -28,8 +28,9 @@ public class EmailService {
 			LoggerFactory.getLogger(EmailService.class);
 	
 	
-	/** Mail d'un client ou prospect --> Akachan (formulaire de contact) 
-	 * A partir d'un formulaire saisi par le client/prospect, mettre en forme un mail à envoyer à Akachanapp.
+	/** 
+	 * envoyer un mail d'un client ou prospect vers mail Akachan (formulaire de contact) 
+	 * A partir d'une liste de champs saisis par client/prospect, mettre en forme un mail à envoyer à Akachanapp.
 	 * 
 	 * @param listeChampsMailClient tous les champs saisis par le client.
 	 * @throws AuthentificationEchoueeException	si l'authentification de l'émetteur (akachanaap) échoue.
@@ -62,7 +63,8 @@ public class EmailService {
 			emailAEnvoyer.envoyerMail();
 		}
 	
-	/** envoyer une sélection de prénoms choisis par le client à son adresse mail et/ou une autre adresse.
+	/** 
+	 * envoyer une sélection de prénoms choisis par le client à son adresse mail et/ou une autre adresse.
 	 * 
 	 * @param listePrenomsSelectionnes liste d'estimations sélectionnée depuis la liste Akachan.
 	 * @param prenomClient pour l'inclure dans le sujet du mail.
@@ -102,10 +104,10 @@ public class EmailService {
 			bodyListe.append(" ");
 			
 			if(estimation.getSexe().equals("1")) {
-				bodyListe.append("<span style='font-size:small;'>garçon</span>,");
+				bodyListe.append("<span style='font-size:small;'>garçon</span>");
 			}
 			else {
-				bodyListe.append("<span style='font-size:small;'>fille</span>,");
+				bodyListe.append("<span style='font-size:small;'>fille</span>");
 			}
 			bodyListe.append("		");
 		}
@@ -116,10 +118,12 @@ public class EmailService {
 	}
 	
 	
-	/** créer un contenu html de mail, depuis une liste de champs saisis par le client/prospect (formulaire contact).
+	/** 
+	 * Formulaire contact : créer un contenu html de mail, depuis une liste de champs saisis par le client/prospect.
 	 * à envoyer sur le mail Akachan.
+	 * 
 	 * @param listeChampsMailClient
-	 * @return
+	 * @return String le body (contenu) à envoyer
 	 */
 	public String creerBodyMailContact(List<String> listeChampsMailClient) {
 		
@@ -149,10 +153,11 @@ public class EmailService {
 		
 	}
 	
-	/** créer le contenu html d'un mail, pour envoyer une liste de prénoms à un destinataire;
+	/** 
+	 * Sélection de prénoms : créer le contenu html d'un mail, pour envoyer une liste de prénoms à un destinataire;
 	 * 
 	 * @param body la liste de prénoms formatée en une String.
-	 * @return
+	 * @return String le body (contenu) à envoyer
 	 */
 	 private String creerBodyMailSelectionDePrenoms(String body) {
 	    	
@@ -170,7 +175,13 @@ public class EmailService {
 	    	
 	    	return builder.toString();
     }
-	
+	 
+	 	/**
+	 	 * regex de validation du bon formatage d'un mail.
+	 	 * 
+	 	 * @param email
+	 	 * @throws EmailInvalideException
+	 	 */
 		private void validerEmail(final String email) throws EmailInvalideException {
 			
 			Boolean emailValide = Pattern.matches("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)+$", email);

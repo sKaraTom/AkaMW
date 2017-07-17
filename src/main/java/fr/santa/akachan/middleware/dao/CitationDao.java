@@ -47,6 +47,7 @@ public class CitationDao {
 	}
 	
 	/**
+	 * obtenir une citation par son identifiant
 	 * 
 	 * @param id l'id (Integer) de la citation
 	 * @return Citation la citation trouvée
@@ -64,7 +65,9 @@ public class CitationDao {
 	}
 	
 	
-	/** obtenir le nombre total de citations dans la table.
+	/** 
+	 * obtenir le nombre total de citations dans la table.
+	 * 
 	 * @return Integer nombre de tuples de la table.
 	 * @throws DaoException si erreur lors de la communication avec la bdd.
 	 */
@@ -84,7 +87,9 @@ public class CitationDao {
 		return total;
 	}
 	
-	/** obtenir toutes les citations de la table.
+	/** 
+	 * obtenir toutes les citations de la table.
+	 * 
 	 * @return List<Citations> liste de toutes les citations
 	 * @throws DaoException si erreur lors de la communication avec la bdd.
 	 */

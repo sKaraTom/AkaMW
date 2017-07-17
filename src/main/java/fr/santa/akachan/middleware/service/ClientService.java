@@ -23,7 +23,9 @@ public class ClientService {
 	@EJB
 	private ClientDao clientDao;
 	
-	/** Obtenir le nombre total de clients inscrits.
+	/** 
+	 * Obtenir le nombre total de clients inscrits.
+	 * 
 	 * @return nombre (Long)
 	 * @throws DaoException 
 	 */
@@ -34,8 +36,10 @@ public class ClientService {
 	}
 	
 
-	/** obtenir un client par son uuid sans les champs sensibles (password du compte, uuid client)
+	/** 
+	 * obtenir un client par son uuid sans les champs sensibles (password du compte, uuid client)
 	 * (sert côté ihm pour infos compte)
+	 * 
 	 * @param refClient
 	 * @return le client obtenu
 	 * @throws ClientIntrouvableException
@@ -58,7 +62,8 @@ public class ClientService {
 		return clientARetourner;
 	}
 	
-	/** obtenir toutes les estimations positives (akachan = "true")
+	/** 
+	 * obtenir toutes les estimations positives (akachan = "true")
 	 * 
 	 * @param refClient
 	 * @return List<Estimation> liste Akachan
@@ -70,7 +75,8 @@ public class ClientService {
 		return listeAkachan;
 	}	
 	
-	/** obtenir toutes les estimations négatives (akachan = "false")
+	/** 
+	 * obtenir toutes les estimations négatives (akachan = "false")
 	 * 
 	 * @param refClient
 	 * @return List<Estimation> liste Noire
@@ -82,7 +88,8 @@ public class ClientService {
 		return listeNoire;
 	}	
 	
-	/** Obtenir les estimations favorites d'un client (favori = 1)
+	/** 
+	 * Obtenir les estimations favorites d'un client (favori = 1)
 	 * 
 	 * @param refClient
 	 * @return List<Estimation> liste des estimations favorites.

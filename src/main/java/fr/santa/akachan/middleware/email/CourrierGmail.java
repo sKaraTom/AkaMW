@@ -45,9 +45,10 @@ public class CourrierGmail
         this.message = new MimeMessage(session);
     }
     
-    /** définir l'émetteur (destinateur) de l'envoi.
-     * Ne sert que si on souhaite émettre un message depuis un autre
-     * compte qu'akachanapp
+    /** 
+     * définir l'émetteur (destinateur) de l'envoi.
+     * Ne sert que si on souhaite émettre un message depuis un autre compte qu'akachanapp
+     * 
      * @param username (sans @aaaa.com)
      * @param password
      */
@@ -57,7 +58,8 @@ public class CourrierGmail
         this.password = password;
     }
     
-    /** ajouter un destinataire
+    /** 
+     * ajouter un destinataire
      * 
      * @param destinataire (adresse mail complète)
      * @throws DestinataireInvalideException 
@@ -72,7 +74,8 @@ public class CourrierGmail
     	}
     }
     
-    /** définir le titre du mail.
+    /** 
+     * définir le titre du mail.
      * 
      * @param String titreMail 
      * @throws SujetInvalideException 
@@ -86,7 +89,8 @@ public class CourrierGmail
     	}
     }
     
-    /** définir le contenu du message TEXTE.
+    /** 
+     * définir le contenu du message TEXTE.
      * 
      * @param body
      * @throws ContenuInvalideException 
@@ -106,7 +110,8 @@ public class CourrierGmail
     }
     
     
-    /** définir le contenu du message HTML.
+    /** 
+     * définir le contenu du message HTML.
      * 
      * @param body	message à intégrer déjà mis en forme html
      * @throws ContenuInvalideException 
@@ -123,7 +128,8 @@ public class CourrierGmail
         }
     }
     
-    /** méthode d'envoi de l'email avec l'objet Transport.
+    /** 
+     * méthode d'envoi de l'email avec l'objet Transport.
      * 
      * @throws MessagingException
      * @throws AuthentificationEchoueeException 
@@ -153,7 +159,8 @@ public class CourrierGmail
         transport.close();
     }
     
-    /** ajouter une pièce jointe au mail à envoyer.
+    /** 
+     * ajouter une pièce jointe au mail à envoyer.
      * 
      * @param String emplacementFichier (emplacement sur le disque du fichier)
      * @throws MessagingException
@@ -166,7 +173,8 @@ public class CourrierGmail
         message.setContent(multipart);
     }
     
-    /** obtenir le contenu fichier en pièce jointe.
+    /** 
+     * obtenir le contenu fichier en pièce jointe.
      * 
      * @param filePath emplacement du fichier source.
      * @return
@@ -182,7 +190,8 @@ public class CourrierGmail
         return messageBodyPart;
     }
     
-    /** methode pour ouvrir une session.
+    /** 
+     * methode pour ouvrir une session.
      * 
      * @return la session.
      */
@@ -194,7 +203,8 @@ public class CourrierGmail
         return session;
     }
     
-    /** paramétrer les propriétés pour la session.
+    /** 
+     * paramétrer les propriétés pour la session.
      * 
      * @return Properties proprietes
      */

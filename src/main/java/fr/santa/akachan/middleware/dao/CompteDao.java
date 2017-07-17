@@ -32,6 +32,13 @@ public class CompteDao {
 	private EntityManager em;
 	
 	
+	/**
+	 * ajouter un compte à la bdd
+	 * 
+	 * @param compte
+	 * @throws CompteInvalideException si le compte à créer n'est pas valide.
+	 * @throws CompteDejaExistantException si un compte identique est dans la bdd.
+	 */
 	public void ajouter(final Compte compte) throws CompteInvalideException, CompteDejaExistantException {
 		
 		try {
@@ -40,11 +47,16 @@ public class CompteDao {
 		catch(final EntityExistsException e) {
 			throw new CompteDejaExistantException();
 		}
+		catch(final IllegalArgumentException e ) {
+			throw new CompteInvalideException();
+		}
 	}
 	
-	/** obtenir un compte.
+	/** 
+	 * obtenir un compte.
 	 * utile pour modifier un compte par exemple.
-	 * @param email de référence
+	 * 
+	 * @param email de référence (pk)
 	 * @return le compte obtenu.
 	 * @throws CompteInexistantException si la recherche par email ne renvoie rien.
 	 */
@@ -59,17 +71,28 @@ public class CompteDao {
 	}
 	
 	
+	/**
+	 * modifier un compte
+	 * 
+	 * @param compte
+	 */
 	public void modifier(final Compte compte) {
 		
 		em.merge(compte);
 		
 	}
 	
+	/**
+	 * supprimer un compte
+	 * 
+	 * @param email
+	 * @throws CompteInexistantException si le compte à supprimer est introuvable dans la bdd.
+	 */
 	public void supprimerCompte(String email) throws CompteInexistantException {
 		
 		// si problème (code 500, catch de l'EntityNotFound ne marche pas) utiliser em.find()
 		try {
-		final Compte compteASupprimer = em.getReference(Compte.class, email);
+			final Compte compteASupprimer = em.getReference(Compte.class, email);
 			em.remove(compteASupprimer);
 		}
 		catch (final EntityNotFoundException e)
@@ -78,7 +101,12 @@ public class CompteDao {
 		}
 	}
 	
-	
+	/**
+	 * vérifier qu'un compte existe bien dans la bdd.
+	 * 
+	 * @param compte le compte à vérifier
+	 * @return true si le compte existe dans la bdd
+	 */
 	public Boolean contenir(final Compte compte) {
 		
 		Boolean estTrouve = null;
@@ -93,8 +121,7 @@ public class CompteDao {
 		else {
 			estTrouve = false;
 		}
-	
-		
+
 		return estTrouve;
 	}
 	

@@ -62,6 +62,16 @@ public class PrenomService {
 	}
 	
 	
+	/**
+	 * générer un prénom aléatoire suivant l'id client (pour ne pas estimer 2 fois un prénom),
+	 * le sexe, et le choix de la tendance.
+	 * 
+	 * @param sexe
+	 * @param refClient
+	 * @param choixTendance
+	 * @return String un prénom généré aléatoirement.
+	 * @throws TendanceInvalideException si le nombre de la tendance ne correspond pas à une des valeurs définies.
+	 */
 	public String genererPrenomAleatoireSql(String sexe, UUID refClient,Integer choixTendance) throws TendanceInvalideException {
 		 
 		String prenomAleatoire = null;
