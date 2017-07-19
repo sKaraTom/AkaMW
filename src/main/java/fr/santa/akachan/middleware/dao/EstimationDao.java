@@ -19,7 +19,7 @@ import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
-import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 
 
 @Stateless

@@ -26,8 +26,8 @@ import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
-import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
-import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 import fr.santa.akachan.middleware.service.EstimationService;
 
 @WebService
@@ -123,7 +123,7 @@ public class EstimationRS {
 	} catch (ClientIntrouvableException e) {
 		builder = Response.status(Response.Status.BAD_REQUEST);
 	
-	} catch (PrenomInexistantException e) {
+	} catch (PrenomInseeInexistantException e) {
 		builder = Response.status(Response.Status.BAD_REQUEST);
 		
 	} catch (EstimationExistanteException e) {

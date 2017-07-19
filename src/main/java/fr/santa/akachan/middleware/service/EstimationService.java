@@ -16,14 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
-import fr.santa.akachan.middleware.dao.PrenomDao;
+import fr.santa.akachan.middleware.dao.PrenomInseeDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
-import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
-import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
 @Transactional
@@ -97,16 +97,14 @@ public class EstimationService {
 	 * @throws EstimationExistanteException s'il existe déjà une estimation pour ce prénom.
 	 */
 	public void estimerPrenom (Estimation estimation, UUID refClient)
-			throws ClientIntrouvableException, PrenomInexistantException, EstimationExistanteException {
-		
-		Client client = clientDao.obtenirClient(refClient);
+			throws ClientIntrouvableException, PrenomInseeInexistantException, EstimationExistanteException {
 		
 		if (!clientDao.contenirClient(refClient)) {
             throw new ClientIntrouvableException();
 		}
 		
 		if (StringUtils.isBlank(estimation.getPrenom())) {
-			throw new PrenomInexistantException();
+			throw new PrenomInseeInexistantException();
 		}
 		
 		else {
