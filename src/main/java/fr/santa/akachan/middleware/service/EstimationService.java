@@ -10,25 +10,29 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
-import fr.santa.akachan.middleware.dao.PrenomInseeDao;
-import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
 @Transactional
 public class EstimationService {
+	
 
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(EstimationService.class);
+	
+	
+	
 	@EJB
 	private ClientDao clientDao;
 	
@@ -150,6 +154,8 @@ public class EstimationService {
 		estimationAModifier.setAkachan(estimation.getAkachan());
 		estimationAModifier.setDateEstimation(estimation.getDateEstimation());
 		estimationAModifier.setFavori(estimation.getFavori());
+		
+		LOGGER.info("======================== estimAModifier : " + estimationAModifier.getDateEstimation().getTime());
 		
 		estimationDao.modifierEstimation(estimationAModifier);
 	}

@@ -120,7 +120,7 @@ public class Estimation implements Serializable {
 		this.akachan = akachan;
 	}
 
-	@Column(name = "EST_DATE")
+	@Column(name = "EST_DATE",columnDefinition= "TIMESTAMP WITH TIME ZONE")
 	public Calendar getDateEstimation() {
 		return dateEstimation;
 	}

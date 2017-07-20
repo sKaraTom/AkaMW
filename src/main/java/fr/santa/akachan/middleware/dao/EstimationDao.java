@@ -214,7 +214,7 @@ public class EstimationDao {
 	public void modifierEstimation(final Estimation estimation) throws DaoException {
 		
 		try {
-			LOGGER.info("*****************" + estimation.getDateEstimation());
+			LOGGER.info("************************ estimation merge DAO : " + estimation.getDateEstimation().getTime());
 			em.merge(estimation);
 		}
 		catch(Exception e) {
