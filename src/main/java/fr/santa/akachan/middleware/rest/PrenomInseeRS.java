@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.PrenomInseeDao;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
+import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.TendanceInvalideException;
 import fr.santa.akachan.middleware.service.PrenomInseeService;
 
 @WebService
@@ -39,90 +39,6 @@ public class PrenomInseeRS {
 	
 	@EJB
 	private PrenomInseeService prenomInseeService;
-	
-	
-	//a voir si on passe le prenomAleatoire en texte plutôt que json.
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/{sexe}/{refclient}/{tendance}")
-	public Response genererPrenomAleatoire(@PathParam("sexe") String sexe,@PathParam("refclient") UUID refClient,@PathParam("tendance") Integer choixTendance) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 //final String prenomAleatoire = prenomService.getPrenomAleatoire(sexe, refClient, choixTendance); // methode cache
-		String prenomAleatoire;
-		
-		try {
-			prenomAleatoire = prenomInseeService.genererPrenomAleatoireSql(sexe, refClient, choixTendance); // methode random SQL
-			builder = Response.ok(prenomAleatoire);
-		} catch (TendanceInvalideException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);
-		}
-
-		return builder.build();
-	}
-	
-	@POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/recherche/{rechercheExacte}")
-	public Response rechercherPrenomEtEstimExistante(Estimation estimation,@PathParam("rechercheExacte") Boolean rechercheExacte) {
-		
-		Response.ResponseBuilder builder = null;
-
-		Map<String, Boolean> resultats;
-
-		try {
-			resultats = prenomInseeService.chercherPrenomEtEstimation(estimation, rechercheExacte);
-			builder = Response.ok(resultats);
-			
-		} catch (PrenomInseeInexistantException e) {
-			builder = Response.status(Response.Status.NO_CONTENT);
-		}
-
-	     return builder.build();
-	}
-	
-	
-	
-	/* METHODES AVANT CACHE
-	// a voir si on passe le prenomAleatoire en texte plutôt que json.
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/{sexe}/{refclient}/{tendance}")
-	public Response genererPrenomAleatoire(@PathParam("sexe") String sexe,@PathParam("refclient") UUID refClient,@PathParam("tendance") Integer choixTendance) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 try {
-	      	// Cas Nominal
-		    final String prenomAleatoire = prenomService.genererPrenomAleatoire(sexe, refClient, choixTendance);
-		    builder = Response.ok(prenomAleatoire);
-		 }
-		 
-	    catch (PrenomInexistantException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);
-		}
-		return builder.build();
-		
-	}
-	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-	@Path("/sql/{sexe}/{refclient}")
-	public Response genererPrenomAleatoireSQL(@PathParam("sexe") String sexe,@PathParam("refclient") UUID refClient) throws DaoException {
-		
-		 Response.ResponseBuilder builder = null;
-
-	      	    // Cas Nominal
-	    final String prenomAleatoire = prenomService.genererPrenomAleatoireSQL(sexe, refClient);
-
-	    builder = Response.ok(prenomAleatoire);
-
-		return builder.build();
-		
-	}
-	*/
 	
 	
 	@GET

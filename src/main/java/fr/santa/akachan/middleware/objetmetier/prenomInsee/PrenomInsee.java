@@ -21,9 +21,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement
 @Entity
-@NamedNativeQueries({
-@NamedNativeQuery(name = "PrenomInsee.chercherPrenomEtEstimationExistante", 
-query = "SELECT DISTINCT pre_label, est_akachan FROM t_prenom LEFT OUTER JOIN t_estimation ON pre_label=est_prenom AND pre_sexe=est_sexe AND est_refclient=:refClient WHERE pre_label LIKE :recherche AND pre_sexe=:sex ORDER BY pre_label ASC")
+@NamedQueries({
+@NamedQuery(name = "PrenomInsee.obtenirStatsPrenom", 
+query = "SELECT p FROM PrenomInsee p WHERE p.label=:lab AND  p.sexe=:sex")
 })
 @Table(name = "T_INSEE")
 public class PrenomInsee implements Serializable {
