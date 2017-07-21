@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.securite;
+package fr.santa.akachan.middleware.authentification;
 
 public class AccesNonAutoriseException extends Exception {
 

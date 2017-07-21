@@ -32,9 +32,6 @@ public class PrenomInseeService {
 	@EJB
 	private PrenomInseeDao prenomInseeDao;
 	
-	@EJB
-	private EstimationDao estimationDao;
-	
 	
 	/** 
 	 * obtenir un tableau de 1900 à 2015 avec nombre de naissances associées pour ce un prénom.

@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.email.AuthentificationEchoueeException;
 import fr.santa.akachan.middleware.email.ConnexionEchoueeException;
 import fr.santa.akachan.middleware.email.ContenuInvalideException;
@@ -29,7 +30,6 @@ import fr.santa.akachan.middleware.email.DestinataireInvalideException;
 import fr.santa.akachan.middleware.email.SujetInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
-import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.EmailService;
 
 @WebService

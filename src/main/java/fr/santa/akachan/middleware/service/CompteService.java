@@ -14,6 +14,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.authentification.Jeton;
+import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.CompteDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
@@ -23,8 +25,6 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
 import fr.santa.akachan.middleware.rest.EstimationRS;
-import fr.santa.akachan.middleware.securite.Jeton;
-import fr.santa.akachan.middleware.securite.JwtCreation;
 
 
 @Stateless
@@ -38,7 +38,7 @@ public class CompteService {
 	private CompteDao compteDao;
 	
 	@EJB
-	private JwtCreation jwtCreation;
+	private JetonService jetonService;
 	
 	/** 
 	 * créer un compte
@@ -171,7 +171,7 @@ public class CompteService {
 				throw new CompteInvalideException("email ou mot de passe invalide.");
 			}
 			else {
-				String token = jwtCreation.creerToken2(compteValide);
+				String token = jetonService.creerToken(compteValide);
 				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
 				jeton = new Jeton(compteValide.getClient().getUuid().toString(),compteValide.getClient().getPrenom(), token) ;
 			}

@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.securite;
+package fr.santa.akachan.middleware.authentification;
 
 import java.io.IOException;
 
@@ -22,7 +22,11 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 
-
+/**
+ * méthode qui alloue à l'annotation @Securise la validation
+ * d'un tokenpassé dans le header d'une requête.
+ *
+ */
 @Securise
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -32,7 +36,11 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(FiltreAuthentification.class);
 	
-	
+	/**
+	 * extraire le token, et vérifier qu'il est valide.
+	 * 
+	 * @throw NotAuthorizedException si le header est invalide.
+	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
@@ -60,34 +68,5 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         }
     }
 	
-	
-	
-	// TODO : inutilisé pour l'instant. Si besoin ajouter des throw exception.
-	public void validerToken(String token) {
 		
-		ClefSecrete clefSecrete = new ClefSecrete();
-		
-		try {
-			 LOGGER.info("================================== debut validerToken()");
-			//Jwts.parser().setSigningKey(clefSecrete.getSecret()).parseClaimsJws(token).getBody().getSubject().equals("users/TzMUocMF4p");
-			 Jws<Claims> jws = Jwts.parser().setSigningKey(clefSecrete.getSecret().getBytes("UTF-8")).parseClaimsJws(token);
-			 LOGGER.info("================================== " + jws.getBody().getExpiration());
-		    
-		 
-		} catch (SignatureException e) {
-		 
-			LOGGER.info("*********************************SIGNATURE EXCEPTION");
-		}
-		catch (ExpiredJwtException e) {
-			// date expiration passée.
-			LOGGER.info("*********************************DATE EXPIREE");
-		}
-		catch(Exception e) {
-			
-			LOGGER.info("*********************************VALIDATION DU TOKEN REJETEE");
-		}
-	
-		
-	}
-	
 }

@@ -20,15 +20,15 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.authentification.Jeton;
+import fr.santa.akachan.middleware.authentification.JetonService;
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
-import fr.santa.akachan.middleware.securite.Jeton;
-import fr.santa.akachan.middleware.securite.JwtCreation;
-import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.CompteService;
 
 @WebService
@@ -40,7 +40,7 @@ public class CompteRS {
 			LoggerFactory.getLogger(CompteRS.class);
 	
 	@EJB
-	private JwtCreation jwtCreation;
+	private JetonService jwtCreation;
 	
 	@EJB
 	private CompteService compteService;
@@ -50,14 +50,14 @@ public class CompteRS {
 	@POST
 	@Path("/creer")
     @Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("text/plain")
 	public Response creerCompte (Compte compte) {
 		
 		Response.ResponseBuilder builder = null;
 		
             try {
 				compteService.creerCompte(compte);
-				builder = Response.ok(compte);
+				builder = Response.ok("compte créé avec succès.");
             }
 			catch (CompteDejaExistantException e) {
 					 builder = Response.status(Response.Status.CONFLICT);
@@ -75,13 +75,12 @@ public class CompteRS {
         return builder.build();
 	}
 	
-	// TODO : inutilisé côté ihm, voir si utile pour admin
 	@POST
 	@Securise
 	@Path("/obtenir")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirCompte(@FormParam("email") String email) {
+	public Response obtenirCompte(@FormParam("email") final String email) {
 		
 		Response.ResponseBuilder builder = null;
 		
@@ -101,7 +100,7 @@ public class CompteRS {
 	@Path("/modifier")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response modifierCompte(Compte compte) {
+	public Response modifierCompte(final Compte compte) {
 		
 		Response.ResponseBuilder builder = null;
 
@@ -149,8 +148,8 @@ public class CompteRS {
 	@POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response connecterCompte(@FormParam("email") String email, 
-            						@FormParam("password") String password) {
+	public Response connecterCompte(@FormParam("email") final String email, 
+            						@FormParam("password") final String password) {
 		
 		Response.ResponseBuilder builder = null;
 		Jeton jeton;

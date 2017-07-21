@@ -90,65 +90,6 @@ public class ClientDao {
 		return client;
 	}
 	
-	// TODO : inutilisé car modification faite côté compte (relation OneToOne).
-	public void modifierClient(final Client client) {
-		
-		em.merge(client);
-	}
-	
-	
-	/** 
-	 * Obtenir liste Akachan des estimations (prénoms aimés) d'un client
-	 * 
-	 * @param refClient
-	 * @return List<Estimation>
-	 */
-	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
-		
-		 final String requeteJPQL = "Estimation.obtenirListeAkachan";
-		 
-		 final Query requete = em.createNamedQuery(requeteJPQL);
-			requete.setParameter("refclient", refClient);
-			
-		List<Estimation> listeAkachan = requete.getResultList();
-		return listeAkachan;
-	}
-	
-	/** 
-	 * Obtenir liste noire des estimations (prénoms non aimés) d'un client
-	 * 
-	 * @param refClient
-	 * @return List<Estimation>
-	 */
-	public List<Estimation> obtenirListeNoire(final UUID refClient) {
-
-		 final String requeteJPQL = "Estimation.obtenirListeNoire";
-		 
-		 final Query requete = em.createNamedQuery(requeteJPQL);
-			requete.setParameter("refclient", refClient);
-			
-		List<Estimation> listeNoire = requete.getResultList();
-		 
-		return listeNoire;
-	}
-	
-	/** 
-	 * Obtenir la liste des favoris d'un client (favori = 1)
-	 * 
-	 * @param refClient
-	 * @return List<Estimation>
-	 */
-	public List<Estimation> obtenirListeFavoris(final UUID refClient) {
-		
-		final String requeteJPQL ="Estimation.obtenirListeFavoris";
-		
-		final Query requete = em.createNamedQuery(requeteJPQL);
-		requete.setParameter("refclient", refClient);
-		
-		List<Estimation> listeFavoris = requete.getResultList();
-	 
-		return listeFavoris;
-	}
 	
 	/** 
 	 * Vérifier si le client existe dans la bdd.

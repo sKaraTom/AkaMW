@@ -131,26 +131,6 @@ public class EstimationDao {
 		return totalEstimClient;		
 	}
 	
-	// TODO : inutilisé depuis reconstruction recherche.
-	/** 
-	 * obtenir la liste des prénoms déjà estimés par un client (filtre : sexe).
-	 * Sert notamment pour la comparaison dans l'outil recherche.
-	 * 
-	 * @param sexe
-	 * @param refClient
-	 * @return List<String> liste de prénoms estimés
-	 */
-	public List<String> obtenirPrenomsEstimesClientParSexe(final String sexe,final UUID refClient){
-		
-		final String requeteJPQL = "SELECT e.prenom FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex";
-		final Query requete = em.createQuery(requeteJPQL);
-		requete.setParameter("refclient", refClient);
-		requete.setParameter("sex", sexe);
-		
-		List<String> listePrenomsEstimes = requete.getResultList();
-		
-		return listePrenomsEstimes;
-	}
 	
 	/**
 	 * obtenir une estimation
@@ -170,6 +150,60 @@ public class EstimationDao {
 		
 		return estimation;
 	}
+	
+	/** 
+	 * Obtenir liste Akachan des estimations (prénoms aimés) d'un client
+	 * 
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
+	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
+		
+		 final String requeteJPQL = "Estimation.obtenirListeAkachan";
+		 
+		 final Query requete = em.createNamedQuery(requeteJPQL);
+			requete.setParameter("refclient", refClient);
+			
+		List<Estimation> listeAkachan = requete.getResultList();
+		return listeAkachan;
+	}
+	
+	/** 
+	 * Obtenir liste noire des estimations (prénoms non aimés) d'un client
+	 * 
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
+	public List<Estimation> obtenirListeNoire(final UUID refClient) {
+
+		 final String requeteJPQL = "Estimation.obtenirListeNoire";
+		 
+		 final Query requete = em.createNamedQuery(requeteJPQL);
+			requete.setParameter("refclient", refClient);
+			
+		List<Estimation> listeNoire = requete.getResultList();
+		 
+		return listeNoire;
+	}
+	
+	/** 
+	 * Obtenir la liste des favoris d'un client (favori = 1)
+	 * 
+	 * @param refClient
+	 * @return List<Estimation>
+	 */
+	public List<Estimation> obtenirListeFavoris(final UUID refClient) {
+		
+		final String requeteJPQL ="Estimation.obtenirListeFavoris";
+		
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("refclient", refClient);
+		
+		List<Estimation> listeFavoris = requete.getResultList();
+	 
+		return listeFavoris;
+	}
+	
 	
 	
 	/** créer une estimation.

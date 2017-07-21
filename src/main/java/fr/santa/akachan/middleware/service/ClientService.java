@@ -62,47 +62,6 @@ public class ClientService {
 		return clientARetourner;
 	}
 	
-	/** 
-	 * obtenir toutes les estimations positives (akachan = "true")
-	 * 
-	 * @param refClient
-	 * @return List<Estimation> liste Akachan
-	 */
-	public List<Estimation> obtenirListeAkachanTrue(final UUID refClient) {
-		
-		List<Estimation> listeAkachan = clientDao.obtenirListAkachanTrue(refClient);
-		
-		return listeAkachan;
-	}	
-	
-	/** 
-	 * obtenir toutes les estimations négatives (akachan = "false")
-	 * 
-	 * @param refClient
-	 * @return List<Estimation> liste Noire
-	 */
-	public List<Estimation> obtenirListeNoire(final UUID refClient) {
-		
-		List<Estimation> listeNoire = clientDao.obtenirListeNoire(refClient);
-		
-		return listeNoire;
-	}	
-	
-	/** 
-	 * Obtenir les estimations favorites d'un client (favori = 1)
-	 * 
-	 * @param refClient
-	 * @return List<Estimation> liste des estimations favorites.
-	 */
-	public List<Estimation> obtenirListeFavoris(final UUID refClient) {
-		
-		List<Estimation> listeFavoris = clientDao.obtenirListeFavoris(refClient);
-		
-		return listeFavoris;
-	}
-	
-	
-	
 	
 	
 }

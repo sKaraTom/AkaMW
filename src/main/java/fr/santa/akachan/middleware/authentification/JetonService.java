@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.securite;
+package fr.santa.akachan.middleware.authentification;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,11 +21,16 @@ import javax.transaction.Transactional;
 
 @Stateless
 @Transactional
-public class JwtCreation {
-
+public class JetonService {
 	
-	
-	public String creerToken2(Compte compte) throws UnsupportedEncodingException {
+	/**
+	 * méthode de création d'un token.
+	 * 
+	 * @param compte pour extraire les informations à intégrer au token.
+	 * @return String un token
+	 * @throws UnsupportedEncodingException
+	 */
+	public String creerToken(Compte compte) throws UnsupportedEncodingException {
 		
 		ClefSecrete clefSecrete = new ClefSecrete();
 		Client client = compte.getClient();
@@ -33,8 +38,8 @@ public class JwtCreation {
 		Date date = new Date();
 		long t = date.getTime();
 		Date dateExpiration = new Date(t + (240*60*60*1000)); // date de maintenant + 10 jours. 10*24h*60mn*60sec*1000ms
-		// 5000l pour test 5 secondes
 		
+		// construction du token
 		String token = Jwts.builder()
 				  .setSubject("users/TzMUocMF4p")
 				  .setIssuedAt(date)
@@ -47,7 +52,7 @@ public class JwtCreation {
 				  )
 				  .compact();
 		
-	return token;	
+		return token;	
 	}
 	
 	

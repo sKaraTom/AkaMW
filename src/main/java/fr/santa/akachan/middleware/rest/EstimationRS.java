@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
@@ -70,6 +71,7 @@ public class EstimationRS {
 	}
 	
 	@GET
+	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}")
 	public Response obtenirNbEstimClient(@PathParam("refclient") UUID refClient) {
@@ -90,6 +92,7 @@ public class EstimationRS {
 	
 	
 	@GET
+	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}/{sexe}")
 	public Response obtenirNbEstimClientParSexe(@PathParam("refclient") UUID refClient, @PathParam("sexe") String sexe) {
@@ -108,8 +111,51 @@ public class EstimationRS {
 			return builder.build();
 	}
 	
+	@GET
+	@Securise
+	@Path("/listeA/{ref}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirListeAkachanTrue(@PathParam("ref") final UUID refClient) {
+		
+		 Response.ResponseBuilder builder = null;
+		 
+		 final List<Estimation> liste = estimationService.obtenirListeAkachanTrue(refClient);
+
+         builder = Response.ok(liste);
+         return builder.build();
+	}
+	
+	@GET
+	@Securise
+	@Path("/listeN/{ref}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {
+		
+		 Response.ResponseBuilder builder = null;
+		 
+		 final List<Estimation> liste = estimationService.obtenirListeNoire(refClient);
+
+         builder = Response.ok(liste);
+         return builder.build();
+	}
+	
+	@GET
+	@Securise
+	@Path("/listeF/{ref}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirListeFavoris(@PathParam("ref") final UUID refClient) {
+		
+		 Response.ResponseBuilder builder = null;
+		 
+		 final List<Estimation> liste = estimationService.obtenirListeFavoris(refClient);
+
+         builder = Response.ok(liste);
+         return builder.build();
+	}
+	
 	
 	@POST
+	@Securise
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{refClient}")
@@ -134,6 +180,7 @@ public class EstimationRS {
 	}
 	
 	@PUT
+	@Securise
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{choixAkachan}")
@@ -148,6 +195,7 @@ public class EstimationRS {
 	}
 	
 	@PUT
+	@Securise
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response modifierEstimation(Estimation estimation) {
@@ -169,6 +217,7 @@ public class EstimationRS {
 	}
 	
 	@DELETE
+	@Securise
 	@Produces("text/plain")
 	@Path("/{refClient}")
 	public Response effacerToutesEstimationsClient(@PathParam("refClient")final UUID refClient) {

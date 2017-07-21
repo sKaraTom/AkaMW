@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.securite;
+package fr.santa.akachan.middleware.authentification;
 
 import java.io.Serializable;
 
@@ -9,7 +9,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-
+/**
+ * un objet Jeton qui sera envoyé côté ihm
+ * contient l'id client, son prénom et un token. 
+ *
+ */
 @XmlRootElement
 public class Jeton implements Serializable {
 

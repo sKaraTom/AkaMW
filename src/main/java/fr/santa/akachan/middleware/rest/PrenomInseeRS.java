@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.PrenomInseeDao;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
@@ -42,13 +43,13 @@ public class PrenomInseeRS {
 	
 	
 	@GET
+	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/pop/{sexe}/{label}")
 	public Response obtenirNaissances(@PathParam("label") String label, @PathParam("sexe") String sexe) {
 		
 		 Response.ResponseBuilder builder = null;
 
-  	    // Cas Nominal
         ArrayList<Integer> liste = null;
         
 		try {

@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
@@ -22,7 +23,6 @@ import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException
 import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
-import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.ClientService;
 
 @WebService
@@ -74,45 +74,5 @@ public class ClientRS {
          return builder.build();
 	}
 	
-	@GET
-	@Securise
-	@Path("/listeA/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirListeAkachanTrue(@PathParam("ref") final UUID refClient) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 final List<Estimation> liste = clientService.obtenirListeAkachanTrue(refClient);
-
-         builder = Response.ok(liste);
-         return builder.build();
-	}
-	
-	@GET
-	@Securise
-	@Path("/listeN/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 final List<Estimation> liste = clientService.obtenirListeNoire(refClient);
-
-         builder = Response.ok(liste);
-         return builder.build();
-	}
-	
-	@GET
-	@Path("/listeF/{ref}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirListeFavoris(@PathParam("ref") final UUID refClient) {
-		
-		 Response.ResponseBuilder builder = null;
-		 
-		 final List<Estimation> liste = clientService.obtenirListeFavoris(refClient);
-
-         builder = Response.ok(liste);
-         return builder.build();
-	}
 	
 }

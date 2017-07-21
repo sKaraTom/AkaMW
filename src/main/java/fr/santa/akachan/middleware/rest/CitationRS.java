@@ -16,12 +16,12 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.*;
 import static javax.ws.rs.core.Response.status;
 
+import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.citation.Citation;
 import fr.santa.akachan.middleware.objetmetier.citation.CitationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.citation.CitationInexistanteException;
 import fr.santa.akachan.middleware.objetmetier.citation.CitationInvalideException;
-import fr.santa.akachan.middleware.securite.Securise;
 import fr.santa.akachan.middleware.service.CitationService;
 
 
