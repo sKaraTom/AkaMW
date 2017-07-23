@@ -71,7 +71,6 @@ public class EstimationRS {
 	}
 	
 	@GET
-	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}")
 	public Response obtenirNbEstimClient(@PathParam("refclient") UUID refClient) {
@@ -92,7 +91,6 @@ public class EstimationRS {
 	
 	
 	@GET
-	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/stats/{refclient}/{sexe}")
 	public Response obtenirNbEstimClientParSexe(@PathParam("refclient") UUID refClient, @PathParam("sexe") String sexe) {
@@ -140,7 +138,6 @@ public class EstimationRS {
 	}
 	
 	@GET
-	@Securise
 	@Path("/listeF/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeFavoris(@PathParam("ref") final UUID refClient) {
