@@ -19,7 +19,7 @@ import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.CompteDao;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
-import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
+import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
@@ -45,12 +45,12 @@ public class CompteService {
 	 * 
 	 * @param compte à persister
 	 * @throws CompteInvalideException
-	 * @throws CompteDejaExistantException si un compte identique est trouvé dans la base
+	 * @throws CompteExistantException si un compte identique est trouvé dans la base
 	 * @throws EmailInvalideException
 	 * @throws PasswordInvalideException 
 	 */
 	public void creerCompte(final Compte compte)
-			throws CompteInvalideException, CompteDejaExistantException, EmailInvalideException, PasswordInvalideException {
+			throws CompteInvalideException, CompteExistantException, EmailInvalideException, PasswordInvalideException {
 		
 		// d'abord vérifier que le compte est valide (les variables sont formatées correctement)
 		// avant d'interroger la BDD.
@@ -77,7 +77,7 @@ public class CompteService {
 			compteDao.ajouter(compte);
 		}
 		else {
-			throw new CompteDejaExistantException();
+			throw new CompteExistantException();
 		}
 	}
 	
@@ -214,7 +214,7 @@ public class CompteService {
 			throw new EmailInvalideException("l'email ne peut être vide.");
 		}
 		
-		Boolean emailValide = Pattern.matches("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)+$", email);
+		Boolean emailValide = Pattern.matches("^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", email);
 		
 		if(!emailValide) {
 			throw new EmailInvalideException("email invalide.");

@@ -24,7 +24,7 @@ import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.authentification.Securise;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
-import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
+import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
@@ -59,7 +59,7 @@ public class CompteRS {
 				compteService.creerCompte(compte);
 				builder = Response.ok("compte créé avec succès.");
             }
-			catch (CompteDejaExistantException e) {
+			catch (CompteExistantException e) {
 					 builder = Response.status(Response.Status.CONFLICT);
 			} 
             catch (CompteInvalideException e) {

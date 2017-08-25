@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
-import fr.santa.akachan.middleware.objetmetier.compte.CompteDejaExistantException;
+import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 
@@ -37,15 +37,15 @@ public class CompteDao {
 	 * 
 	 * @param compte
 	 * @throws CompteInvalideException si le compte à créer n'est pas valide.
-	 * @throws CompteDejaExistantException si un compte identique est dans la bdd.
+	 * @throws CompteExistantException si un compte identique est dans la bdd.
 	 */
-	public void ajouter(final Compte compte) throws CompteInvalideException, CompteDejaExistantException {
+	public void ajouter(final Compte compte) throws CompteInvalideException, CompteExistantException {
 		
 		try {
 			em.persist(compte);
 		}
 		catch(final EntityExistsException e) {
-			throw new CompteDejaExistantException();
+			throw new CompteExistantException();
 		}
 		catch(final IllegalArgumentException e ) {
 			throw new CompteInvalideException();

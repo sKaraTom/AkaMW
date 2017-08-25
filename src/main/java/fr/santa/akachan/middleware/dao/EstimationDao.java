@@ -294,8 +294,8 @@ public class EstimationDao {
 		requete.setParameter("sex", estimation.getSexe());
 		
 		try {
-		String resultat = (String) requete.getSingleResult();
-		return true;
+			String resultat = (String) requete.getSingleResult();
+			return true;
 		}
 		
 		catch(NoResultException e) {
