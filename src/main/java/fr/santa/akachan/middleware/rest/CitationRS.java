@@ -86,7 +86,7 @@ public class CitationRS {
 		Citation citationAleatoire;
 		try {
 			citationAleatoire = citationService.obtenirCitationAleatoire();
-			builder = status(OK).entity(citationAleatoire);
+			builder = Response.ok(citationAleatoire);
 			
 		} catch (DaoException e) {
 			status(INTERNAL_SERVER_ERROR).entity(e.getMessage());

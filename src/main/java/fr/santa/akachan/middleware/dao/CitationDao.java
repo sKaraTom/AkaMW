@@ -78,7 +78,7 @@ public class CitationDao {
 		
 		Long total;
 		try {
-		total = (Long) requete.getSingleResult();
+			total = (Long) requete.getSingleResult();
 		}
 		catch(Exception e) {
 			throw new DaoException("echec à l'obtention du nombre total de citations.");
