@@ -51,7 +51,7 @@ public class CitationDao {
 	 * 
 	 * @param id l'id (Integer) de la citation
 	 * @return Citation la citation trouvée
-	 * @throws CitationInexistanteException si aucune existante à cet idée.
+	 * @throws CitationInexistanteException si aucune citation existante à cet id.
 	 */
 	public Citation obtenirCitation(final Integer id) throws CitationInexistanteException {
 		
