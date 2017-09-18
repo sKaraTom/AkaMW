@@ -8,7 +8,7 @@
 		Nous définissons la règle de traitement
 		et de redirection des URLs du serveur Java EE.
 		Toute URL répondant à la regex /ws/* sera traitée par notre application.
-		Toute URL ne répondant pas à la regex sera ignoré par notre application.
+		Toute URL ne répondant pas à la regex sera ignorée par notre application.
 	-->	
 	<servlet-mapping>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>

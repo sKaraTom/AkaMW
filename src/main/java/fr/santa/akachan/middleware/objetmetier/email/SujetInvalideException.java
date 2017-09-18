@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.email;
+package fr.santa.akachan.middleware.objetmetier.email;
 
 public class SujetInvalideException extends Exception {
 

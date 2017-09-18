@@ -9,13 +9,13 @@ import javax.mail.internet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.email.AuthentificationEchoueeException;
-import fr.santa.akachan.middleware.email.ConnexionEchoueeException;
-import fr.santa.akachan.middleware.email.ContenuInvalideException;
-import fr.santa.akachan.middleware.email.CourrierGmail;
-import fr.santa.akachan.middleware.email.DestinataireInvalideException;
-import fr.santa.akachan.middleware.email.SujetInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
+import fr.santa.akachan.middleware.objetmetier.email.AuthentificationEchoueeException;
+import fr.santa.akachan.middleware.objetmetier.email.ConnexionEchoueeException;
+import fr.santa.akachan.middleware.objetmetier.email.ContenuInvalideException;
+import fr.santa.akachan.middleware.objetmetier.email.CourrierGmail;
+import fr.santa.akachan.middleware.objetmetier.email.DestinataireInvalideException;
+import fr.santa.akachan.middleware.objetmetier.email.SujetInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.rest.EstimationRS;
 

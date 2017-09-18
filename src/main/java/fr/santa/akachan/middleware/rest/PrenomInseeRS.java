@@ -43,7 +43,6 @@ public class PrenomInseeRS {
 	
 	
 	@GET
-	@Securise
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/pop/{sexe}/{label}")
 	public Response obtenirNaissances(@PathParam("label") String label, @PathParam("sexe") String sexe) {

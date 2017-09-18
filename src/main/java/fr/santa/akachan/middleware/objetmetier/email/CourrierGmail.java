@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.email;
+package fr.santa.akachan.middleware.objetmetier.email;
 
 import java.util.Properties;
 
