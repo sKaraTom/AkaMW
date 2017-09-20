@@ -16,6 +16,6 @@ import javax.ws.rs.NameBinding;
 @NameBinding
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface Securise {
+public @interface Authentifie {
 
 }

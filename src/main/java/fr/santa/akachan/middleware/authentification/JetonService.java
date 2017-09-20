@@ -1,7 +1,5 @@
 package fr.santa.akachan.middleware.authentification;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
 import java.io.UnsupportedEncodingException;
@@ -23,37 +21,60 @@ import javax.transaction.Transactional;
 @Transactional
 public class JetonService {
 	
+	private final String clef = "%^$lsf#&asfgva120" ;
+	
+	
 	/**
 	 * méthode de création d'un token.
 	 * 
-	 * @param compte pour extraire les informations à intégrer au token.
+	 * @param compte pour extraire les informations à intégrer au token, nbreJoursToken pour définir une date d'expiration du token.
 	 * @return String un token
 	 * @throws UnsupportedEncodingException
 	 */
-	public String creerToken(Compte compte) throws UnsupportedEncodingException {
+	public String creerToken(Compte compte, Integer dureeMsAvantExpiration) throws UnsupportedEncodingException {
 		
-		ClefSecrete clefSecrete = new ClefSecrete();
 		Client client = compte.getClient();
 		
 		Date date = new Date();
 		long t = date.getTime();
-		Date dateExpiration = new Date(t + (240*60*60*1000)); // date de maintenant + 10 jours. 10*24h*60mn*60sec*1000ms
+		Date dateExpiration = new Date(t + dureeMsAvantExpiration); // date de maintenant + durée (ms)
 		
 		// construction du token
 		String token = Jwts.builder()
-				  .setSubject("users/TzMUocMF4p")
-				  .setIssuedAt(date)
-				  .setExpiration(dateExpiration)
-				  .claim("prenom", client.getPrenom())
-				  .claim("sexe", client.getSexe())
-				  .signWith(
-				    SignatureAlgorithm.HS256,
-				    clefSecrete.getSecret().getBytes("UTF-8")
-				  )
-				  .compact();
+						  .setSubject("users/TzMUocMF4p")
+						  .setIssuedAt(date)
+						  .setExpiration(dateExpiration)
+						  .claim("prenom", client.getPrenom())
+						  .claim("sexe", client.getSexe())
+						  .signWith(
+						    SignatureAlgorithm.HS256,
+						    clef.getBytes("UTF-8")
+						  )
+						  .compact();
 		
 		return token;	
 	}
+	
+	/**
+	 * méthode de validation d'un token.
+	 * 
+	 * @param token
+	 * @throws ExpiredJwtException si la date d'expiration est passée.
+	 * @throws UnsupportedJwtException
+	 * @throws MalformedJwtException
+	 * @throws SignatureException
+	 * @throws IllegalArgumentException
+	 * @throws UnsupportedEncodingException
+	 */
+	public void validerToken(String token) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException,
+	SignatureException, IllegalArgumentException, UnsupportedEncodingException {
+		
+	 
+		Jws<Claims> jws = Jwts.parser().setSigningKey(clef.getBytes("UTF-8")).parseClaimsJws(token);
+
+	}
+	
+	
 	
 	
 }

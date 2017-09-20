@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
@@ -110,7 +110,7 @@ public class EstimationRS {
 	}
 	
 	@GET
-	@Securise
+	@Authentifie
 	@Path("/listeA/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeAkachanTrue(@PathParam("ref") final UUID refClient) {
@@ -124,7 +124,7 @@ public class EstimationRS {
 	}
 	
 	@GET
-	@Securise
+	@Authentifie
 	@Path("/listeN/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {
@@ -152,7 +152,7 @@ public class EstimationRS {
 	
 	
 	@POST
-	@Securise
+	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{refClient}")
@@ -177,7 +177,7 @@ public class EstimationRS {
 	}
 	
 	@PUT
-	@Securise
+	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{choixAkachan}")
@@ -192,7 +192,7 @@ public class EstimationRS {
 	}
 	
 	@PUT
-	@Securise
+	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response modifierEstimation(Estimation estimation) {
@@ -214,7 +214,7 @@ public class EstimationRS {
 	}
 	
 	@DELETE
-	@Securise
+	@Authentifie
 	@Produces("text/plain")
 	@Path("/{refClient}")
 	public Response effacerToutesEstimationsClient(@PathParam("refClient")final UUID refClient) {

@@ -22,7 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.email.AuthentificationEchoueeException;
 import fr.santa.akachan.middleware.objetmetier.email.ConnexionEchoueeException;
@@ -84,7 +84,7 @@ public class EmailRS {
 	}
 	
 	@POST
-	@Securise
+	@Authentifie
 	@Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Path("/selection/{prenomClient}/{mailClient}/{mailAutre}")

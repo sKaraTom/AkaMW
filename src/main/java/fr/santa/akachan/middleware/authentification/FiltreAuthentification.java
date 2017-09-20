@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
@@ -24,7 +25,7 @@ import io.jsonwebtoken.Jwts;
  * d'un tokenpassé dans le header d'une requête.
  *
  */
-@Securise
+@Authentifie
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class FiltreAuthentification implements ContainerRequestFilter {
@@ -33,8 +34,13 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(FiltreAuthentification.class);
 	
+	@EJB
+	JetonService jetonService;
+	
+	
 	/**
-	 * extraire le token, et vérifier qu'il est valide.
+	 * méthode implémentée de l'interface ContainerRequestFilter
+	 * extraire le token, et vérifier qu'il est valide sinon lever une exception et envoyer un code http d'erreur.
 	 * 
 	 * @throw NotAuthorizedException si le header est invalide.
 	 */
@@ -52,17 +58,20 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         // Extraire le token du header http
         String token = headerAuthorization.substring("Bearer".length()).trim();
         
-        ClefSecrete clefSecrete = new ClefSecrete();
-        
-        try {
-            // valider le token
-        	 Jws<Claims> jws = Jwts.parser().setSigningKey(clefSecrete.getSecret().getBytes("UTF-8")).parseClaimsJws(token);
-        	 
+        // valider le token :
+        // si date d'expiration passée : code 400
+        // pour toute autre exception : code 401
+        try {	
+        	jetonService.validerToken(token);
+        } catch (ExpiredJwtException e) {
+        	requestContext.abortWith(
+	                Response.status(Response.Status.BAD_REQUEST).entity("la session a expiré, veuillez vous reconnecter.").build());
         } catch (Exception e) {
            // n'importe quelle exception annule la connexion côté ihm.
         	requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED).build());
         }
+        
     }
 	
 		

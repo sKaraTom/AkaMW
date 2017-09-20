@@ -3,6 +3,7 @@ package fr.santa.akachan.middleware.service;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
@@ -17,11 +18,13 @@ import org.slf4j.LoggerFactory;
 import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.CompteDao;
+import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.CompteNonAdminException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
 import fr.santa.akachan.middleware.rest.EstimationRS;
@@ -171,7 +174,9 @@ public class CompteService {
 				throw new CompteInvalideException("email ou mot de passe invalide.");
 			}
 			else {
-				String token = jetonService.creerToken(compteValide);
+				Integer dureeExpirationToken = 100*24*60*60*1000; // nombre de jours*24h*60mn*60sec*1000ms
+				String token = jetonService.creerToken(compteValide,dureeExpirationToken);
+				
 				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
 				jeton = new Jeton(compteValide.getClient().getUuid().toString(),compteValide.getClient().getPrenom(), token) ;
 			}
@@ -179,6 +184,37 @@ public class CompteService {
 			return jeton;
 	
 	}
+	
+	/**
+	 * se connecter à la console d'administration.
+	 * si succès envoie d'un token à durée courte côté ihm
+	 * 
+	 * @param compte
+	 * @return String sessionId
+	 * @throws CompteInexistantException
+	 * @throws CompteInvalideException
+	 * @throws CompteNonAdminException
+	 * @throws UnsupportedEncodingException 
+	 */
+	public String connecterAdmin(final Compte compte) throws CompteInexistantException, CompteInvalideException, CompteNonAdminException, UnsupportedEncodingException {
+		
+		Compte compteValide = compteDao.obtenir(compte.getEmail());
+		
+		if (!compteValide.getPassword().equals(compte.getPassword()) ||
+			!compteValide.getEmail().equals(compte.getEmail())) {
+			throw new CompteInvalideException("login ou mot de passe invalide.");
+		}
+		
+		if(!compteValide.getRole().equals("admin")) {
+			throw new CompteNonAdminException("accès non autorisé.");
+		}
+		
+		Integer dureeExpirationToken = 3600000; // 1h = 60mn*60sec*1000ms
+		String token = jetonService.creerToken(compteValide,dureeExpirationToken);
+		
+		return token;
+	}
+	
 	
 	/** 
 	 * valider un compte :

@@ -15,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
@@ -55,7 +55,7 @@ public class ClientRS {
 	
 	
 	@GET
-	@Securise
+	@Authentifie
 	@Path("/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirClient(@PathParam("ref") final UUID refClient) {

@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.PrenomInseeDao;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;

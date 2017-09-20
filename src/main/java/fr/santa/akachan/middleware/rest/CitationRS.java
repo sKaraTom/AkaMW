@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.*;
 import static javax.ws.rs.core.Response.status;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.citation.Citation;
 import fr.santa.akachan.middleware.objetmetier.citation.CitationExistanteException;
@@ -35,7 +35,7 @@ public class CitationRS {
 	
 	
 	@POST
-	@Securise
+	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response ajouterCitation(Citation citation) {
@@ -57,7 +57,7 @@ public class CitationRS {
 		}
 	
 	@GET
-	@Securise
+	@Authentifie
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirCitations(){
 		

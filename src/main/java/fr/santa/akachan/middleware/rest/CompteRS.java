@@ -22,11 +22,13 @@ import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
+import fr.santa.akachan.middleware.objetmetier.compte.CompteNonAdminException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
 import fr.santa.akachan.middleware.service.CompteService;
@@ -76,7 +78,7 @@ public class CompteRS {
 	}
 	
 	@POST
-	@Securise
+	@Authentifie
 	@Path("/obtenir")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -96,7 +98,7 @@ public class CompteRS {
 	}
 	
 	@PUT
-	@Securise
+	@Authentifie
 	@Path("/modifier")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -119,7 +121,7 @@ public class CompteRS {
 	}
 	
 	@PUT
-	@Securise
+	@Authentifie
 	@Path("/modifier/password")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces("text/plain")
@@ -172,8 +174,39 @@ public class CompteRS {
 		return builder.build();
 	}
 	
+	@POST
+	@Path("/admin/connexion")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response connecterAdmin(final Compte compte) {
+		
+		Response.ResponseBuilder builder = null;
+				
+				try {
+					String sessionId;
+					sessionId = compteService.connecterAdmin(compte);
+					builder = Response.ok(sessionId);
+					
+				} catch (CompteInexistantException e) {
+					builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+					
+				} catch (CompteInvalideException e) {
+					builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+					
+					
+				} catch (CompteNonAdminException e) {
+					builder = Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage());
+					
+				} catch (UnsupportedEncodingException e) {
+					builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+				}
+		
+		return builder.build();
+	}
+	
+	
 	@GET
-	@Securise
+	@Authentifie
 	@Path("/token")
 	@Produces("text/plain")
 	public Response validerToken() {

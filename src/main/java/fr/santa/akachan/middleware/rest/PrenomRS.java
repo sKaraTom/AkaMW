@@ -16,7 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fr.santa.akachan.middleware.authentification.Securise;
+import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.prenom.PrenomInexistantException;
@@ -34,7 +34,7 @@ public class PrenomRS {
 	
 	
 	@GET
-	@Securise
+	@Authentifie
     @Produces("text/plain")
 	@Path("/{sexe}/{refclient}/{tendance}")
 	public Response genererPrenomAleatoire(@PathParam("sexe") String sexe,@PathParam("refclient") UUID refClient,@PathParam("tendance") Integer choixTendance) {
@@ -61,7 +61,7 @@ public class PrenomRS {
 	
 	
 	@POST
-	@Securise
+	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/recherche/{rechercheExacte}")
