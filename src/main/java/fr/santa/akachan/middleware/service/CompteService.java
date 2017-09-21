@@ -84,12 +84,31 @@ public class CompteService {
 		}
 	}
 	
-	// TODO : inutilisé côté ihm, voir si utile pour admin
+	/**
+	 * obtenir un compte à partir de sa clef primaire, l'email.
+	 * 
+	 * @param email
+	 * @return le compte obtenu
+	 * @throws CompteInexistantException
+	 */
 	public Compte obtenirCompte(final String email) throws CompteInexistantException {
 			
 		Compte compte = compteDao.obtenir(email);
 		
 		return compte;
+	}
+	
+	/**
+	 * obtenir tous les comptes sans leur password (interface ADMIN)
+	 * 
+	 * @return List<Compte> tous les comptes sans password
+	 * @throws DaoException
+	 */
+	public List<Compte> obtenirTousComptes() throws DaoException {
+		
+		List<Compte> listeComptes = compteDao.obtenirTousComptes();
+		
+		return listeComptes;
 	}
 	
 	/** 
@@ -175,7 +194,7 @@ public class CompteService {
 			}
 			else {
 				Integer dureeExpirationToken = 100*24*60*60*1000; // nombre de jours*24h*60mn*60sec*1000ms
-				String token = jetonService.creerToken(compteValide,dureeExpirationToken);
+				String token = jetonService.creerToken(compteValide,dureeExpirationToken,"clefClient");
 				
 				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
 				jeton = new Jeton(compteValide.getClient().getUuid().toString(),compteValide.getClient().getPrenom(), token) ;
@@ -187,7 +206,7 @@ public class CompteService {
 	
 	/**
 	 * se connecter à la console d'administration.
-	 * si succès envoie d'un token à durée courte côté ihm
+	 * si succès envoi d'un token propre à durée courte
 	 * 
 	 * @param compte
 	 * @return String sessionId
@@ -210,7 +229,7 @@ public class CompteService {
 		}
 		
 		Integer dureeExpirationToken = 3600000; // 1h = 60mn*60sec*1000ms
-		String token = jetonService.creerToken(compteValide,dureeExpirationToken);
+		String token = jetonService.creerToken(compteValide,dureeExpirationToken,"clefAdmin");
 		
 		return token;
 	}

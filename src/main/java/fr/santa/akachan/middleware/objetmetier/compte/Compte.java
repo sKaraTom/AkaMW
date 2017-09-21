@@ -2,11 +2,13 @@ package fr.santa.akachan.middleware.objetmetier.compte;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.UUID;
 
 import javax.mail.internet.InternetAddress;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -30,6 +32,10 @@ import fr.santa.akachan.middleware.objetmetier.client.Client;
 
 @XmlRootElement
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "Compte.obtenirTousComptes", 
+			query = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl")
+	})
 @Table(name = "T_COMPTE")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
 public class Compte implements Serializable {
@@ -58,8 +64,21 @@ public class Compte implements Serializable {
 		this.dateDeCreation = Calendar.getInstance();
 		this.role = "client";
 		this.client = client;
+	}
+	
+	// constructeur pour l'obtention de tous les comptes et client sans données sensibles.
+	public Compte(String email, Calendar dateDeCreation, String role, String prenom, String sexe) {
+		super();
+		this.email = email;
+		this.password = null;
+		this.dateDeCreation = dateDeCreation;
+		this.role = role;
+		this.client = new Client();
+		this.client.setPrenom(prenom);
+		this.client.setSexe(sexe);
 		
 	}
+	
 	
 	@Id
 	@Column(name = "COM_EMAIL")
@@ -99,7 +118,7 @@ public class Compte implements Serializable {
 		this.role = role;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL,mappedBy="compte")
+	@OneToOne(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy="compte", fetch = FetchType.EAGER)
 	public Client getClient() {
 		return client;
 	}

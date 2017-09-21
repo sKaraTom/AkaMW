@@ -10,6 +10,9 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import io.jsonwebtoken.*;
@@ -21,7 +24,12 @@ import javax.transaction.Transactional;
 @Transactional
 public class JetonService {
 	
-	private final String clef = "%^$lsf#&asfgva120" ;
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(JetonService.class);
+	
+	private final String clefClient = "%^$lsf#&asfgva120" ;
+	private final String clefAdmin = "i1O8lea-yW*%qYZ";
 	
 	
 	/**
@@ -31,7 +39,7 @@ public class JetonService {
 	 * @return String un token
 	 * @throws UnsupportedEncodingException
 	 */
-	public String creerToken(Compte compte, Integer dureeMsAvantExpiration) throws UnsupportedEncodingException {
+	public String creerToken(Compte compte, Integer dureeMsAvantExpiration, String choixClef) throws UnsupportedEncodingException {
 		
 		Client client = compte.getClient();
 		
@@ -48,7 +56,7 @@ public class JetonService {
 						  .claim("sexe", client.getSexe())
 						  .signWith(
 						    SignatureAlgorithm.HS256,
-						    clef.getBytes("UTF-8")
+						    choixClef.getBytes("UTF-8")
 						  )
 						  .compact();
 		
@@ -66,11 +74,11 @@ public class JetonService {
 	 * @throws IllegalArgumentException
 	 * @throws UnsupportedEncodingException
 	 */
-	public void validerToken(String token) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException,
+	public void validerToken(String token, String choixClef) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException,
 	SignatureException, IllegalArgumentException, UnsupportedEncodingException {
 		
-	 
-		Jws<Claims> jws = Jwts.parser().setSigningKey(clef.getBytes("UTF-8")).parseClaimsJws(token);
+			Jws<Claims> jws = Jwts.parser().setSigningKey(choixClef.getBytes("UTF-8")).parseClaimsJws(token);
+		
 
 	}
 	

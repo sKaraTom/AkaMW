@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.dao;
 
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.ejb.Stateless;
@@ -68,6 +69,31 @@ public class CompteDao {
 			throw new CompteInexistantException("le compte n'existe pas");
 		}
 		return compte;
+	}
+	
+	/**
+	 * obtenir tous les comptes (interface ADMIN)
+	 * 
+	 * @return List<Compte> tous les comptes sans leur mot de passe.
+	 * @throws DaoException
+	 */
+	public List<Compte> obtenirTousComptes() throws DaoException {
+		
+		final String requeteJPQL = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl";
+		
+		final TypedQuery<Compte> requete = em.createQuery(requeteJPQL,Compte.class);
+		
+		List<Compte> listeComptes;
+		
+		try {
+			listeComptes = requete.getResultList();
+		}
+		catch(Exception e) {
+			throw new DaoException("échec à l'obtention des comptes depuis la base de données.");
+		}
+		return listeComptes;
+		
+		
 	}
 	
 	

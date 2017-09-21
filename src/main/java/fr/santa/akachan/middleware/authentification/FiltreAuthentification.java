@@ -50,22 +50,41 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 		//récupérer header authorization de la requête HTTP
 		String headerAuthorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 		
+        String intituleHeader = null;
+        String choixClef = null;
+		
 		 // vérifier que le header 'authorization' est bien présent et formaté.
-        if (headerAuthorization == null || !headerAuthorization.startsWith("Bearer ")) {
+        if (headerAuthorization == null) {
         	 throw new NotAuthorizedException("header Authorization requis");
         }	
 
+        else if(headerAuthorization.startsWith("Bearer ")) {
+        	intituleHeader = "Bearer ";
+        	choixClef = "clefClient";
+        }
+	        
+        else if(headerAuthorization.startsWith("BearerAdmin ")) {
+        	intituleHeader = "BearerAdmin ";
+        	choixClef = "clefAdmin";
+        }
+        
+        else {
+        	throw new NotAuthorizedException("header invalide");
+        }
+         
         // Extraire le token du header http
-        String token = headerAuthorization.substring("Bearer".length()).trim();
+        String token = headerAuthorization.substring(intituleHeader.length()).trim();
         
         // valider le token :
         // si date d'expiration passée : code 400
         // pour toute autre exception : code 401
         try {	
-        	jetonService.validerToken(token);
+        	jetonService.validerToken(token,choixClef);
+        
         } catch (ExpiredJwtException e) {
         	requestContext.abortWith(
 	                Response.status(Response.Status.BAD_REQUEST).entity("la session a expiré, veuillez vous reconnecter.").build());
+        
         } catch (Exception e) {
            // n'importe quelle exception annule la connexion côté ihm.
         	requestContext.abortWith(

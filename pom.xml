@@ -125,8 +125,8 @@
 						</goals>
 						<configuration>
 							<hostname>localhost</hostname>
-							<username>Tomadmin</username>
-							<password>daimadoshiw06</password>
+							<username>admin</username>
+							<password>admin</password>
 						</configuration>
 					</execution>
 				</executions>

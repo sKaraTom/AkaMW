@@ -34,7 +34,8 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 @XmlRootElement
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c")
+	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c"),
+	@NamedQuery(name = "Client.obtenirNbreClientsParSexe", query = "SELECT COUNT(c.prenom) FROM Client c WHERE c.sexe=:sexe")
 	})
 @Table(name = "T_CLIENT")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid") // pour éviter boucles infinies en json côté WS

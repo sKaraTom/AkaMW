@@ -97,6 +97,25 @@ public class CompteRS {
 		return builder.build();
 	}
 	
+	@GET
+	@Authentifie
+	@Path("/admin/comptes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirTousComptes() {
+		
+		Response.ResponseBuilder builder = null;
+		
+		try {
+			List<Compte> listeComptes = compteService.obtenirTousComptes();
+			builder = Response.ok(listeComptes);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+        return builder.build();
+	}
+	
+	
 	@PUT
 	@Authentifie
 	@Path("/modifier")
