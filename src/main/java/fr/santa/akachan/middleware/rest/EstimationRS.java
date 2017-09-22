@@ -27,6 +27,7 @@ import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
+import fr.santa.akachan.middleware.objetmetier.estimation.EstimationInvalideException;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 import fr.santa.akachan.middleware.service.EstimationService;
@@ -124,7 +125,7 @@ public class EstimationRS {
 	}
 	
 	@GET
-	@Authentifie
+//	@Authentifie
 	@Path("/listeN/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {
@@ -166,12 +167,11 @@ public class EstimationRS {
 	} catch (ClientIntrouvableException e) {
 		builder = Response.status(Response.Status.BAD_REQUEST);
 	
-	} catch (PrenomInseeInexistantException e) {
-		builder = Response.status(Response.Status.BAD_REQUEST);
-		
 	} catch (EstimationExistanteException e) {
 		builder = Response.status(Response.Status.CONFLICT);
 		
+	} catch (EstimationInvalideException e) {
+		builder = Response.status(Response.Status.BAD_REQUEST);
 	}
 	   return builder.build();
 	}
@@ -186,7 +186,7 @@ public class EstimationRS {
 		 Response.ResponseBuilder builder = null;
 		 
 		 estimationService.changerDeListeEstimations(estimations, akachan);
-		  builder = Response.ok(estimations);
+		 builder = Response.ok(estimations);
 
 		   return builder.build();
 	}

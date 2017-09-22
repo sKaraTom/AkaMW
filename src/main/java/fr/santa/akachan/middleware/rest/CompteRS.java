@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.dto.CompteDTO;
 import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
@@ -112,6 +113,20 @@ public class CompteRS {
 		} catch (DaoException e) {
 			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
 		}
+        return builder.build();
+	}
+	
+	@GET
+	@Authentifie
+	@Path("/admin/comptesDTO")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response obtenirTousComptesDTO() {
+		
+		Response.ResponseBuilder builder = null;
+		
+		List<CompteDTO> listeComptes = compteService.obtenirTousComptesDTO();
+		builder = Response.ok(listeComptes);
+			
         return builder.build();
 	}
 	

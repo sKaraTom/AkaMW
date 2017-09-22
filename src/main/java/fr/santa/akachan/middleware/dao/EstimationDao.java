@@ -9,11 +9,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
@@ -26,13 +28,12 @@ import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 @Transactional
 public class EstimationDao {
 
-	@PersistenceContext
-	private EntityManager em;
-	
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(EstimationDao.class);
 	
-	
+	@PersistenceContext
+	private EntityManager em;
+
 	
 	/** 
 	 * obtenir le nombre total d'estimations sans distinction de client, liste akachan ou noire, ou autre.
@@ -98,8 +99,8 @@ public class EstimationDao {
 		try {
 			totalEstimClient = (Long) requete.getSingleResult();
 		}
-		catch (NoResultException n) {
-			throw new DaoException();
+		catch (NoResultException e) {
+			throw new DaoException( " échec à l'obtention du nbre d'estimations clients depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		return totalEstimClient;
 		
@@ -121,11 +122,13 @@ public class EstimationDao {
 		requete.setParameter("sex", sexe);
 		
 		Long totalEstimClient = null;
+		
 		try {
-		totalEstimClient = (Long) requete.getSingleResult();
+			totalEstimClient = (Long) requete.getSingleResult();
 		}
-		catch (NoResultException n) {
-			throw new DaoException();
+		
+		catch (NoResultException e) {
+			throw new DaoException( "échec à l'obtention du nbre d'estim d'un client par sexe depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		
 		return totalEstimClient;		
@@ -145,46 +148,30 @@ public class EstimationDao {
 		estimation = em.find(Estimation.class, uuidEstimation);
 		
 		if(Objects.isNull(estimation)) {
-			throw new EstimationIntrouvableException("erreur interne : aucune estimation trouvée.");
+			throw new EstimationIntrouvableException("aucune estimation trouvée depuis la bdd.");
 		}
 		
 		return estimation;
 	}
 	
 	/** 
-	 * Obtenir liste Akachan des estimations (prénoms aimés) d'un client
+	 * Obtenir liste des estimations (liste akachan ou noir) d'un client
 	 * 
-	 * @param refClient
+	 * @param refClient, booleenAkachan si prénoms aimés ou pas
 	 * @return List<Estimation>
 	 */
-	public List<Estimation> obtenirListAkachanTrue(final UUID refClient) {
-		
-		 final String requeteJPQL = "Estimation.obtenirListeAkachan";
+	public List<Estimation> obtenirListeEstimations(final UUID refClient,String booleenAkachan) {
+			
+		 final String requeteJPQL = "Estimation.obtenirListeEstimations";
 		 
-		 final Query requete = em.createNamedQuery(requeteJPQL);
+		 final TypedQuery<Estimation> requete = em.createNamedQuery(requeteJPQL,Estimation.class);
 			requete.setParameter("refclient", refClient);
+			requete.setParameter("akachan", booleenAkachan);
 			
 		List<Estimation> listeAkachan = requete.getResultList();
 		return listeAkachan;
 	}
 	
-	/** 
-	 * Obtenir liste noire des estimations (prénoms non aimés) d'un client
-	 * 
-	 * @param refClient
-	 * @return List<Estimation>
-	 */
-	public List<Estimation> obtenirListeNoire(final UUID refClient) {
-
-		 final String requeteJPQL = "Estimation.obtenirListeNoire";
-		 
-		 final Query requete = em.createNamedQuery(requeteJPQL);
-			requete.setParameter("refclient", refClient);
-			
-		List<Estimation> listeNoire = requete.getResultList();
-		 
-		return listeNoire;
-	}
 	
 	/** 
 	 * Obtenir la liste des favoris d'un client (favori = 1)
@@ -196,7 +183,7 @@ public class EstimationDao {
 		
 		final String requeteJPQL ="Estimation.obtenirListeFavoris";
 		
-		final Query requete = em.createNamedQuery(requeteJPQL);
+		final TypedQuery<Estimation> requete = em.createNamedQuery(requeteJPQL,Estimation.class);
 		requete.setParameter("refclient", refClient);
 		
 		List<Estimation> listeFavoris = requete.getResultList();
@@ -248,11 +235,10 @@ public class EstimationDao {
 	public void modifierEstimation(final Estimation estimation) throws DaoException {
 		
 		try {
-			LOGGER.info("************************ estimation merge DAO : " + estimation.getDateEstimation().getTime());
 			em.merge(estimation);
 		}
 		catch(Exception e) {
-			throw new DaoException("problème interne : impossible d'enregistrer la modification dans la base.");
+			throw new DaoException("impossible d'enregistrer la modification dans la base : " + e.getClass() + " - " + e.getMessage());
 		}
 	}
 	
@@ -272,7 +258,7 @@ public class EstimationDao {
 			requete.executeUpdate();
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à la suppression des estimations.");
+			throw new DaoException("échec à la suppression des estimations : " + e.getClass() + " - " + e.getMessage());
 		}
 	}
 	

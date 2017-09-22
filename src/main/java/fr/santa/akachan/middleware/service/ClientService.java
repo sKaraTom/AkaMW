@@ -1,11 +1,15 @@
 package fr.santa.akachan.middleware.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
@@ -19,7 +23,10 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 @Stateless
 @Transactional
 public class ClientService {
-
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(ClientService.class);
+	
 	@EJB
 	private ClientDao clientDao;
 	
@@ -35,6 +42,20 @@ public class ClientService {
 		return total;
 	}
 	
+	/**
+	 * obtenir le nombre total de clients par sexe
+	 * 
+	 * @param sexe
+	 * @return
+	 * @throws DaoException
+	 */
+	public Long obtenirNombreClientsParSexe(final String sexe) throws DaoException {
+		
+		Long totalParSexe = clientDao.obtenirNombreClientsParSexe(sexe);
+		
+		return totalParSexe;
+	}
+	
 
 	/** 
 	 * obtenir un client par son uuid sans les champs sensibles (password du compte, uuid client)
@@ -43,24 +64,15 @@ public class ClientService {
 	 * @param refClient
 	 * @return le client obtenu
 	 * @throws ClientIntrouvableException
+	 * @throws DaoException 
 	 */
-	public Client obtenirClientSansDonneesSensibles(UUID refClient) throws ClientIntrouvableException {
+	public Client obtenirClientSansDonneesSensibles(UUID refClient) throws ClientIntrouvableException, DaoException {
 		
-		Client clientDeReference = clientDao.obtenirClient(refClient);
+		Client client = clientDao.obtenirClientSansDonneesSensibles(refClient);
 		
-		// Instancier un client qui prendra les valeurs souhaitées du client qu'on doit retourner :
-		// choisir les champs souhaités et ne pas modifier le client de référence.
-		Client clientARetourner = new Client();
-		clientARetourner.setPrenom(clientDeReference.getPrenom());
-		clientARetourner.setSexe(clientDeReference.getSexe());
-		
-		// instancier un compte et remplacer le mot de passe par "confidentiel".
-		// Le lier au client retourné.
-		Compte compte = new Compte(clientDeReference.getCompte().getEmail(),"confidentiel",clientARetourner);
-		clientARetourner.setCompte(compte);
-		
-		return clientARetourner;
+		return client;
 	}
+	
 	
 	
 	

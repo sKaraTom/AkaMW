@@ -8,6 +8,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -55,6 +57,34 @@ public class ClientDao {
 		return total;
 	}
 	
+	
+	/**
+	 * obtenir le nombre total de clients par sexe
+	 * 
+	 * @param sexe
+	 * @return
+	 * @throws DaoException
+	 */
+	public Long obtenirNombreClientsParSexe(final String sexe) throws DaoException {
+		
+		final String requeteJPQL = "Client.obtenirNbreClientsParSexe";
+		
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("sexe", sexe);
+		
+		Long total;
+		
+		try {
+		total = (Long) requete.getSingleResult();
+		}
+		
+		catch(Exception e) {
+			throw new DaoException("echec à l'obtention du nombre de clients par sexe : " +  e.getClass() + " - " + e.getMessage());
+		}
+		
+		return total;
+	}
+	
 	/** 
 	 * Obtenir la liste de tous les clients inscrits.
 	 * TODO : A dérouler jusqu'aux WS pour admin.
@@ -71,7 +101,7 @@ public class ClientDao {
 	}
 
 	/** 
-	 * obtenir un client par son uuid (sert côté ihm pour infos compte)
+	 * obtenir un client par son uuid
 	 * 
 	 * @param refClient
 	 * @return
@@ -84,12 +114,36 @@ public class ClientDao {
 		client = em.find(Client.class, refClient);
 		
 		if(Objects.isNull(client)) {
-			throw new ClientIntrouvableException();
+			throw new ClientIntrouvableException("aucun client trouvé à cet uuid : ");
 		}
 		
 		return client;
 	}
 	
+	public Client obtenirClientSansDonneesSensibles(final UUID refClient) throws ClientIntrouvableException, DaoException {
+		
+		final String requeteJPQL = "Client.obtenirClientSansDonneesSensibles";
+		
+		final TypedQuery<Client> requete = em.createNamedQuery(requeteJPQL,Client.class);
+		requete.setParameter("uuid", refClient);
+		
+		Client client;
+		
+		try {
+			client = (Client)requete.getSingleResult();
+		}
+		
+		catch(NoResultException e) {
+			throw new ClientIntrouvableException("Aucun client existant pour cet uuid.");
+		}
+
+		catch(Exception e) {
+			throw new DaoException("un problème est survenu à l'obtention du client depuis la bdd : " + e.getClass() + " - " + e.getMessage());
+		}
+		
+		return client;
+		
+	}
 	
 	/** 
 	 * Vérifier si le client existe dans la bdd.

@@ -34,7 +34,10 @@ import fr.santa.akachan.middleware.objetmetier.client.Client;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "Compte.obtenirTousComptes", 
-			query = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl")
+			query = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl WHERE c.role != 'admin'"),
+//	@NamedQuery(name = "Compte.obtenirTousComptesDTO", 
+//	query = "SELECT new CompteDTO(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe, (SELECT COUNT(e.refClient) FROM Estimation e WHERE e.refClient=cl.uuid)) FROM Client cl LEFT JOIN cl.compte c WHERE c.role != 'admin'"),
+
 	})
 @Table(name = "T_COMPTE")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
@@ -118,7 +121,7 @@ public class Compte implements Serializable {
 		this.role = role;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy="compte", fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy="compte")
 	public Client getClient() {
 		return client;
 	}

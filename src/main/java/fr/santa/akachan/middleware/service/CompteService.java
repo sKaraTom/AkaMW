@@ -19,6 +19,7 @@ import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.CompteDao;
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.dto.CompteDTO;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
@@ -106,10 +107,19 @@ public class CompteService {
 	 */
 	public List<Compte> obtenirTousComptes() throws DaoException {
 		
-		List<Compte> listeComptes = compteDao.obtenirTousComptes();
+		List<Compte> listeComptes = compteDao.obtenirTousComptesSansDonneesSensibles();
 		
 		return listeComptes;
 	}
+	
+	
+	public List<CompteDTO> obtenirTousComptesDTO() {
+		
+		List<CompteDTO> listeComptes = compteDao.obtenirTousComptesDTO();
+		
+		return listeComptes;
+	}
+	
 	
 	/** 
 	 * modifier les informations client du compte.

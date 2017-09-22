@@ -81,7 +81,7 @@ public class CitationDao {
 			total = (Long) requete.getSingleResult();
 		}
 		catch(Exception e) {
-			throw new DaoException("echec à l'obtention du nombre total de citations.");
+			throw new DaoException("echec à l'obtention du nombre total de citations depuis la bdd :" + e.getClass() + " - " + e.getMessage());
 		}
 
 		return total;
@@ -111,7 +111,7 @@ public class CitationDao {
 			listeCitations = requete.getResultList(); 
 		}
 		catch(Exception e) {
-			throw new DaoException("echec à obtenir la liste de citations depuis la bdd");
+			throw new DaoException("echec à obtenir la liste de citations depuis la bdd :" + e.getClass() + " - " + e.getMessage());
 		}
 		
 		return listeCitations;

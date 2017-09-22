@@ -17,10 +17,12 @@ import org.slf4j.LoggerFactory;
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.EstimationDao;
+import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
+import fr.santa.akachan.middleware.objetmetier.estimation.EstimationInvalideException;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
@@ -91,6 +93,7 @@ public class EstimationService {
 		return total;
 	}
 	
+	// TODO : refactorer les 2 méthodes en une (paramètre akachan à remonter jusqu'à l'ihm).
 	/** 
 	 * obtenir toutes les estimations positives (akachan = "true")
 	 * 
@@ -99,7 +102,7 @@ public class EstimationService {
 	 */
 	public List<Estimation> obtenirListeAkachanTrue(final UUID refClient) {
 		
-		List<Estimation> listeAkachan = estimationDao.obtenirListAkachanTrue(refClient);
+		List<Estimation> listeAkachan = estimationDao.obtenirListeEstimations(refClient,"true");
 		
 		return listeAkachan;
 	}	
@@ -112,7 +115,7 @@ public class EstimationService {
 	 */
 	public List<Estimation> obtenirListeNoire(final UUID refClient) {
 		
-		List<Estimation> listeNoire = estimationDao.obtenirListeNoire(refClient);
+		List<Estimation> listeNoire = estimationDao.obtenirListeEstimations(refClient,"false");
 		
 		return listeNoire;
 	}	
@@ -140,16 +143,15 @@ public class EstimationService {
 	 * @throws ClientIntrouvableException si la vérification de l'uuid client a échoué
 	 * @throws PrenomInexistantException si le prénom reçu est blanc.
 	 * @throws EstimationExistanteException s'il existe déjà une estimation pour ce prénom.
+	 * @throws EstimationInvalideException 
 	 */
 	public void estimerPrenom (Estimation estimation, UUID refClient)
-			throws ClientIntrouvableException, PrenomInseeInexistantException, EstimationExistanteException {
+			throws ClientIntrouvableException, EstimationExistanteException, EstimationInvalideException {
 		
-		if (!clientDao.contenirClient(refClient)) {
-            throw new ClientIntrouvableException();
-		}
+		Client client = clientDao.obtenirClient(refClient);
 		
 		if (StringUtils.isBlank(estimation.getPrenom())) {
-			throw new PrenomInseeInexistantException();
+			throw new EstimationInvalideException();
 		}
 		
 		else {

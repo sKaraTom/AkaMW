@@ -41,14 +41,33 @@ public class ClientRS {
 		
 		 Response.ResponseBuilder builder = null;
 		 
-		 Long TotalClients;
+		 Long totalClients;
 
 		 try {
-			TotalClients = clientService.obtenirNombreClients();
-			builder = Response.ok(TotalClients);
+			totalClients = clientService.obtenirNombreClients();
+			builder = Response.ok(totalClients);
 			
 		} catch (DaoException e) {
 			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+		}	
+         return builder.build();
+	}
+	
+	@GET
+	@Path("/total/{sexe}")
+	@Produces("text/plain")
+	public Response obtenirNombreClientsParSexe(@PathParam("sexe") final String sexe) {
+		
+		 Response.ResponseBuilder builder = null;
+		 
+		 Long total;
+
+		 try {
+			total = clientService.obtenirNombreClientsParSexe(sexe);
+			builder = Response.ok(total);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
 		}	
          return builder.build();
 	}
@@ -66,8 +85,12 @@ public class ClientRS {
 		try {
 			client = clientService.obtenirClientSansDonneesSensibles(refClient);
 	        builder = Response.ok(client);
+	        
 		} catch (ClientIntrouvableException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
 		}
 
 

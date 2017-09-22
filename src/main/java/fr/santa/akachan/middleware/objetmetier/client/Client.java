@@ -23,9 +23,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
@@ -34,8 +38,11 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 @XmlRootElement
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c"),
-	@NamedQuery(name = "Client.obtenirNbreClientsParSexe", query = "SELECT COUNT(c.prenom) FROM Client c WHERE c.sexe=:sexe")
+	@NamedQuery(name = "Client.obtenirNbreClients", query = "SELECT COUNT(c.prenom) FROM Client c WHERE c.compte.role != 'admin'"),
+	@NamedQuery(name = "Client.obtenirNbreClientsParSexe", 
+		query = "SELECT COUNT(c.prenom) FROM Client c WHERE c.sexe=:sexe AND c.compte.role != 'admin'"),
+	@NamedQuery(name = "Client.obtenirClientSansDonneesSensibles", 
+		query = "SELECT new Client(c.uuid,c.prenom,c.sexe,c.compte.email) FROM Client c WHERE c.uuid=:uuid")
 	})
 @Table(name = "T_CLIENT")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid") // pour éviter boucles infinies en json côté WS
@@ -46,6 +53,7 @@ public class Client implements Serializable{
 	private String sexe;
 	
 	private Compte compte;
+	
 	
 	public Client() {
 		super();
@@ -58,7 +66,16 @@ public class Client implements Serializable{
 		this.sexe = sexe;
 		this.compte = compte;
 	}
-
+	
+	// constructeur pour la requête obtenirClient sans données sensibles.
+	public Client(UUID uuid, String prenom, String sexe, String email) {
+		super();
+		this.uuid = uuid;
+		this.prenom = prenom;
+		this.sexe = sexe;
+		this.compte = new Compte();
+		this.compte.setEmail(email);
+	}
 	
 	@Id
     @GeneratedValue(generator = "uuid")

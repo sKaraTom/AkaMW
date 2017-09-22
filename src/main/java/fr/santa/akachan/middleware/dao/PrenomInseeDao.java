@@ -44,8 +44,9 @@ public class PrenomInseeDao {
 
 		try {
 			liste = requete.getResultList();
+			
 		} catch (Exception e) {
-			throw new DaoException(e);
+			throw new DaoException("échec à l'obtention des stats d'un prénom depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 
 		return liste;

@@ -54,7 +54,7 @@ public class PrenomDao {
 			throw new PrenomIntrouvableException("aucun prénom n'a pu être trouvé.");
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à l'obtention d'un prénom aléatoire depuis la base.");
+			throw new DaoException("échec à l'obtention d'un prénom aléatoire depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		return prenomAleatoire;
 	}
@@ -92,7 +92,7 @@ public class PrenomDao {
 			throw new PrenomIntrouvableException("aucun prénom tendance n'a pu être trouvé.");
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à l'obtention d'un prénom tendance depuis la base.");
+			throw new DaoException("échec à l'obtention d'un prénom tendance depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		return prenomTendance;
 	}
@@ -130,7 +130,7 @@ public class PrenomDao {
 			throw new PrenomIntrouvableException("aucun prénom ancien n'a pu être trouvé.");
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à l'obtention d'un prénom ancien depuis la base.");
+			throw new DaoException("échec à l'obtention d'un prénom ancien depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		return prenomAncien;
 	} 

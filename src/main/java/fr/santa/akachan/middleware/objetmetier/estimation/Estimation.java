@@ -4,10 +4,14 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -19,11 +23,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import fr.santa.akachan.middleware.objetmetier.client.Client;
+
 @XmlRootElement
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "Estimation.obtenirListeAkachan", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='true'"),
-	@NamedQuery(name = "Estimation.obtenirListeNoire", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan='false'"),
+	@NamedQuery(name = "Estimation.obtenirListeEstimations", 
+		query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan=:akachan"),
 	@NamedQuery(name = "Estimation.obtenirListeFavoris", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.favori='1'"),
 	@NamedQuery(name = "Estimation.obtenirNbreTotal", query = "SELECT count(*) FROM Estimation"),
 	@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.sexe=:sex"),
@@ -35,6 +46,7 @@ import org.hibernate.annotations.GenericGenerator;
 	@NamedQuery(name = "Estimation.supprimerToutesEstimationsClient", query = "DELETE FROM Estimation e WHERE e.refClient=:refclient")
 	})
 @Table(name = "T_ESTIMATION")
+//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid") 
 public class Estimation implements Serializable {
 
 	private UUID uuid;
@@ -47,7 +59,7 @@ public class Estimation implements Serializable {
 	private String akachan;
 	
 	private Calendar dateEstimation;
-
+	
 	public Estimation() {
 		super();
 		this.dateEstimation = Calendar.getInstance();
@@ -130,6 +142,7 @@ public class Estimation implements Serializable {
 	public void setDateEstimation(Calendar dateEstimation) {
 		this.dateEstimation = dateEstimation;
 	}
+	
 
 	@Override
 	public int hashCode() {

@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.santa.akachan.middleware.dto.CompteDTO;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteExistantException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteInexistantException;
@@ -55,7 +56,6 @@ public class CompteDao {
 	
 	/** 
 	 * obtenir un compte.
-	 * utile pour modifier un compte par exemple.
 	 * 
 	 * @param email de référence (pk)
 	 * @return le compte obtenu.
@@ -74,14 +74,14 @@ public class CompteDao {
 	/**
 	 * obtenir tous les comptes (interface ADMIN)
 	 * 
-	 * @return List<Compte> tous les comptes sans leur mot de passe.
+	 * @return List<Compte> tous les comptes sans mot de passe et uuid client.
 	 * @throws DaoException
 	 */
-	public List<Compte> obtenirTousComptes() throws DaoException {
+	public List<Compte> obtenirTousComptesSansDonneesSensibles() throws DaoException {
 		
-		final String requeteJPQL = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl";
+		final String requeteJPQL = "Compte.obtenirTousComptes";
 		
-		final TypedQuery<Compte> requete = em.createQuery(requeteJPQL,Compte.class);
+		final TypedQuery<Compte> requete = em.createNamedQuery(requeteJPQL, Compte.class);
 		
 		List<Compte> listeComptes;
 		
@@ -89,8 +89,32 @@ public class CompteDao {
 			listeComptes = requete.getResultList();
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à l'obtention des comptes depuis la base de données.");
+			throw new DaoException("échec à l'obtention des comptes depuis la bdd :" + e.getClass() + " - " + e.getMessage());
 		}
+		return listeComptes;
+	}
+	
+	
+	public List<CompteDTO> obtenirTousComptesDTO() {
+		
+//		final String requeteJPQL = "Compte.obtenirTousComptesDTO";
+//		final TypedQuery<CompteDTO> requete = em.createNamedQuery(requeteJPQL, CompteDTO.class);
+		
+		final String requeteJPQL = "SELECT new fr.santa.akachan.middleware.dto.CompteDTO(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe, (SELECT COUNT(e.refClient) FROM Estimation e WHERE e.refClient=cl.uuid)) FROM Client cl LEFT JOIN cl.compte c WHERE c.role != 'admin'";
+		
+		final TypedQuery<CompteDTO> requete = em.createQuery(requeteJPQL, CompteDTO.class);
+		
+		final StringBuilder requeteSQL = new StringBuilder();
+		requeteSQL.append("SELECT co.com_email AS email, co.com_datecreation AS date, co.com_role AS role ,cl.cli_prenom AS prenom,");
+		requeteSQL.append(" cl.cli_sexe AS sexe, count(e.est_refClient) AS total FROM t_client cl");
+		requeteSQL.append(" LEFT JOIN t_compte co ON co.com_email=cl.compte_email");
+		requeteSQL.append(" LEFT JOIN t_estimation e ON (e.est_refClient=cl.cli_uuid)");
+		requeteSQL.append(" GROUP BY email,prenom,sexe;");
+		
+//		final Query requete = em.createNativeQuery(requeteSQL.toString(),CompteDTO.class);
+		
+		List<CompteDTO> listeComptes = requete.getResultList();
+		
 		return listeComptes;
 		
 		
