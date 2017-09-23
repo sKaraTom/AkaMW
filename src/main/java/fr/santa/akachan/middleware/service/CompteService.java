@@ -203,7 +203,7 @@ public class CompteService {
 				throw new CompteInvalideException("email ou mot de passe invalide.");
 			}
 			else {
-				Integer dureeExpirationToken = 100*24*60*60*1000; // nombre de jours*24h*60mn*60sec*1000ms
+				Long dureeExpirationToken = 8640000000l; // (nombre de jours: 100)*24h*60mn*60sec*1000ms
 				String token = jetonService.creerToken(compteValide,dureeExpirationToken,"clefClient");
 				
 				// je créé un jeton contenant l'uuid client, son prénom, et le token à retourner.
@@ -238,7 +238,7 @@ public class CompteService {
 			throw new CompteNonAdminException("accès non autorisé.");
 		}
 		
-		Integer dureeExpirationToken = 3600000; // 1h = 60mn*60sec*1000ms
+		Long dureeExpirationToken = 3600000l; // 1h = 60mn*60sec*1000ms
 		String token = jetonService.creerToken(compteValide,dureeExpirationToken,"clefAdmin");
 		
 		return token;

@@ -125,7 +125,7 @@ public class EstimationRS {
 	}
 	
 	@GET
-//	@Authentifie
+	@Authentifie
 	@Path("/listeN/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeNoire(@PathParam("ref") final UUID refClient) {

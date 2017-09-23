@@ -35,11 +35,11 @@ public class JetonService {
 	/**
 	 * méthode de création d'un token.
 	 * 
-	 * @param compte pour extraire les informations à intégrer au token, nbreJoursToken pour définir une date d'expiration du token.
+	 * @param compte pour extraire les informations à intégrer au token, dureeMsAvantExpiration pour définir une durée avant expiration du token.
 	 * @return String un token
 	 * @throws UnsupportedEncodingException
 	 */
-	public String creerToken(Compte compte, Integer dureeMsAvantExpiration, String choixClef) throws UnsupportedEncodingException {
+	public String creerToken(Compte compte, Long dureeMsAvantExpiration, String choixClef) throws UnsupportedEncodingException {
 		
 		Client client = compte.getClient();
 		
