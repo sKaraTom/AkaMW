@@ -2,6 +2,7 @@ package fr.santa.akachan.middleware.dto;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -24,6 +25,8 @@ public class CompteDTO implements Serializable {
 	
 	String role;
 	
+	UUID uuid;
+	
 	String prenom;
 	
 	String sexe;
@@ -35,16 +38,18 @@ public class CompteDTO implements Serializable {
 		super();
 	}
 
-	public CompteDTO(String email, Calendar dateDeCreation, String role, String prenom, String sexe,
+	public CompteDTO(String email, Calendar dateDeCreation, String role, UUID uuid, String prenom, String sexe,
 			Long nombreEstimations) {
 		super();
 		this.email = email;
 		this.dateDeCreation = dateDeCreation;
 		this.role = role;
+		this.uuid = uuid;
 		this.prenom = prenom;
 		this.sexe = sexe;
 		this.nombreEstimations = nombreEstimations;
 	}
+
 
 	public String getEmail() {
 		return email;
@@ -68,6 +73,14 @@ public class CompteDTO implements Serializable {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getPrenom() {

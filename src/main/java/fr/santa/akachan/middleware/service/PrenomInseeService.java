@@ -56,7 +56,7 @@ public class PrenomInseeService {
 			// puis je peuple à chaque année de naissance récupérée (année de naissance -1900 pour tomber sur l'index).
 			// à cet index j'ajoute le nombre de naissances.
 			for( PrenomInsee prenom : statsPrenom) {
-				listeNaissances.set((prenom.getAnnee()-1900), prenom.getNombreNaissance());
+				listeNaissances.set((prenom.getAnnee()-1900), prenom.getNombreNaissances());
 			}
 		return listeNaissances;
 	}

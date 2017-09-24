@@ -32,13 +32,6 @@ import fr.santa.akachan.middleware.objetmetier.client.Client;
 
 @XmlRootElement
 @Entity
-@NamedQueries({
-	@NamedQuery(name = "Compte.obtenirTousComptes", 
-			query = "SELECT new Compte(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe) FROM Compte c JOIN c.client cl WHERE c.role != 'admin'"),
-//	@NamedQuery(name = "Compte.obtenirTousComptesDTO", 
-//	query = "SELECT new CompteDTO(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe, (SELECT COUNT(e.refClient) FROM Estimation e WHERE e.refClient=cl.uuid)) FROM Client cl LEFT JOIN cl.compte c WHERE c.role != 'admin'"),
-
-	})
 @Table(name = "T_COMPTE")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
 public class Compte implements Serializable {
@@ -67,19 +60,6 @@ public class Compte implements Serializable {
 		this.dateDeCreation = Calendar.getInstance();
 		this.role = "client";
 		this.client = client;
-	}
-	
-	// constructeur pour l'obtention de tous les comptes et client sans données sensibles.
-	public Compte(String email, Calendar dateDeCreation, String role, String prenom, String sexe) {
-		super();
-		this.email = email;
-		this.password = null;
-		this.dateDeCreation = dateDeCreation;
-		this.role = role;
-		this.client = new Client();
-		this.client.setPrenom(prenom);
-		this.client.setSexe(sexe);
-		
 	}
 	
 	

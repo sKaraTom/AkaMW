@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -100,34 +101,23 @@ public class CompteRS {
 	
 	@GET
 	@Authentifie
-	@Path("/admin/comptes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response obtenirTousComptes() {
-		
-		Response.ResponseBuilder builder = null;
-		
-		try {
-			List<Compte> listeComptes = compteService.obtenirTousComptes();
-			builder = Response.ok(listeComptes);
-			
-		} catch (DaoException e) {
-			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
-		}
-        return builder.build();
-	}
-	
-	@GET
-	@Authentifie
 	@Path("/admin/comptesDTO")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirTousComptesDTO() {
 		
 		Response.ResponseBuilder builder = null;
 		
-		List<CompteDTO> listeComptes = compteService.obtenirTousComptesDTO();
-		builder = Response.ok(listeComptes);
+		List<CompteDTO> listeComptes;
+		
+		try {
+			listeComptes = compteService.obtenirTousComptesDTO();
+			builder = Response.ok(listeComptes);
 			
-        return builder.build();
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+
+		return builder.build();
 	}
 	
 	
@@ -190,20 +180,20 @@ public class CompteRS {
 		Response.ResponseBuilder builder = null;
 		Jeton jeton;
 
-			try {
-				jeton = compteService.connecter(email, password);
-				builder = Response.ok(jeton);
-				
-			} catch (UnsupportedEncodingException e) {
-				builder = Response.status(Response.Status.NOT_ACCEPTABLE);
-				
-			} catch (CompteInvalideException e) {
-				builder = Response.status(Response.Status.UNAUTHORIZED);	
+		try {
+			jeton = compteService.connecter(email, password);
+			builder = Response.ok(jeton);
 			
-			} catch (CompteInexistantException e) {
-				builder = Response.status(Response.Status.BAD_REQUEST);
-				
-			} 
+		} catch (UnsupportedEncodingException e) {
+			builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+			
+		} catch (CompteInvalideException e) {
+			builder = Response.status(Response.Status.UNAUTHORIZED);	
+		
+		} catch (CompteInexistantException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST);
+			
+		} 
 		
 		return builder.build();
 	}
@@ -216,24 +206,49 @@ public class CompteRS {
 		
 		Response.ResponseBuilder builder = null;
 				
-				try {
-					String sessionId;
-					sessionId = compteService.connecterAdmin(compte);
-					builder = Response.ok(sessionId);
-					
-				} catch (CompteInexistantException e) {
-					builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-					
-				} catch (CompteInvalideException e) {
-					builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
-					
-					
-				} catch (CompteNonAdminException e) {
-					builder = Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage());
-					
-				} catch (UnsupportedEncodingException e) {
-					builder = Response.status(Response.Status.NOT_ACCEPTABLE);
-				}
+		try {
+			String tokenDeSession;
+			tokenDeSession = compteService.connecterAdmin(compte);
+			builder = Response.ok(tokenDeSession);
+			
+		} catch (CompteInexistantException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+			
+		} catch (CompteInvalideException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+			
+			
+		} catch (CompteNonAdminException e) {
+			builder = Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage());
+			
+		} catch (UnsupportedEncodingException e) {
+			builder = Response.status(Response.Status.NOT_ACCEPTABLE);
+		}
+		
+		return builder.build();
+	}
+	
+	
+	@DELETE
+	@Path("/admin/suppression")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces("text/plain")
+	public Response supprimerCompte(final CompteDTO compteDTO) {
+		
+		Response.ResponseBuilder builder = null;
+		
+		String suppressionReussie = "compte dont l'email est " + compteDTO.getEmail() + " supprimé avec succès.";
+		
+		try {
+			compteService.supprimerCompteEtEstimations(compteDTO);
+			builder = Response.ok(suppressionReussie);
+			
+		} catch (CompteInexistantException e) {
+			builder = Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage());
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
 		
 		return builder.build();
 	}

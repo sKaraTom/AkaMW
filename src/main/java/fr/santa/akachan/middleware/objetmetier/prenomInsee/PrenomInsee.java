@@ -36,7 +36,7 @@ public class PrenomInsee implements Serializable {
 	
 	private Integer annee;
 	
-	private Integer nombreNaissance;
+	private Integer nombreNaissances;
 
 	
 	public PrenomInsee() {
@@ -49,7 +49,7 @@ public class PrenomInsee implements Serializable {
 		this.sexe = sexe;
 		this.label = label;
 		this.annee = annee;
-		this.nombreNaissance = nombre;
+		this.nombreNaissances = nombre;
 	}
 
 	@Id
@@ -92,12 +92,12 @@ public class PrenomInsee implements Serializable {
 	}
 	
 	@Column(name = "INS_NOMBRE")
-	public Integer getNombreNaissance() {
-		return nombreNaissance;
+	public Integer getNombreNaissances() {
+		return nombreNaissances;
 	}
 
-	public void setNombreNaissance(Integer nombre) {
-		this.nombreNaissance = nombre;
+	public void setNombreNaissances(Integer nombre) {
+		this.nombreNaissances = nombre;
 	}
 	
 	@Override
@@ -107,7 +107,7 @@ public class PrenomInsee implements Serializable {
 				.append(this.sexe)
 				.append(this.label)
 				.append(this.annee)
-				.append(nombreNaissance)
+				.append(nombreNaissances)
 				.build();
 	}
 
@@ -129,7 +129,7 @@ public class PrenomInsee implements Serializable {
 				.append(this.label, autre.label)
 				.append(this.sexe, autre.sexe)
 				.append(this.annee, autre.annee)
-				.append(this.nombreNaissance, autre.nombreNaissance)
+				.append(this.nombreNaissances, autre.nombreNaissances)
 				.build();
 	}
 
@@ -140,7 +140,7 @@ public class PrenomInsee implements Serializable {
 				.append("Sexe", this.sexe)
 				.append("Label", this.label)
 				.append("annee", this.annee)
-				.append("nombre", this.nombreNaissance)
+				.append("nombre de naissances :", this.nombreNaissances)
 				.build();
 	}
 	

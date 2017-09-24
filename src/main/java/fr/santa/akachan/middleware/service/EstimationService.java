@@ -33,8 +33,6 @@ public class EstimationService {
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(EstimationService.class);
 	
-	
-	
 	@EJB
 	private ClientDao clientDao;
 	
@@ -133,8 +131,6 @@ public class EstimationService {
 		return listeFavoris;
 	}
 	
-	
-	
 	/**
 	 * créer une estimation
 	 * 
@@ -155,10 +151,10 @@ public class EstimationService {
 		}
 		
 		else {
-		estimation.setRefClient(refClient);
-		estimation.setPrenom(StringUtils.upperCase(estimation.getPrenom()));
-		estimation.setFavori(false);
-		estimationDao.creerEstimation(estimation);
+			estimation.setRefClient(refClient);
+			estimation.setPrenom(StringUtils.upperCase(estimation.getPrenom()));
+			estimation.setFavori(false);
+			estimationDao.creerEstimation(estimation);
 		}
 	}
 	
@@ -197,8 +193,6 @@ public class EstimationService {
 		estimationAModifier.setAkachan(estimation.getAkachan());
 		estimationAModifier.setDateEstimation(estimation.getDateEstimation());
 		estimationAModifier.setFavori(estimation.getFavori());
-		
-		LOGGER.info("======================== estimAModifier : " + estimationAModifier.getDateEstimation().getTime());
 		
 		estimationDao.modifierEstimation(estimationAModifier);
 	}

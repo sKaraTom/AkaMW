@@ -54,6 +54,7 @@ public class ClientRS {
 	}
 	
 	@GET
+	@Authentifie
 	@Path("/total/{sexe}")
 	@Produces("text/plain")
 	public Response obtenirNombreClientsParSexe(@PathParam("sexe") final String sexe) {

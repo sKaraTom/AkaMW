@@ -19,6 +19,7 @@ import fr.santa.akachan.middleware.authentification.Jeton;
 import fr.santa.akachan.middleware.authentification.JetonService;
 import fr.santa.akachan.middleware.dao.CompteDao;
 import fr.santa.akachan.middleware.dao.DaoException;
+import fr.santa.akachan.middleware.dao.EstimationDao;
 import fr.santa.akachan.middleware.dto.CompteDTO;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
 import fr.santa.akachan.middleware.objetmetier.compte.Compte;
@@ -42,6 +43,9 @@ public class CompteService {
 	private CompteDao compteDao;
 	
 	@EJB
+	private EstimationDao estimationDao;
+	
+	@EJB
 	private JetonService jetonService;
 	
 	/** 
@@ -60,7 +64,7 @@ public class CompteService {
 		// avant d'interroger la BDD.
 		this.validerCompte(compte);
 		
-		boolean estContenu = compteDao.contenir(compte);
+		boolean estContenu = compteDao.contenir(compte.getEmail());
 		
 		if(!estContenu) {
 			// forcer le formatage du prénom client pour la persistance.
@@ -100,20 +104,12 @@ public class CompteService {
 	}
 	
 	/**
-	 * obtenir tous les comptes sans leur password (interface ADMIN)
+	 * obtenir tous les comptes en format de DTO compteDTO
 	 * 
-	 * @return List<Compte> tous les comptes sans password
+	 * @return List<CompteDTO>
 	 * @throws DaoException
 	 */
-	public List<Compte> obtenirTousComptes() throws DaoException {
-		
-		List<Compte> listeComptes = compteDao.obtenirTousComptesSansDonneesSensibles();
-		
-		return listeComptes;
-	}
-	
-	
-	public List<CompteDTO> obtenirTousComptesDTO() {
+	public List<CompteDTO> obtenirTousComptesDTO() throws DaoException {
 		
 		List<CompteDTO> listeComptes = compteDao.obtenirTousComptesDTO();
 		
@@ -211,7 +207,6 @@ public class CompteService {
 			}
 			
 			return jeton;
-	
 	}
 	
 	/**
@@ -242,6 +237,18 @@ public class CompteService {
 		String token = jetonService.creerToken(compteValide,dureeExpirationToken,"clefAdmin");
 		
 		return token;
+	}
+	
+	public void supprimerCompteEtEstimations(final CompteDTO compteDTO) throws CompteInexistantException, DaoException {
+		
+		if(compteDao.contenir(compteDTO.getEmail())) {
+			compteDao.supprimerCompte(compteDTO.getEmail());
+			estimationDao.supprimerToutesEstimationsClient(compteDTO.getUuid());
+		}
+		else {
+			throw new CompteInexistantException("aucun compte ne correspond à cet email");
+		}
+		
 	}
 	
 	

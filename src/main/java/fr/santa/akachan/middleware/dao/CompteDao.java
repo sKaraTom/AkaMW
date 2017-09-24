@@ -71,19 +71,24 @@ public class CompteDao {
 		return compte;
 	}
 	
+	
 	/**
-	 * obtenir tous les comptes (interface ADMIN)
+	 * obtenir tous les comptesDTO (interface ADMIN)
+	 * Utilisation de compteDTO pour ne transférer que les champs voulu et le nombre d'estimations du client.
 	 * 
-	 * @return List<Compte> tous les comptes sans mot de passe et uuid client.
-	 * @throws DaoException
+	 * @return List<CompteDTO> tous les comptesDTO (email, date de création, role, prenom, sexe, nombre d'estimations)
+	 * @throws DaoException 
 	 */
-	public List<Compte> obtenirTousComptesSansDonneesSensibles() throws DaoException {
+	public List<CompteDTO> obtenirTousComptesDTO() throws DaoException {
 		
-		final String requeteJPQL = "Compte.obtenirTousComptes";
+		final StringBuilder requeteJPQL = new StringBuilder();
+		requeteJPQL.append("SELECT new fr.santa.akachan.middleware.dto.CompteDTO(c.email,c.dateDeCreation,c.role,cl.uuid,cl.prenom,cl.sexe,");
+		requeteJPQL.append(" (SELECT COUNT(e.refClient) FROM Estimation e WHERE e.refClient=cl.uuid))");
+		requeteJPQL.append(" FROM Client cl LEFT JOIN cl.compte c WHERE c.role != 'admin'");
 		
-		final TypedQuery<Compte> requete = em.createNamedQuery(requeteJPQL, Compte.class);
+		final TypedQuery<CompteDTO> requete = em.createQuery(requeteJPQL.toString(), CompteDTO.class);
 		
-		List<Compte> listeComptes;
+		List<CompteDTO> listeComptes;
 		
 		try {
 			listeComptes = requete.getResultList();
@@ -91,33 +96,8 @@ public class CompteDao {
 		catch(Exception e) {
 			throw new DaoException("échec à l'obtention des comptes depuis la bdd :" + e.getClass() + " - " + e.getMessage());
 		}
-		return listeComptes;
-	}
-	
-	
-	public List<CompteDTO> obtenirTousComptesDTO() {
-		
-//		final String requeteJPQL = "Compte.obtenirTousComptesDTO";
-//		final TypedQuery<CompteDTO> requete = em.createNamedQuery(requeteJPQL, CompteDTO.class);
-		
-		final String requeteJPQL = "SELECT new fr.santa.akachan.middleware.dto.CompteDTO(c.email,c.dateDeCreation,c.role,cl.prenom,cl.sexe, (SELECT COUNT(e.refClient) FROM Estimation e WHERE e.refClient=cl.uuid)) FROM Client cl LEFT JOIN cl.compte c WHERE c.role != 'admin'";
-		
-		final TypedQuery<CompteDTO> requete = em.createQuery(requeteJPQL, CompteDTO.class);
-		
-		final StringBuilder requeteSQL = new StringBuilder();
-		requeteSQL.append("SELECT co.com_email AS email, co.com_datecreation AS date, co.com_role AS role ,cl.cli_prenom AS prenom,");
-		requeteSQL.append(" cl.cli_sexe AS sexe, count(e.est_refClient) AS total FROM t_client cl");
-		requeteSQL.append(" LEFT JOIN t_compte co ON co.com_email=cl.compte_email");
-		requeteSQL.append(" LEFT JOIN t_estimation e ON (e.est_refClient=cl.cli_uuid)");
-		requeteSQL.append(" GROUP BY email,prenom,sexe;");
-		
-//		final Query requete = em.createNativeQuery(requeteSQL.toString(),CompteDTO.class);
-		
-		List<CompteDTO> listeComptes = requete.getResultList();
 		
 		return listeComptes;
-		
-		
 	}
 	
 	
@@ -129,7 +109,6 @@ public class CompteDao {
 	public void modifier(final Compte compte) {
 		
 		em.merge(compte);
-		
 	}
 	
 	/**
@@ -157,15 +136,13 @@ public class CompteDao {
 	 * @param compte le compte à vérifier
 	 * @return true si le compte existe dans la bdd
 	 */
-	public Boolean contenir(final Compte compte) {
+	public Boolean contenir(final String email) {
 		
 		Boolean estTrouve = null;
 		
-		Compte compteExistant = em.find(Compte.class, compte.getEmail());
+		Compte compteExistant = em.find(Compte.class, email);
 		
-		//if(compteExistant.equals(null)) {
 		if (!Objects.isNull(compteExistant)){
-		//if(em.contains(compte)) {
 			estTrouve = true;
 		}
 		else {
