@@ -36,17 +36,16 @@ import fr.santa.akachan.middleware.objetmetier.client.Client;
 	@NamedQuery(name = "Estimation.obtenirListeEstimations", 
 		query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.akachan=:akachan"),
 	@NamedQuery(name = "Estimation.obtenirListeFavoris", query = "SELECT e FROM Estimation e WHERE e.refClient=:refclient AND e.favori='1'"),
-	@NamedQuery(name = "Estimation.obtenirNbreTotal", query = "SELECT count(*) FROM Estimation"),
-	@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(*) FROM Estimation e WHERE e.sexe=:sex"),
-	@NamedQuery(name = "Estimation.obtenirNbEstimClient", query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient"),
+	@NamedQuery(name = "Estimation.obtenirNbreTotal", query = "SELECT count(e.uuid) FROM Estimation e"),
+	@NamedQuery(name = "Estimation.obtenirNbreTotalParSexe", query = "SELECT count(e.uuid) FROM Estimation e WHERE e.sexe=:sex"),
+	@NamedQuery(name = "Estimation.obtenirNbEstimClient", query = "SELECT count(e.uuid) FROM Estimation e WHERE e.refClient=:refclient"),
 	@NamedQuery(name = "Estimation.obtenirNbEstimClientParSexe", 
 		query = "SELECT count(*) FROM Estimation e WHERE e.refClient=:refclient AND e.sexe=:sex"),
 	@NamedQuery(name = "Estimation.obtenirTopPrenomsEstimes", 
-		query = "SELECT e.prenom FROM Estimation e WHERE e.sexe=:sex AND e.akachan='true' GROUP BY e.prenom ORDER BY COUNT(*) DESC"),
+		query = "SELECT e.prenom FROM Estimation e WHERE e.sexe=:sex AND e.akachan='true' GROUP BY e.prenom ORDER BY COUNT(e) DESC"),
 	@NamedQuery(name = "Estimation.supprimerToutesEstimationsClient", query = "DELETE FROM Estimation e WHERE e.refClient=:refclient")
 	})
 @Table(name = "T_ESTIMATION")
-//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="uuid") 
 public class Estimation implements Serializable {
 
 	private UUID uuid;
@@ -65,7 +64,7 @@ public class Estimation implements Serializable {
 		this.dateEstimation = Calendar.getInstance();
 	}
 
-	public Estimation(UUID uuid, String prenom, String sexe, UUID refClient, String akachan, Calendar dateEstimation) {
+	public Estimation(UUID uuid, String prenom, String sexe, UUID refClient, String akachan) {
 		super();
 		this.uuid = uuid;
 		this.prenom = prenom;

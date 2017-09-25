@@ -41,6 +41,50 @@ public class PrenomInseeRS {
 	@EJB
 	private PrenomInseeService prenomInseeService;
 	
+	@GET
+	@Authentifie
+    @Produces(MediaType.APPLICATION_JSON)
+	@Path("/pop/max/{sexe}/{label}")
+	public Response obtenirAnneeMaxNaissancesPourUnPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) {
+		
+		 Response.ResponseBuilder builder = null;
+
+        List<PrenomInsee> liste = null;
+        
+		try {
+			liste = prenomInseeService.obtenirAnneeMaxNaissancesPourUnPrenom(label, sexe);
+			builder = Response.ok(liste);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+		
+		return builder.build();
+	}
+	
+	@GET
+	@Authentifie
+    @Produces(MediaType.APPLICATION_JSON)
+	@Path("/admin/{sexe}/{label}")
+	public Response obtenirStatsPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) {
+		
+		 Response.ResponseBuilder builder = null;
+
+        List<PrenomInsee> liste = null;
+        
+		try {
+			liste = prenomInseeService.obtenirStatsPrenom(label, sexe);
+			builder = Response.ok(liste);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+			
+		} catch (PrenomInseeInexistantException e) {
+			builder = Response.status(Response.Status.NO_CONTENT).entity(e.getMessage());
+		}
+		
+		return builder.build();
+	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -54,9 +98,11 @@ public class PrenomInseeRS {
 		try {
 			liste = prenomInseeService.obtenirNaissancesPrenom(label,sexe);
 			builder = Response.ok(liste);
+			
 		} catch (DaoException e) {
 			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
 		}
+		
 		return builder.build();
 	}
 	

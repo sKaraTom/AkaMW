@@ -4,7 +4,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -12,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
 @Transactional
@@ -22,6 +26,37 @@ public class PrenomInseeDao {
 	
 	@PersistenceContext
 	private EntityManager em;
+	
+	/**
+	 * obtenir les années où il y a eu le max de naissances d'un prénom
+	 * peut y avoir plusieurs résultats (même nombre max sur plusieurs années)
+	 * 
+	 * @param prenom
+	 * @param sexe
+	 * @return liste de prenomInsee contenant l'année et le nombre de naissances.
+	 * @throws DaoException
+	 */
+	public List<PrenomInsee> obtenirAnneeMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
+		
+		final String requeteJPQL = "PrenomInsee.obtenirAnneeMaxNaissancesPourUnPrenom";
+		
+		final TypedQuery<PrenomInsee> requete = em.createNamedQuery(requeteJPQL, PrenomInsee.class);
+		requete.setParameter("lab", prenom);
+		requete.setParameter("sexe", sexe);
+		
+		List<PrenomInsee> listePrenomInsee = null;
+		
+		try {
+			listePrenomInsee = requete.getResultList();
+		}
+		catch(Exception e) {
+			throw new DaoException("échec à l'obtention des stats d'un prénom depuis la bdd : " + e.getClass() + " - " + e.getMessage());
+		}
+
+		return listePrenomInsee;
+		
+	}
+	
 	
 	
 	/**

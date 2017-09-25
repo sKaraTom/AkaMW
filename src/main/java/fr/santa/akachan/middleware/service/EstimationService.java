@@ -52,6 +52,20 @@ public class EstimationService {
 	}
 	
 	/**
+	 * obtenir le total d'estimations pour un sexe donné.
+	 * 
+	 * @param sexe
+	 * @return
+	 */
+	public Long obtenirNbTotalEstimParSexe(String sexe) {
+		
+		Long totalParSexe = estimationDao.obtenirNbTotalEstimParSexe(sexe);
+		
+		return totalParSexe;
+	}
+	
+	
+	/**
 	 * obtenir les 3 prénoms les plus estimés positivement pour un sexe.
 	 * 
 	 * @param sexe

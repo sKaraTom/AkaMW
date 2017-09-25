@@ -59,6 +59,20 @@ public class EstimationRS {
 	}
 	
 	@GET
+	@Authentifie
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/total/{sexe}")
+	public Response obtenirNbTotalEstimParSexe(@PathParam("sexe")String sexe){
+		
+		Response.ResponseBuilder builder = null;
+		
+		final Long totalEstimationsParSexe = estimationService.obtenirNbTotalEstimParSexe(sexe);
+		builder = Response.ok(totalEstimationsParSexe);
+		
+		return builder.build();
+	}
+	
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/top/{sexe}")
 	public Response obtenirTop3Estimations(@PathParam("sexe")String sexe){

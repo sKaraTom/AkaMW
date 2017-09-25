@@ -33,6 +33,45 @@ public class PrenomInseeService {
 	private PrenomInseeDao prenomInseeDao;
 	
 	
+	/**
+	 * obtenir les années où il y a eu le max de naissances d'un prénom
+	 * peut y avoir plusieurs résultats (même nombre max sur plusieurs années)
+	 * 
+	 * @param prenom
+	 * @param sexe
+	 * @return liste de prenomInsee contenant l'année et le nombre de naissances.
+	 * @throws DaoException
+	 */
+	public List<PrenomInsee> obtenirAnneeMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
+		
+		List<PrenomInsee> liste = prenomInseeDao.obtenirAnneeMaxNaissancesPourUnPrenom(prenom, sexe);
+		return liste;
+	}
+	
+	/**
+	 * obtenir la liste de tous les PrenomInsee pour un prenom(label) donné à un sexe donné.
+	 * interface ADMIN
+	 * 
+	 * @param label
+	 * @param sexe
+	 * @return
+	 * @throws DaoException
+	 * @throws PrenomInseeInexistantException si aucun prénom obtenu
+	 */
+	public List<PrenomInsee> obtenirStatsPrenom(String label, String sexe) throws DaoException, PrenomInseeInexistantException {
+		
+		label = label.toUpperCase();
+		
+		List<PrenomInsee> liste = prenomInseeDao.obtenirStatsPrenom(label, sexe);
+		
+		if(liste.isEmpty()) {
+			throw new PrenomInseeInexistantException("");
+		}
+		
+		return liste;
+		
+	}
+	
 	/** 
 	 * obtenir un tableau de 1900 à 2015 avec nombre de naissances associées pour ce un prénom.
 	 * 1.peupler le tableau de l'index 0 à 115 (correspond aux années 1900 à 2015)

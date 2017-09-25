@@ -94,7 +94,7 @@ public class ClientDao {
 	public List<Client> obtenirClients() {
 
 		final String requeteJPQL = "SELECT c FROM Client c";
-
+		
 		final TypedQuery<Client> requete = em.createQuery(requeteJPQL, Client.class);
 
 		return requete.getResultList();

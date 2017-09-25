@@ -50,8 +50,12 @@ public class EstimationDao {
 		return total;
 	}
 	
-	// toutes les estimations sans distinction de client, par sexe.
-	// TODO : inutilisé pour l'instant.
+	/**
+	 * obtenir le total d'estimation par sexe
+	 * 
+	 * @param sexe
+	 * @return
+	 */
 	public Long obtenirNbTotalEstimParSexe(String sexe) {
 		
 		final String requeteJPQL = "Estimation.obtenirNbreTotalParSexe";
