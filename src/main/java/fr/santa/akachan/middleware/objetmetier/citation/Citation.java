@@ -19,7 +19,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "Citation.obtenirNbreCitations", query = "SELECT COUNT(c.auteur) FROM Citation c")
+	@NamedQuery(name = "Citation.obtenirNbreCitations", query = "SELECT COUNT(c.id) FROM Citation c"),
+	@NamedQuery(name = "Citation.obtenirIdMax", query = "SELECT MAX(c.id) FROM Citation c")
 	})
 @Table(name = "T_CITATION")
 public class Citation {
@@ -40,7 +41,6 @@ public class Citation {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CIT_ID")
 	public Integer getId() {
 		return id;

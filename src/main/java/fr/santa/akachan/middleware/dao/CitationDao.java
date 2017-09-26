@@ -42,7 +42,6 @@ public class CitationDao {
 		}
 		catch(EntityExistsException e) {
 			throw new CitationExistanteException();
-			
 		}
 	}
 	
@@ -64,6 +63,22 @@ public class CitationDao {
 		return citation;
 	}
 	
+	public Integer obtenirIdMax() throws DaoException {
+		
+		final String requeteJPQL = "Citation.obtenirIdMax";
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		
+		Integer total;
+		
+		try {
+			total = (Integer) requete.getSingleResult();
+		}
+		catch(Exception e) {
+			throw new DaoException("echec à l'obtention de l'id maximum depuis la bdd :" + e.getClass() + " - " + e.getMessage());
+		}
+
+		return total;
+	}
 	
 	/** 
 	 * obtenir le nombre total de citations dans la table.

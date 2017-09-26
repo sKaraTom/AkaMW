@@ -8,6 +8,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.CitationDao;
 import fr.santa.akachan.middleware.dao.DaoException;
@@ -18,7 +20,9 @@ import fr.santa.akachan.middleware.objetmetier.citation.CitationInvalideExceptio
 
 @Stateless
 public class CitationService {
-
+	
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(CitationDao.class);
 	
 	@EJB
 	CitationDao citationDao;
@@ -29,10 +33,18 @@ public class CitationService {
 	 * @param citation
 	 * @throws CitationExistanteException si la citation à ajouter existe déjà.
 	 * @throws CitationInvalideException si la citation n'a pas passé la méthode de validation.
+	 * @throws DaoException 
 	 */
-	public void ajouterCitation(final Citation citation) throws CitationExistanteException, CitationInvalideException {
+	public void ajouterCitation(final Citation citation) throws CitationExistanteException, CitationInvalideException, DaoException {
 		
 		validerCitation(citation);
+		
+		// si l'id n'est pas inclus dans la requête, un nouvel id est généré à partir de l'id max.
+		if(citation.getId() == null) {
+			Integer max = citationDao.obtenirIdMax();
+			Integer nouvelId = max + 1;
+			citation.setId(nouvelId);
+		}
 		
 		citationDao.ajouterCitation(citation);
 	}
@@ -83,9 +95,14 @@ public class CitationService {
 	public Integer obtenirNombreTotalCitations() throws DaoException {
 		
 		Long total = citationDao.obtenirNombreTotalCitations();
-		
 		Integer totalConverti;
-		totalConverti = total.intValue();
+		
+		if(total != null) {
+			totalConverti = total.intValue();
+		}
+		else {
+			throw new DaoException("la requête pour obtenir le total de citations renvoie un null.");
+		}
 		
 		return totalConverti;
 		

@@ -34,6 +34,26 @@ public class CitationRS {
 	CitationService citationService;
 	
 	
+	@GET
+	@Authentifie
+	@Path("/total")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response obtenirTotalCitations() {
+		
+		Response.ResponseBuilder builder = null;
+		
+		try {
+			Integer total = citationService.obtenirNombreTotalCitations();
+			builder = Response.ok(total);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+		
+		return builder.build();
+		
+	}
+	
 	@POST
 	@Authentifie
     @Consumes(MediaType.APPLICATION_JSON)
@@ -51,6 +71,9 @@ public class CitationRS {
 			
 		} catch (CitationInvalideException e) {
 			builder = Response.status(Response.Status.BAD_REQUEST);
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
 		}
 			
 		   return builder.build();
@@ -90,6 +113,7 @@ public class CitationRS {
 			
 		} catch (DaoException e) {
 			status(INTERNAL_SERVER_ERROR).entity(e.getMessage());
+			
 		} catch (CitationInexistanteException e) {
 			status(BAD_REQUEST).entity(e.getMessage());
 		}
