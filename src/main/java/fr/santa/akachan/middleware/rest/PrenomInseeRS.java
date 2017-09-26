@@ -42,17 +42,30 @@ public class PrenomInseeRS {
 	private PrenomInseeService prenomInseeService;
 	
 	@GET
-	@Authentifie
+    @Produces(MediaType.TEXT_PLAIN)
+	@Path("/pop/total/{sexe}/{label}")
+	public Response obtenirNombreTotalNaissancesPourUnPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) {
+		
+		Response.ResponseBuilder builder = null;
+
+       	Long total = prenomInseeService.obtenirNombreTotalNaissancesPourUnPrenom(label, sexe);
+
+		builder = Response.ok(total);
+
+		return builder.build();
+	}
+	
+	@GET
     @Produces(MediaType.APPLICATION_JSON)
 	@Path("/pop/max/{sexe}/{label}")
-	public Response obtenirAnneeMaxNaissancesPourUnPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) {
+	public Response obtenirAnneesMaxNaissancesPourUnPrenom(@PathParam("label") String label, @PathParam("sexe") String sexe) {
 		
 		 Response.ResponseBuilder builder = null;
 
         List<PrenomInsee> liste = null;
         
 		try {
-			liste = prenomInseeService.obtenirAnneeMaxNaissancesPourUnPrenom(label, sexe);
+			liste = prenomInseeService.obtenirAnneesMaxNaissancesPourUnPrenom(label, sexe);
 			builder = Response.ok(liste);
 			
 		} catch (DaoException e) {

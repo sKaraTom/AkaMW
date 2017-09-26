@@ -28,6 +28,29 @@ public class PrenomInseeDao {
 	private EntityManager em;
 	
 	/**
+	 * obtenir le total de naissances depuis 1900 pour un prénom et un sexe donnés.
+	 * 
+	 * @param prenom
+	 * @param sexe
+	 * @return Long total
+	 */
+	public Long obtenirNombreTotalNaissancesPourUnPrenom(String prenom, String sexe) {
+		
+		final String requeteJPQL = "PrenomInsee.obtenirTotalNaissancesPourUnPrenom";
+		
+		final Query requete = em.createNamedQuery(requeteJPQL);
+		requete.setParameter("lab", prenom);
+		requete.setParameter("sexe", sexe);
+		
+		Long total;
+		
+		total = (Long) requete.getSingleResult();
+		
+		return total;
+		
+	}
+	
+	/**
 	 * obtenir les années où il y a eu le max de naissances d'un prénom
 	 * peut y avoir plusieurs résultats (même nombre max sur plusieurs années)
 	 * 
@@ -36,9 +59,9 @@ public class PrenomInseeDao {
 	 * @return liste de prenomInsee contenant l'année et le nombre de naissances.
 	 * @throws DaoException
 	 */
-	public List<PrenomInsee> obtenirAnneeMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
+	public List<PrenomInsee> obtenirAnneesMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
 		
-		final String requeteJPQL = "PrenomInsee.obtenirAnneeMaxNaissancesPourUnPrenom";
+		final String requeteJPQL = "PrenomInsee.obtenirAnneesMaxNaissancesPourUnPrenom";
 		
 		final TypedQuery<PrenomInsee> requete = em.createNamedQuery(requeteJPQL, PrenomInsee.class);
 		requete.setParameter("lab", prenom);

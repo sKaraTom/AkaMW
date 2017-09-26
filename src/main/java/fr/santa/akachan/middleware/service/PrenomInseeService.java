@@ -34,6 +34,21 @@ public class PrenomInseeService {
 	
 	
 	/**
+	 * obtenir le nombre total de naissances depuis 1900
+	 * pour un prénom et un sexe donnés
+	 * 
+	 * @param prenom
+	 * @param sexe
+	 * @return Long total
+	 */
+	public Long obtenirNombreTotalNaissancesPourUnPrenom(String prenom, String sexe) {
+		
+		Long total = prenomInseeDao.obtenirNombreTotalNaissancesPourUnPrenom(prenom, sexe);
+		
+		return total;
+	}
+	
+	/**
 	 * obtenir les années où il y a eu le max de naissances d'un prénom
 	 * peut y avoir plusieurs résultats (même nombre max sur plusieurs années)
 	 * 
@@ -42,9 +57,9 @@ public class PrenomInseeService {
 	 * @return liste de prenomInsee contenant l'année et le nombre de naissances.
 	 * @throws DaoException
 	 */
-	public List<PrenomInsee> obtenirAnneeMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
+	public List<PrenomInsee> obtenirAnneesMaxNaissancesPourUnPrenom(String prenom, String sexe) throws DaoException {
 		
-		List<PrenomInsee> liste = prenomInseeDao.obtenirAnneeMaxNaissancesPourUnPrenom(prenom, sexe);
+		List<PrenomInsee> liste = prenomInseeDao.obtenirAnneesMaxNaissancesPourUnPrenom(prenom, sexe);
 		return liste;
 	}
 	

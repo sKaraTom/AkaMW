@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 query = "SELECT p FROM PrenomInsee p WHERE p.label=:lab AND  p.sexe=:sex"),
 @NamedQuery(name = "PrenomInsee.obtenirTotalNaissancesPourUnPrenom", 
 query = "SELECT SUM(p.nombreNaissances) FROM PrenomInsee p WHERE p.label=:lab AND  p.sexe=:sexe"),
-@NamedQuery(name = "PrenomInsee.obtenirAnneeMaxNaissancesPourUnPrenom", 
+@NamedQuery(name = "PrenomInsee.obtenirAnneesMaxNaissancesPourUnPrenom", 
 query = "SELECT p FROM PrenomInsee p WHERE p.label=:lab AND p.sexe=:sexe AND p.nombreNaissances=(SELECT MAX(i.nombreNaissances) FROM PrenomInsee i WHERE i.label=:lab AND i.sexe=:sexe)")
 })
 @Table(name = "T_INSEE")
