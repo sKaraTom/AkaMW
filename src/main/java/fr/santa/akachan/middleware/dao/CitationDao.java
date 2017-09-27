@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -131,6 +132,27 @@ public class CitationDao {
 		
 		return listeCitations;
 		
+	}
+	
+	/**
+	 * supprimer une citation
+	 * 
+	 * @param id
+	 * @throws CitationInexistanteException si aucune citation trouvée
+	 * @throws DaoException si l'id en paramètre n'est pas valide.
+	 */
+	public void supprimerCitation(final Integer id) throws CitationInexistanteException, DaoException {
+		
+		try {
+		final Citation citationASupprimer = em.getReference(Citation.class, id);
+		em.remove(citationASupprimer);
+		}
+		catch(EntityNotFoundException e) {
+			throw new CitationInexistanteException("citation introuvable");
+		}
+		catch(IllegalArgumentException e) {
+			throw new DaoException("l'id communiqué n'est pas valide");
+		}
 	}
 	
 	

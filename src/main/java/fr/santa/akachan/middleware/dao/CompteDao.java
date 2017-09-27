@@ -119,7 +119,6 @@ public class CompteDao {
 	 */
 	public void supprimerCompte(String email) throws CompteInexistantException {
 		
-		// si problème (code 500, catch de l'EntityNotFound ne marche pas) utiliser em.find()
 		try {
 			final Compte compteASupprimer = em.getReference(Compte.class, email);
 			em.remove(compteASupprimer);

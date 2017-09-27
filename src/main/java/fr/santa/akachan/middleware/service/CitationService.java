@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,12 @@ public class CitationService {
 			Integer nouvelId = max + 1;
 			citation.setId(nouvelId);
 		}
+		
+		// formater les variables en ajoutant les majuscules.
+		String auteurAvecMajuscules = WordUtils.capitalizeFully(citation.getAuteur(), new char[] { '-',' ' });
+		citation.setAuteur(auteurAvecMajuscules);
+		
+		citation.setContenu(ajouterMajusculesPhrase(citation.getContenu()));
 		
 		citationDao.ajouterCitation(citation);
 	}
@@ -105,9 +112,13 @@ public class CitationService {
 		}
 		
 		return totalConverti;
-		
 	}
 	
+	public void supprimerCitation(final Integer id) throws CitationInexistanteException, DaoException {
+		
+		citationDao.supprimerCitation(id);
+		
+	}
 	
 	/** méthode de vérification qu'une citation est valide.
 	 * 
@@ -121,6 +132,37 @@ public class CitationService {
 		}
 			
 	}
+	
+	/**
+	 * formater une phrase (String) avec majuscules.
+	 * 
+	 * @param String phrase, la phrase à convertir
+	 * @return String phrase formatée
+	 */
+	public static String ajouterMajusculesPhrase(String phrase){
+        
+	 	char[] tableauDeCaracteres = phrase.toCharArray();
+	  
+         // true pour commencer avec une majuscule.
+         boolean estMajuscule = true;
+ 
+         for (int i = 0; i < tableauDeCaracteres.length; i++){
+ 
+             if (estMajuscule == true && !Character.isWhitespace(tableauDeCaracteres[i])) {
+            	 tableauDeCaracteres[i] =  Character.toUpperCase(tableauDeCaracteres[i]);
+            	 estMajuscule = false;
+             }
+             else {
+                 if (tableauDeCaracteres[i] == '.' || tableauDeCaracteres[i] == '?' || tableauDeCaracteres[i] == '!' ) {
+                	 estMajuscule = true;
+                 }
+             }
+         }
+         
+         String phraseFormatee = new String(tableauDeCaracteres);
+         
+         return phraseFormatee;
+ }
 	
 	
 }

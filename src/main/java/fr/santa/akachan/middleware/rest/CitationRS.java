@@ -6,9 +6,11 @@ import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -112,10 +114,32 @@ public class CitationRS {
 			builder = Response.ok(citationAleatoire);
 			
 		} catch (DaoException e) {
-			status(INTERNAL_SERVER_ERROR).entity(e.getMessage());
+			builder = status(INTERNAL_SERVER_ERROR).entity(e.getMessage());
 			
 		} catch (CitationInexistanteException e) {
-			status(BAD_REQUEST).entity(e.getMessage());
+			builder = status(BAD_REQUEST).entity(e.getMessage());
+		}
+		
+		return builder.build();
+	}
+	
+	@DELETE
+	@Authentifie
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public Response supprimerCitation(@PathParam("sexe")final Integer id) {
+		
+		Response.ResponseBuilder builder = null;
+		
+		try {
+			citationService.supprimerCitation(id);
+			builder = Response.ok("la citation n°"+id+" est supprimée.");
+			
+		} catch (CitationInexistanteException e) {
+			builder = Response.status(Response.Status.NOT_FOUND).entity(e.getMessage());
+			
+		} catch (DaoException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
 		}
 		
 		return builder.build();
