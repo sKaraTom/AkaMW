@@ -1,6 +1,7 @@
 package fr.santa.akachan.middleware.authentification;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Priority;
 import javax.ejb.EJB;
@@ -19,6 +20,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 /**
  * méthode qui alloue à l'annotation @Securise la validation
@@ -45,7 +49,7 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 	 * @throw NotAuthorizedException si le header est invalide.
 	 */
 	@Override
-	public void filter(ContainerRequestContext requestContext) throws IOException {
+	public void filter(ContainerRequestContext requestContext) {
 
 		//récupérer header authorization de la requête HTTP
 		String headerAuthorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
@@ -78,18 +82,15 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         // valider le token :
         // si date d'expiration passée : code 400
         // pour toute autre exception : code 401
-        try {	
-        	jetonService.validerToken(token,choixClef);
-        
-        } catch (ExpiredJwtException e) {
-        	requestContext.abortWith(
-	                Response.status(Response.Status.BAD_REQUEST).entity("la session a expiré, veuillez vous reconnecter.").build());
-        
-        } catch (Exception e) {
-           // n'importe quelle exception annule la connexion côté ihm.
-        	requestContext.abortWith(
-                Response.status(Response.Status.UNAUTHORIZED).build());
-        }
+  
+				try {
+					jetonService.validerToken(token,choixClef);
+					
+				} catch (AccesNonAutoriseException e) {
+					
+					requestContext.abortWith(
+			                Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build());
+				}
         
     }
 	

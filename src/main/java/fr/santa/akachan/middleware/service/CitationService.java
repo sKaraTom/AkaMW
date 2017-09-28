@@ -36,7 +36,7 @@ public class CitationService {
 	 * @throws CitationInvalideException si la citation n'a pas passé la méthode de validation.
 	 * @throws DaoException 
 	 */
-	public void ajouterCitation(final Citation citation) throws CitationExistanteException, CitationInvalideException, DaoException {
+	public void ajouterCitation(final Citation citation) throws CitationInvalideException, DaoException, CitationExistanteException {
 		
 		validerCitation(citation);
 		
@@ -45,6 +45,10 @@ public class CitationService {
 			Integer max = citationDao.obtenirIdMax();
 			Integer nouvelId = max + 1;
 			citation.setId(nouvelId);
+		}
+		
+		else if(citationDao.contenir(citation.getId())) {
+			throw new CitationExistanteException("une citation existe déjà pour cet id");
 		}
 		
 		// formater les variables en ajoutant les majuscules.
@@ -77,18 +81,23 @@ public class CitationService {
 	 * @throws DaoException si l'obtention du nombre total a échoué.
 	 * @throws CitationInexistanteException si la citation à l'id tiré n'existe pas.
 	 */
-	public Citation obtenirCitationAleatoire() throws DaoException, CitationInexistanteException {
+	public Citation obtenirCitationAleatoire() throws DaoException {
 		
 		// initialiser le chiffre aléatoire.
 		Integer chiffreAleat = 0;
 		Random hasard = new Random();
 		
-		Integer totalCitations = obtenirNombreTotalCitations();
+		Integer idMax = citationDao.obtenirIdMax();
 		
+		Citation citationAleatoire = null;
+		
+		while(Objects.isNull(citationAleatoire)) {
+			
 		// hasard.nextInt(max)+min pour ne pas commencer à 0.
-		chiffreAleat = hasard.nextInt(totalCitations)+1;
+		chiffreAleat = hasard.nextInt(idMax)+1;
 		
-		Citation citationAleatoire = citationDao.obtenirCitation(chiffreAleat);
+		citationAleatoire = citationDao.obtenirCitation(chiffreAleat);
+		}
 		
 		return citationAleatoire;
 	}
@@ -114,6 +123,26 @@ public class CitationService {
 		return totalConverti;
 	}
 	
+	public void modifierCitation(final Citation citation) throws CitationInvalideException {
+		
+		if (Objects.isNull(citation)) {
+			throw new CitationInvalideException("aucune citation réceptionnée à modifier.");
+		}
+		
+		if( (StringUtils.isBlank(citation.getAuteur()) ) || (StringUtils.isBlank(citation.getContenu()) ) ) {
+			throw new CitationInvalideException("tous les champs doivent être renseignés");
+		}
+		
+		citationDao.modifierCitation(citation);
+	}
+	
+	/**
+	 * supprimer une citation
+	 * 
+	 * @param id
+	 * @throws CitationInexistanteException
+	 * @throws DaoException
+	 */
 	public void supprimerCitation(final Integer id) throws CitationInexistanteException, DaoException {
 		
 		citationDao.supprimerCitation(id);

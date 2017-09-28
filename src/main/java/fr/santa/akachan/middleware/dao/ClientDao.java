@@ -154,18 +154,15 @@ public class ClientDao {
 	 */
 	public Boolean contenirClient(final UUID uuid){
 		
-		Boolean estTrouve = null;
-		
 		try
 		{
 			em.getReference(Client.class, uuid);
-			estTrouve = true;
+			return true;
 		}
 		catch (final EntityNotFoundException e)
 		{
-			estTrouve = false;
+			return false;
 		}
-		return estTrouve;
 	}
 	
 }

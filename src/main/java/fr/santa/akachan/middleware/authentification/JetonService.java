@@ -67,17 +67,22 @@ public class JetonService {
 	 * méthode de validation d'un token.
 	 * 
 	 * @param token
-	 * @throws ExpiredJwtException si la date d'expiration est passée.
-	 * @throws UnsupportedJwtException
-	 * @throws MalformedJwtException
-	 * @throws SignatureException
-	 * @throws IllegalArgumentException
-	 * @throws UnsupportedEncodingException
+	 * @throws AccesNonAutoriseException 
 	 */
-	public void validerToken(String token, String choixClef) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException,
-	SignatureException, IllegalArgumentException, UnsupportedEncodingException {
-		
-			Jws<Claims> jws = Jwts.parser().setSigningKey(choixClef.getBytes("UTF-8")).parseClaimsJws(token);
+	public void validerToken(String token, String choixClef) throws AccesNonAutoriseException {
+
+
+			try {
+				Jws<Claims> jws = Jwts.parser().setSigningKey(choixClef.getBytes("UTF-8")).parseClaimsJws(token);
+			
+			} catch (ExpiredJwtException e) {
+				throw new AccesNonAutoriseException("la session a expiré, veuillez vous reconnecter.");
+				
+			} catch (UnsupportedJwtException | MalformedJwtException | SignatureException
+					| IllegalArgumentException | UnsupportedEncodingException e) {
+				throw new AccesNonAutoriseException("accès non autorisé.");
+			}
+			
 		
 
 	}

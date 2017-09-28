@@ -42,7 +42,7 @@ public class CitationDao {
 		em.persist(citation);
 		}
 		catch(EntityExistsException e) {
-			throw new CitationExistanteException();
+			throw new CitationExistanteException("une citation existe déjà pour cet id");
 		}
 	}
 	
@@ -51,15 +51,10 @@ public class CitationDao {
 	 * 
 	 * @param id l'id (Integer) de la citation
 	 * @return Citation la citation trouvée
-	 * @throws CitationInexistanteException si aucune citation existante à cet id.
 	 */
-	public Citation obtenirCitation(final Integer id) throws CitationInexistanteException {
+	public Citation obtenirCitation(final Integer id) {
 		
 		Citation citation = em.find(Citation.class, id);
-		
-		if(Objects.isNull(citation)) {
-			throw new CitationInexistanteException("l'id ne correspond pas à une citation existante.");
-		}
 		
 		return citation;
 	}
@@ -133,6 +128,16 @@ public class CitationDao {
 		return listeCitations;
 		
 	}
+	/**
+	 * modifier une citation
+	 * 
+	 * @param citation
+	 */
+	public void modifierCitation(final Citation citation) {
+		
+		em.merge(citation);
+	}
+	
 	
 	/**
 	 * supprimer une citation
@@ -152,6 +157,25 @@ public class CitationDao {
 		}
 		catch(IllegalArgumentException e) {
 			throw new DaoException("l'id communiqué n'est pas valide");
+		}
+	}
+	
+	/**
+	 * méthode de vérification si une citation existe dans la bdd 
+	 * à l'id renseigné
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Boolean contenir(final Integer id) {
+		
+		try {
+			Citation citation = em.getReference(Citation.class,id);
+			citation.getAuteur(); // pour contourner le chargement lazy de em.getReference()
+			return true;
+		}
+		catch(EntityNotFoundException e) {
+			return false;
 		}
 	}
 	

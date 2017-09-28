@@ -137,18 +137,15 @@ public class CompteDao {
 	 */
 	public Boolean contenir(final String email) {
 		
-		Boolean estTrouve = null;
-		
-		Compte compteExistant = em.find(Compte.class, email);
-		
-		if (!Objects.isNull(compteExistant)){
-			estTrouve = true;
+		try {
+			Compte compte = em.getReference(Compte.class,email);
+			compte.getRole(); // pour contourner le chargement lazy de em.getReference()
+			return true;
 		}
-		else {
-			estTrouve = false;
+		catch(EntityNotFoundException e) {
+			return false;
 		}
-
-		return estTrouve;
+		
 	}
 	
 }

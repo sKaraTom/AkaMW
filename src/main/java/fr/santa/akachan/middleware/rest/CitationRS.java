@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -69,10 +70,10 @@ public class CitationRS {
 			builder = Response.ok(citation);
 			
 		} catch (CitationExistanteException e) {
-			builder = Response.status(Response.Status.CONFLICT);
+			builder = Response.status(Response.Status.CONFLICT).entity(e.getMessage());
 			
 		} catch (CitationInvalideException e) {
-			builder = Response.status(Response.Status.BAD_REQUEST);
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
 			
 		} catch (DaoException e) {
 			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage());
@@ -115,9 +116,24 @@ public class CitationRS {
 			
 		} catch (DaoException e) {
 			builder = status(INTERNAL_SERVER_ERROR).entity(e.getMessage());
+		}
+		
+		return builder.build();
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response modifierCitation(final Citation citation) {
+		
+		Response.ResponseBuilder builder = null;
+		
+		try {
+			citationService.modifierCitation(citation);
+			builder = Response.ok("la modification de la citation n°" + citation.getId() + " s'est bien effectuée.");
 			
-		} catch (CitationInexistanteException e) {
-			builder = status(BAD_REQUEST).entity(e.getMessage());
+		} catch (CitationInvalideException e) {
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
 		}
 		
 		return builder.build();
@@ -127,7 +143,7 @@ public class CitationRS {
 	@Authentifie
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public Response supprimerCitation(@PathParam("sexe")final Integer id) {
+	public Response supprimerCitation(@PathParam("id")final Integer id) {
 		
 		Response.ResponseBuilder builder = null;
 		
