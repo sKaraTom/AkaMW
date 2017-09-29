@@ -153,6 +153,7 @@ public class EstimationRS {
 	}
 	
 	@GET
+	@Authentifie
 	@Path("/listeF/{ref}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obtenirListeFavoris(@PathParam("ref") final UUID refClient) {
