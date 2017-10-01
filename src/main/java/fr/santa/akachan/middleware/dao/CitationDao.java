@@ -1,7 +1,6 @@
 package fr.santa.akachan.middleware.dao;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;

@@ -1,7 +1,5 @@
 package fr.santa.akachan.middleware.authentification;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Priority;
 import javax.ejb.EJB;
@@ -16,13 +14,6 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
 /**
  * méthode qui alloue à l'annotation @Securise la validation
@@ -49,7 +40,7 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 	 * @throw NotAuthorizedException si le header est invalide.
 	 */
 	@Override
-	public void filter(ContainerRequestContext requestContext) {
+	public void filter(ContainerRequestContext requestContext) throws NotAuthorizedException {
 
 		//récupérer header authorization de la requête HTTP
 		String headerAuthorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);

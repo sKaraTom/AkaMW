@@ -1,7 +1,5 @@
 package fr.santa.akachan.middleware.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.EJB;
@@ -14,11 +12,7 @@ import org.slf4j.LoggerFactory;
 import fr.santa.akachan.middleware.dao.ClientDao;
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.objetmetier.client.Client;
-import fr.santa.akachan.middleware.objetmetier.client.ClientExistantException;
 import fr.santa.akachan.middleware.objetmetier.client.ClientIntrouvableException;
-import fr.santa.akachan.middleware.objetmetier.client.ClientInvalideException;
-import fr.santa.akachan.middleware.objetmetier.compte.Compte;
-import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 
 @Stateless
 @Transactional

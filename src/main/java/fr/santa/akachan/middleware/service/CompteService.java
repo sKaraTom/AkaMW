@@ -3,12 +3,10 @@ package fr.santa.akachan.middleware.service;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -29,7 +27,6 @@ import fr.santa.akachan.middleware.objetmetier.compte.CompteInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.CompteNonAdminException;
 import fr.santa.akachan.middleware.objetmetier.compte.EmailInvalideException;
 import fr.santa.akachan.middleware.objetmetier.compte.PasswordInvalideException;
-import fr.santa.akachan.middleware.rest.EstimationRS;
 
 
 @Stateless

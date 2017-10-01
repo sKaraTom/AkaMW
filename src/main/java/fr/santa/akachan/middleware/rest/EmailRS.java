@@ -4,17 +4,14 @@ import static javax.ws.rs.core.Response.status;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
-import static javax.ws.rs.core.Response.Status.OK;
 
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

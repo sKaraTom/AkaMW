@@ -2,8 +2,6 @@ package fr.santa.akachan.middleware.service;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.ejb.EJB;
@@ -23,7 +21,6 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationInvalideException;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
 @Transactional

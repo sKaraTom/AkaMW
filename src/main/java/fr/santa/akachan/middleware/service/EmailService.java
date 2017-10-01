@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.mail.*;
-import javax.mail.internet.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,6 @@ import fr.santa.akachan.middleware.objetmetier.email.CourrierGmail;
 import fr.santa.akachan.middleware.objetmetier.email.DestinataireInvalideException;
 import fr.santa.akachan.middleware.objetmetier.email.SujetInvalideException;
 import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
-import fr.santa.akachan.middleware.rest.EstimationRS;
 
 import javax.ejb.Stateless;
 

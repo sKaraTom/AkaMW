@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -15,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 
 @Stateless
 @Transactional

@@ -1,25 +1,16 @@
 package fr.santa.akachan.middleware.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
-import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.DaoException;
-import fr.santa.akachan.middleware.dao.EstimationDao;
 import fr.santa.akachan.middleware.dao.PrenomInseeDao;
-import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
-import fr.santa.akachan.middleware.objetmetier.prenom.TendanceInvalideException;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
 import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 

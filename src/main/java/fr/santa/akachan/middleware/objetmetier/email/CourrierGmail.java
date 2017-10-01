@@ -6,15 +6,15 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.AuthenticationFailedException;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -123,6 +123,7 @@ public class CourrierGmail
 	        messageBodyPart.setContent(body,"text/html");
 	        multipart.addBodyPart(messageBodyPart);
 	        message.setContent(multipart);
+	        
         } catch(Exception e) {
         	throw new ContenuInvalideException("le contenu du mail (html) n'est pas valide.");
         }
@@ -150,8 +151,10 @@ public class CourrierGmail
         
         try {
         	transport.sendMessage(message, message.getAllRecipients());
+        	
         } catch(SendFailedException s){
-        	throw new DestinataireInvalideException("l'adresse mail n'est pas valide");
+        	throw new DestinataireInvalideException("échec à l'envoi du message : l'adresse mail n'est pas valide " );
+        	
         } catch(MessagingException m) {
         	throw new ConnexionEchoueeException("la connexion est coupée ou inexistante à la tentative d'envoi.");
         }
@@ -195,30 +198,39 @@ public class CourrierGmail
      * 
      * @return la session.
      */
-    private Session getSession()
-    {
-        Properties proprietes = obtenirProprietesServeurMail();
-        Session session = Session.getDefaultInstance(proprietes);
+    private Session getSession() {
+        
+    	 Authenticator auth = new Authenticator() {
+ 			//override the getPasswordAuthentication method
+ 			protected PasswordAuthentication getPasswordAuthentication() {
+ 				return new PasswordAuthentication(username+"@gmail.com", password);
+ 			}
+ 		};
+ 		
+    	Properties proprietes = obtenirProprietesServeurMail();
+        
+        Session session = Session.getInstance(proprietes,auth);
 
         return session;
     }
     
     /** 
      * paramétrer les propriétés pour la session.
+     * propriétes SSL (port  465)
      * 
      * @return Properties proprietes
      */
-    private Properties obtenirProprietesServeurMail()
-    {
-        Properties proprietes = System.getProperties();
-        proprietes.put("mail.smtp.starttls.enable", "true");
-        proprietes.put("mail.smtp.host", protocol + ".gmail.com");
-        proprietes.put("mail.smtp.user", username);
-        proprietes.put("mail.smtp.password", password);
-        proprietes.put("mail.smtp.port", "587");
-        proprietes.put("mail.smtp.auth", "true");
-
-        return proprietes;
+    private Properties obtenirProprietesServeurMail() {
+    	
+    	
+      Properties proprietes = System.getProperties();
+      proprietes.put("mail.smtp.host", protocol + ".gmail.com"); //SMTP Host
+      proprietes.put("mail.smtp.socketFactory.port", "465"); //SSL Port
+      proprietes.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //SSL Factory Class
+      proprietes.put("mail.smtp.auth", "true"); //Enabling SMTP Authentication
+      proprietes.put("mail.smtp.port", "465"); //SMTP Port
+    
+      return proprietes;
     }
     
     

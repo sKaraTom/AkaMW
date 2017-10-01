@@ -1,14 +1,8 @@
 package fr.santa.akachan.middleware.authentification;
 
-import io.jsonwebtoken.impl.crypto.MacProvider;
 
 import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.util.Calendar;
 import java.util.Date;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,6 @@
 package fr.santa.akachan.middleware.rest;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.ejb.EJB;
@@ -28,8 +27,6 @@ import fr.santa.akachan.middleware.objetmetier.estimation.Estimation;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationExistanteException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationIntrouvableException;
 import fr.santa.akachan.middleware.objetmetier.estimation.EstimationInvalideException;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
 import fr.santa.akachan.middleware.service.EstimationService;
 
 @WebService
