@@ -48,15 +48,14 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         String intituleHeader = null;
         String choixClef = null;
 		
-        try {
-			validerHeader(headerAuthorization);
-			
-		} catch (AccesNonAutoriseException e1) {
-			requestContext.abortWith(
-	                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
-		}
+		 // vérifier que le header 'authorization' est bien présent et formaté.
+        if (headerAuthorization == null) {
+        	 requestContext.abortWith(
+		                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
+        	 throw new NotAuthorizedException("requête invalide au niveau du header");
+        }	
 
-        if(headerAuthorization.startsWith("Bearer ")) {
+        else if(headerAuthorization.startsWith("Bearer ")) {
         	intituleHeader = "Bearer ";
         	choixClef = "clefClient";
         }
@@ -88,13 +87,6 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 		}
         
     }
-	
-	private void validerHeader(String header) throws AccesNonAutoriseException {
-		
-		 if (header == null) {
-			 throw new AccesNonAutoriseException("requête invalide au niveau du header");
-		 }
-	}
 	
 		
 }
