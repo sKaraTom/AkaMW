@@ -45,14 +45,13 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 		//récupérer header authorization de la requête HTTP
 		String headerAuthorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 		
-        String intituleHeader = null;
-        String choixClef = null;
+        String intituleHeader = "";
+        String choixClef = "";
 		
 		 // vérifier que le header 'authorization' est bien présent et formaté.
         if (headerAuthorization == null) {
         	 requestContext.abortWith(
 		                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
-        	 throw new NotAuthorizedException("requête invalide au niveau du header");
         }	
 
         else if(headerAuthorization.startsWith("Bearer ")) {
