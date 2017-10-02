@@ -3,6 +3,7 @@ package fr.santa.akachan.middleware.authentification;
 
 import javax.annotation.Priority;
 import javax.ejb.EJB;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -47,13 +48,15 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         String intituleHeader = null;
         String choixClef = null;
 		
-		 // vérifier que le header 'authorization' est bien présent et formaté.
-        if (headerAuthorization == null) {
-        	 requestContext.abortWith(
-		                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
-        }	
+        try {
+			validerHeader(headerAuthorization);
+			
+		} catch (AccesNonAutoriseException e1) {
+			requestContext.abortWith(
+	                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
+		}
 
-        else if(headerAuthorization.startsWith("Bearer ")) {
+        if(headerAuthorization.startsWith("Bearer ")) {
         	intituleHeader = "Bearer ";
         	choixClef = "clefClient";
         }
@@ -85,6 +88,13 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 		}
         
     }
+	
+	private void validerHeader(String header) throws AccesNonAutoriseException {
+		
+		 if (header == null) {
+			 throw new AccesNonAutoriseException("requête invalide au niveau du header");
+		 }
+	}
 	
 		
 }
