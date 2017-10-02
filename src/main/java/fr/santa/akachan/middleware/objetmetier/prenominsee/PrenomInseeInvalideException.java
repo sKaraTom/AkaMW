@@ -1,4 +1,4 @@
-package fr.santa.akachan.middleware.objetmetier.prenomInsee;
+package fr.santa.akachan.middleware.objetmetier.prenominsee;
 
 public class PrenomInseeInvalideException extends Exception {
 	

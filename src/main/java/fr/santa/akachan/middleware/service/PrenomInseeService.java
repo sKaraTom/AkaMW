@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.dao.DaoException;
 import fr.santa.akachan.middleware.dao.PrenomInseeDao;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
+import fr.santa.akachan.middleware.objetmetier.prenominsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenominsee.PrenomInseeInexistantException;
 
 @Stateless
 public class PrenomInseeService {
@@ -66,9 +66,9 @@ public class PrenomInseeService {
 	 */
 	public List<PrenomInsee> obtenirStatsPrenom(String label, String sexe) throws DaoException, PrenomInseeInexistantException {
 		
-		label = label.toUpperCase();
+		String labelMajuscules = label.toUpperCase();
 		
-		List<PrenomInsee> liste = prenomInseeDao.obtenirStatsPrenom(label, sexe);
+		List<PrenomInsee> liste = prenomInseeDao.obtenirStatsPrenom(labelMajuscules, sexe);
 		
 		if(liste.isEmpty()) {
 			throw new PrenomInseeInexistantException("");
@@ -88,10 +88,10 @@ public class PrenomInseeService {
 	 * @return ArrayList<Integer> une liste de nombre de naissances de 1900 à 2015 pour courbe de statistiques.
 	 * @throws DaoException
 	 */
-	public ArrayList<Integer> obtenirNaissancesPrenom(String label, String sexe) throws DaoException {
+	public List<Integer> obtenirNaissancesPrenom(String label, String sexe) throws DaoException {
 		
 		List<PrenomInsee> statsPrenom = prenomInseeDao.obtenirStatsPrenom(label,sexe);
-		ArrayList<Integer> listeNaissances = new ArrayList<>();
+		List<Integer> listeNaissances = new ArrayList<>();
 			
 			// je commence par peupler la liste de 0 naissance pour les années 1900 à 2015 (index 0 à 115)
 			for (Integer i=0; i<=115;i++) {
@@ -101,7 +101,7 @@ public class PrenomInseeService {
 			// puis je peuple à chaque année de naissance récupérée (année de naissance -1900 pour tomber sur l'index).
 			// à cet index j'ajoute le nombre de naissances.
 			for( PrenomInsee prenom : statsPrenom) {
-				listeNaissances.set((prenom.getAnnee()-1900), prenom.getNombreNaissances());
+				listeNaissances.set( (prenom.getAnnee()-1900), prenom.getNombreNaissances() );
 			}
 		return listeNaissances;
 	}

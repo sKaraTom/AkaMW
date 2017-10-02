@@ -60,80 +60,44 @@ public class PrenomDao {
 	}
 	
 	/**
-	 * obtenir un prénom aléatoire tendance
+	 * obtenir un prénom aléatoire tendance ou ancien
 	 * requête native SQL pour RANDOM()
 	 * 
 	 * @param sexe
 	 * @param refClient
+	 * @param choixTendance ("ANCIEN" ou "TENDANCE")
 	 * @return String un prénom tendance
 	 * @throws DaoException
 	 * @throws PrenomIntrouvableException
 	 */
-	public String obtenirPrenomAeatoireTendance(String sexe, UUID refClient) throws DaoException, PrenomIntrouvableException {
+	public String obtenirPrenomAleatoireTendanceOuAncien(String sexe, UUID refClient,String choixTendance) throws DaoException, PrenomIntrouvableException {
 		
 		final StringBuilder requeteSQL = new StringBuilder();
 				requeteSQL.append("SELECT pre_label FROM t_prenom p");
 				requeteSQL.append(" WHERE NOT EXISTS (SELECT est_prenom FROM t_estimation e WHERE e.est_refClient=:refclient AND e.est_sexe=:sex");
 				requeteSQL.append(" AND e.est_prenom=p.pre_label)");
 				requeteSQL.append(" AND pre_sexe= :sex");
-				requeteSQL.append(" AND pre_tendance= 'TENDANCE'");
+				requeteSQL.append(" AND pre_tendance= :choixTendance");
 				requeteSQL.append(" ORDER BY RANDOM() LIMIT 1");
 				
 		Query q = em.createNativeQuery(requeteSQL.toString());
 		q.setParameter("sex", sexe);
 		q.setParameter("refclient", refClient);
-					
+		q.setParameter("choixTendance", choixTendance);
+		
 		String prenomTendance;
 		
 		try {
 			prenomTendance = (String)q.getSingleResult();
 		}
 		catch(NoResultException e) {
-			throw new PrenomIntrouvableException("aucun prénom tendance n'a pu être trouvé.");
+			throw new PrenomIntrouvableException("aucun prénom tendance ou ancien n'a pu être trouvé.");
 		}
 		catch(Exception e) {
-			throw new DaoException("échec à l'obtention d'un prénom tendance depuis la bdd : " + e.getClass() + " - " + e.getMessage());
+			throw new DaoException("échec à l'obtention d'un prénom tendance ou ancien depuis la bdd : " + e.getClass() + " - " + e.getMessage());
 		}
 		return prenomTendance;
 	}
-	
-	/**
-	 * obtenir un prénom aléatoire ancien
-	 * requête native SQL pour RANDOM()
-	 * 
-	 * @param sexe
-	 * @param refClient
-	 * @return
-	 * @throws PrenomIntrouvableException
-	 * @throws DaoException
-	 */
-	public String obtenirPrenomAeatoireAncien(String sexe, UUID refClient) throws PrenomIntrouvableException, DaoException {
-		
-		final StringBuilder requeteSQL = new StringBuilder();
-				requeteSQL.append("SELECT pre_label FROM t_prenom p");
-				requeteSQL.append(" WHERE NOT EXISTS (SELECT est_prenom FROM t_estimation e WHERE e.est_refClient=:refclient AND e.est_sexe=:sex");
-				requeteSQL.append(" AND e.est_prenom=p.pre_label)");
-				requeteSQL.append(" AND pre_sexe= :sex");
-				requeteSQL.append(" AND pre_tendance= 'ANCIEN'");
-				requeteSQL.append(" ORDER BY RANDOM() LIMIT 1");
-				
-		Query q = em.createNativeQuery(requeteSQL.toString());
-		q.setParameter("sex", sexe);
-		q.setParameter("refclient", refClient);
-						
-		String prenomAncien;
-			
-		try {
-			prenomAncien = (String)q.getSingleResult();
-		}
-		catch(NoResultException e) {
-			throw new PrenomIntrouvableException("aucun prénom ancien n'a pu être trouvé.");
-		}
-		catch(Exception e) {
-			throw new DaoException("échec à l'obtention d'un prénom ancien depuis la bdd : " + e.getClass() + " - " + e.getMessage());
-		}
-		return prenomAncien;
-	} 
 	
 	
 	/**

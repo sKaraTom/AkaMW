@@ -42,11 +42,11 @@ public class PrenomService {
 		}
 		
 		else if(choixTendance.equals(2)) {
-			prenomAleatoire = this.prenomDao.obtenirPrenomAeatoireTendance(sexe, refClient);
+			prenomAleatoire = this.prenomDao.obtenirPrenomAleatoireTendanceOuAncien(sexe, refClient,"TENDANCE");
 		}
 		
 		else if(choixTendance.equals(3)) {
-			prenomAleatoire = this.prenomDao.obtenirPrenomAeatoireAncien(sexe, refClient);
+			prenomAleatoire = this.prenomDao.obtenirPrenomAleatoireTendanceOuAncien(sexe, refClient,"ANCIEN");
 		}
 		
 		else {

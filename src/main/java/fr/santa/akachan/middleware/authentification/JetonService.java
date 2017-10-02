@@ -22,8 +22,8 @@ public class JetonService {
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(JetonService.class);
 	
-	private final String clefClient = "%^$lsf#&asfgva120" ;
-	private final String clefAdmin = "i1O8lea-yW*%qYZ";
+	private static final String clefClient = "%^$lsf#&asfgva120" ;
+	private static final String clefAdmin = "i1O8lea-yW*%qYZ";
 	
 	
 	/**
@@ -43,7 +43,7 @@ public class JetonService {
 		
 		// construction du token
 		String token = Jwts.builder()
-						  .setSubject("users/TzMUocMF4p")
+						  .setSubject(client.getUuid().toString().substring(0, 15)) // un extrait de l'uuid pour générer un sujet propre à l'utilisateur
 						  .setIssuedAt(date)
 						  .setExpiration(dateExpiration)
 						  .claim("prenom", client.getPrenom())

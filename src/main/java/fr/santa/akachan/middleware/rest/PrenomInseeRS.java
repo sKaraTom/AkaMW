@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.santa.akachan.middleware.authentification.Authentifie;
 import fr.santa.akachan.middleware.dao.DaoException;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInseeInexistantException;
+import fr.santa.akachan.middleware.objetmetier.prenominsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenominsee.PrenomInseeInexistantException;
 import fr.santa.akachan.middleware.service.PrenomInseeService;
 
 @WebService
@@ -98,7 +98,7 @@ public class PrenomInseeRS {
 		
 		 Response.ResponseBuilder builder = null;
 
-        ArrayList<Integer> liste = null;
+        List<Integer> liste = null;
         
 		try {
 			liste = prenomInseeService.obtenirNaissancesPrenom(label,sexe);

@@ -55,18 +55,9 @@ public class EmailRS {
 				// échec de l'authentification de l'émetteur (mail Akachan)
 				builder = status(PRECONDITION_FAILED).entity(e.getMessage());
 				
-			} catch (DestinataireInvalideException e) {
+			} catch (DestinataireInvalideException | SujetInvalideException | ContenuInvalideException | EmailInvalideException e) {
 				builder = status(BAD_REQUEST).entity(e.getMessage());
 				
-			} catch (SujetInvalideException e) {
-				builder = status(BAD_REQUEST).entity(e.getMessage());
-				
-			} catch (ContenuInvalideException e) {
-				builder = status(BAD_REQUEST).entity(e.getMessage()); 
-				
-			} catch (EmailInvalideException e) {
-				builder = status(BAD_REQUEST).entity(e.getMessage());
-			
 			} catch (ConnexionEchoueeException e) {
 				// problème au moment de l'envoi.
 				builder = status(SERVICE_UNAVAILABLE).entity(e.getMessage());
@@ -99,17 +90,8 @@ public class EmailRS {
 			// échec de l'authentification de l'émetteur (mail Akachan)
 			builder = status(PRECONDITION_FAILED).entity(e.getMessage());
 			
-		} catch (EmailInvalideException e) {
+		} catch (DestinataireInvalideException | SujetInvalideException | ContenuInvalideException | EmailInvalideException e) {
 			builder = status(BAD_REQUEST).entity(e.getMessage());
-			
-		} catch (DestinataireInvalideException e) {
-			builder = status(BAD_REQUEST).entity(e.getMessage());
-			
-		} catch (SujetInvalideException e) {
-			builder = status(BAD_REQUEST).entity(e.getMessage());
-			
-		} catch (ContenuInvalideException e) {
-			builder = status(BAD_REQUEST).entity(e.getMessage()); 
 			
 		} catch (ConnexionEchoueeException e) {
 			// problème au moment de l'envoi.

@@ -148,8 +148,8 @@ public class CitationDao {
 	public void supprimerCitation(final Integer id) throws CitationInexistanteException, DaoException {
 		
 		try {
-		final Citation citationASupprimer = em.getReference(Citation.class, id);
-		em.remove(citationASupprimer);
+			final Citation citationASupprimer = em.getReference(Citation.class, id);
+			em.remove(citationASupprimer);
 		}
 		catch(EntityNotFoundException e) {
 			throw new CitationInexistanteException("citation introuvable");

@@ -3,7 +3,6 @@ package fr.santa.akachan.middleware.authentification;
 
 import javax.annotation.Priority;
 import javax.ejb.EJB;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -40,7 +39,7 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 	 * @throw NotAuthorizedException si le header est invalide.
 	 */
 	@Override
-	public void filter(ContainerRequestContext requestContext) throws NotAuthorizedException {
+	public void filter(ContainerRequestContext requestContext) {
 
 		//récupérer header authorization de la requête HTTP
 		String headerAuthorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
@@ -50,7 +49,8 @@ public class FiltreAuthentification implements ContainerRequestFilter {
 		
 		 // vérifier que le header 'authorization' est bien présent et formaté.
         if (headerAuthorization == null) {
-        	 throw new NotAuthorizedException("header Authorization requis");
+        	 requestContext.abortWith(
+		                Response.status(Response.Status.BAD_REQUEST).entity("la requête est invalide (header null.").build());
         }	
 
         else if(headerAuthorization.startsWith("Bearer ")) {
@@ -64,7 +64,8 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         }
         
         else {
-        	throw new NotAuthorizedException("header invalide");
+        	requestContext.abortWith(
+	                Response.status(Response.Status.UNAUTHORIZED).entity("la requête est invalide.").build());
         }
          
         // Extraire le token du header http
@@ -74,14 +75,14 @@ public class FiltreAuthentification implements ContainerRequestFilter {
         // si date d'expiration passée : code 400
         // pour toute autre exception : code 401
   
-				try {
-					jetonService.validerToken(token,choixClef);
-					
-				} catch (AccesNonAutoriseException e) {
-					
-					requestContext.abortWith(
-			                Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build());
-				}
+		try {
+			jetonService.validerToken(token,choixClef);
+			
+		} catch (AccesNonAutoriseException e) {
+			
+			requestContext.abortWith(
+	                Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build());
+		}
         
     }
 	

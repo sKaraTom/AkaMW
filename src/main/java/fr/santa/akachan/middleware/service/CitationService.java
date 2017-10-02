@@ -159,11 +159,10 @@ public class CitationService {
 		if(Objects.isNull(citation) || StringUtils.isBlank(citation.getAuteur()) || StringUtils.isBlank(citation.getContenu())) {
 			throw new CitationInvalideException("champ null ou blanc");
 		}
-			
 	}
 	
 	/**
-	 * formater une phrase (String) avec majuscules.
+	 * formater un texte (String) avec majuscules à chaque début de phrase.
 	 * 
 	 * @param String phrase, la phrase à convertir
 	 * @return String phrase formatée

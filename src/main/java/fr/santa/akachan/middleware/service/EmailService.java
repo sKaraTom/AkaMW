@@ -143,7 +143,7 @@ public class EmailService {
 		body.append(contenuMail);
 		body.append("</h3></div>");
 		//adresse du site final à mettre ici :
-		body.append("<p style='font-size:small;'><a target='_blank' href='https://www.akachan.fr'>Akachan.fr</a></p>");
+		body.append("<p style='font-size:small;'><a target='_blank' href='https://www.akachan.fr'>www.akachan.fr</a></p>");
 		body.append("<div style='height:30px;background-color:#eb505f;border-radius:5px;'></div>");
 		body.append("</body></html>");
 	    	
@@ -168,7 +168,7 @@ public class EmailService {
 	    	builder.append(body);
 	    	builder.append("</h2></div>");
 	    	builder.append("<div align='left' style='font-size:small;'>retrouvez-les et bien d'autres sur le site ");
-	    	builder.append("<a target='_blank' href='https://www.akachan.fr'>Akachan.io</a></div>"); // adresse du site final à mettre ici.
+	    	builder.append("<a target='_blank' href='https://www.akachan.fr'>www.akachan.fr</a></div>"); // adresse du site final à mettre ici.
 	    	builder.append("<div style='height:30px;background-color:#eb505f;border-radius:5px;'></div>");
 	    	
 	    	return builder.toString();

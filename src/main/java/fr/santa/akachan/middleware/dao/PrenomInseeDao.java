@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.santa.akachan.middleware.objetmetier.prenomInsee.PrenomInsee;
+import fr.santa.akachan.middleware.objetmetier.prenominsee.PrenomInsee;
 
 @Stateless
 @Transactional

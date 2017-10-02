@@ -209,9 +209,9 @@ public class CourrierGmail
  		
     	Properties proprietes = obtenirProprietesServeurMail();
         
-        Session session = Session.getInstance(proprietes,auth);
+        Session nouvelleSession = Session.getInstance(proprietes,auth);
 
-        return session;
+        return nouvelleSession;
     }
     
     /** 

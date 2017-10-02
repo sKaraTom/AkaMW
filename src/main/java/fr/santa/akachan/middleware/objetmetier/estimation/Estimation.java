@@ -104,7 +104,6 @@ public class Estimation implements Serializable {
 	public void setFavori(Boolean favori) {
 		this.favori = favori;
 	}
-	
 
 	@Column(name = "EST_REFCLIENT")
 	public UUID getRefClient() {

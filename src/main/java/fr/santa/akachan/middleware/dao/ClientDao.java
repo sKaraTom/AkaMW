@@ -82,7 +82,6 @@ public class ClientDao {
 	
 	/** 
 	 * Obtenir la liste de tous les clients inscrits.
-	 * TODO : A dérouler jusqu'aux WS pour admin.
 	 * 
 	 * @return Liste de clients (List<Client>)
 	 */
@@ -104,9 +103,7 @@ public class ClientDao {
 	 */
 	public Client obtenirClient(final UUID refClient) throws ClientIntrouvableException {
 
-		Client client = null;
-
-		client = em.find(Client.class, refClient);
+		Client client = em.find(Client.class, refClient);
 		
 		if(Objects.isNull(client)) {
 			throw new ClientIntrouvableException("aucun client trouvé à cet uuid : ");
@@ -125,7 +122,7 @@ public class ClientDao {
 		Client client;
 		
 		try {
-			client = (Client)requete.getSingleResult();
+			client = requete.getSingleResult();
 		}
 		
 		catch(NoResultException e) {
@@ -142,7 +139,6 @@ public class ClientDao {
 	
 	/** 
 	 * Vérifier si le client existe dans la bdd.
-	 * TODO : inutilisé, voir si supprimer après page admin.
 	 * 
 	 * @param uuid
 	 * @return Boolean (true si client existe dans bdd, false sinon).
@@ -151,7 +147,8 @@ public class ClientDao {
 		
 		try
 		{
-			em.getReference(Client.class, uuid);
+			Client client = em.getReference(Client.class, uuid);
+			client.getPrenom(); // pour contourner le chargement lazy de em.getReference()
 			return true;
 		}
 		catch (final EntityNotFoundException e)
